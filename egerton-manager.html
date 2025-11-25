@@ -1,0 +1,1499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <title>Egerton U15 Lions - Manager</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* ========================================
+           CSS VARIABLES & RESET
+        ======================================== */
+        * {
+            -webkit-tap-highlight-color: transparent;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --color-primary: #FACC15;
+            --color-primary-light: #FEF9C3;
+            --color-primary-dark: #CA8A04;
+            --color-win: #22c55e;
+            --color-draw: #FACC15;
+            --color-loss: #ef4444;
+            --color-home: #15803d;
+            --color-away: #1d4ed8;
+            --glass-bg: rgba(255, 255, 255, 0.75);
+            --glass-border: rgba(0, 0, 0, 0.06);
+            --transition-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            --transition-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        body {
+            background: linear-gradient(180deg, #f8f8f8 0%, #f0f0f5 100%);
+            min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
+        }
+
+        /* ========================================
+           GLASS MORPHISM COMPONENTS
+        ======================================== */
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.65);
+            backdrop-filter: blur(40px) saturate(180%);
+            -webkit-backdrop-filter: blur(40px) saturate(180%);
+            border: 0.5px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 
+                0 -1px 0 rgba(0, 0, 0, 0.04),
+                0 8px 32px rgba(0, 0, 0, 0.08),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8),
+                inset 0 -0.5px 0 rgba(0, 0, 0, 0.05);
+        }
+
+        .glass-header {
+            background: rgba(255, 255, 255, 0.72);
+            backdrop-filter: blur(30px) saturate(180%);
+            -webkit-backdrop-filter: blur(30px) saturate(180%);
+            border-bottom: 0.5px solid var(--glass-border);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        }
+
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px) saturate(150%);
+            -webkit-backdrop-filter: blur(20px) saturate(150%);
+            border: 0.5px solid var(--glass-border);
+            box-shadow: 
+                0 2px 12px rgba(0, 0, 0, 0.04),
+                0 1px 2px rgba(0, 0, 0, 0.02),
+                inset 0 1px 0 rgba(255, 255, 255, 0.9);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .glass-card:active { transform: scale(0.98); }
+
+        .glass-card-yellow {
+            background: rgba(254, 249, 195, 0.5);
+            border: 0.5px solid rgba(250, 204, 21, 0.3);
+            box-shadow: 0 2px 12px rgba(250, 204, 21, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+        }
+
+        /* ========================================
+           SIDEBAR (Desktop)
+        ======================================== */
+        .sidebar {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(40px) saturate(180%);
+            -webkit-backdrop-filter: blur(40px) saturate(180%);
+            border-right: 0.5px solid var(--glass-border);
+            box-shadow: 1px 0 3px rgba(0, 0, 0, 0.02), inset -1px 0 0 rgba(255, 255, 255, 0.5);
+        }
+        
+        .sidebar-item {
+            border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s var(--transition-spring);
+        }
+        
+        .sidebar-item::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(250, 204, 21, 0.18);
+            border-radius: 12px;
+            transform: translateX(-105%);
+            transition: transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: -1;
+        }
+        
+        @media (min-width: 768px) {
+            .sidebar-item:hover::before { transform: translateX(0); }
+            .sidebar-item:hover { transform: translateX(3px); }
+            .sidebar-item:active { animation: sidebarBounce 0.6s var(--transition-spring); transform: translateX(3px); }
+            .sidebar-item.active::before { transform: translateX(0); background: rgba(250, 204, 21, 0.25); }
+            .sidebar-item.active { transform: translateX(3px); }
+            .sidebar-item.active:hover::before { background: rgba(250, 204, 21, 0.32); }
+        }
+        
+        @media (max-width: 767px) {
+            .sidebar-item::before { display: none; }
+            .sidebar-item:active { transform: scale(0.97); }
+            .sidebar-item.active { background: rgba(250, 204, 21, 0.15); }
+        }
+
+        /* ========================================
+           NAVIGATION
+        ======================================== */
+        .nav-item {
+            transition: all 0.25s var(--transition-smooth);
+            position: relative;
+        }
+        
+        .nav-item::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 50%;
+            transform: translateX(-50%) scaleX(0);
+            width: 4px;
+            height: 4px;
+            background: var(--color-primary);
+            border-radius: 50%;
+            transition: transform 0.25s var(--transition-smooth);
+        }
+        
+        .nav-item.active::after { transform: translateX(-50%) scaleX(1); }
+        .nav-item:active { transform: scale(0.9); }
+
+        /* ========================================
+           ANIMATIONS
+        ======================================== */
+        .page-content { animation: pageFadeIn 0.3s ease; }
+        
+        @keyframes pageFadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        @keyframes sidebarBounce {
+            0% { transform: translateX(3px) scale(1); }
+            25% { transform: translateX(3px) scale(0.92); }
+            50% { transform: translateX(3px) scale(1.06); }
+            75% { transform: translateX(3px) scale(0.97); }
+            100% { transform: translateX(3px) scale(1); }
+        }
+
+        @keyframes welcomeFadeIn {
+            0% { opacity: 0; transform: scale(0.9); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        
+        @keyframes badgeFadeIn {
+            0% { opacity: 0; transform: scale(0.8) rotate(-10deg); }
+            60% { transform: scale(1.05) rotate(2deg); }
+            100% { opacity: 1; transform: scale(1) rotate(0deg); }
+        }
+        
+        @keyframes homeSlideIn {
+            0% { opacity: 0; transform: translateY(30px) scale(0.95); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-8px); }
+            40%, 80% { transform: translateX(8px); }
+        }
+        
+        .welcome-text { animation: welcomeFadeIn 0.6s var(--transition-spring); }
+        .badge-animate { animation: badgeFadeIn 0.7s var(--transition-spring); }
+        .home-slide-in { animation: homeSlideIn 0.6s var(--transition-spring); }
+        .shake { animation: shake 0.4s ease; }
+
+        /* ========================================
+           FORM ELEMENTS
+        ======================================== */
+        .glass-input {
+            background: rgba(255, 255, 255, 0.8);
+            border: 0.5px solid rgba(0, 0, 0, 0.1);
+            transition: all 0.2s ease;
+        }
+        
+        .glass-input:focus {
+            background: rgba(255, 255, 255, 0.95);
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px rgba(250, 204, 21, 0.2);
+            outline: none;
+        }
+
+        .glass-select {
+            background: rgba(255, 255, 255, 0.8);
+            border: 0.5px solid rgba(0, 0, 0, 0.1);
+            transition: all 0.2s ease;
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 40px;
+        }
+        
+        .glass-select:focus {
+            background-color: rgba(255, 255, 255, 0.95);
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px rgba(250, 204, 21, 0.2);
+            outline: none;
+        }
+
+        .login-input {
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+            transition: all 0.3s var(--transition-spring);
+        }
+        
+        .login-input:focus {
+            background: rgba(255, 255, 255, 0.9);
+            border-color: var(--color-primary);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), 0 0 0 3px rgba(250, 204, 21, 0.2);
+            transform: scale(1.02);
+            outline: none;
+        }
+
+        /* ========================================
+           BUTTONS
+        ======================================== */
+        .btn-primary {
+            background: var(--color-primary);
+            color: #1f2937;
+            transition: all 0.2s ease;
+        }
+        
+        .btn-primary:active {
+            transform: scale(0.97);
+            background: var(--color-primary-dark);
+        }
+
+        .btn-glass {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 0.5px solid rgba(0, 0, 0, 0.08);
+            transition: all 0.2s ease;
+        }
+        
+        .btn-glass:active { transform: scale(0.97); background: rgba(255, 255, 255, 0.8); }
+        .btn-glass.active { background: rgba(250, 204, 21, 0.25); border-color: rgba(250, 204, 21, 0.5); }
+
+        /* ========================================
+           PILLS & BADGES
+        ======================================== */
+        .pill {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 0.5px solid var(--glass-border);
+        }
+        
+        .pill-home { background: rgba(220, 252, 231, 0.7); color: var(--color-home); }
+        .pill-away { background: rgba(219, 234, 254, 0.7); color: var(--color-away); }
+        .pill-manager { background: rgba(250, 204, 21, 0.2); color: #92400e; }
+
+        .result-w { background: rgba(34, 197, 94, 0.15); color: #15803d; }
+        .result-d { background: rgba(250, 204, 21, 0.2); color: #a16207; }
+        .result-l { background: rgba(239, 68, 68, 0.15); color: #dc2626; }
+
+        /* ========================================
+           UTILITIES
+        ======================================== */
+        .safe-top { padding-top: env(safe-area-inset-top, 0px); }
+        .safe-bottom { padding-bottom: env(safe-area-inset-bottom, 0px); }
+        .scroll-container { overflow-y: auto; -webkit-overflow-scrolling: touch; }
+        .number-display { font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; }
+
+        .overlay-bg {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+
+        .gradient-bg {
+            background: linear-gradient(180deg, rgba(250, 204, 21, 0.1) 0%, rgba(255, 255, 255, 0.95) 50%);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+
+        /* ========================================
+           LINEUP GRAPHIC
+        ======================================== */
+        .lineup-graphic {
+            background: linear-gradient(135deg, #FACC15 0%, #EAB308 100%);
+            border-radius: 20px;
+            padding: 24px;
+            color: #1f2937;
+        }
+
+        .lineup-player {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
+
+        .lineup-player:last-child {
+            border-bottom: none;
+        }
+
+        .lineup-number {
+            width: 28px;
+            height: 28px;
+            background: rgba(0,0,0,0.15);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        /* ========================================
+           CHAT STYLES
+        ======================================== */
+        .chat-bubble-sent {
+            background: var(--color-primary);
+            color: #1f2937;
+            border-radius: 18px 18px 4px 18px;
+            max-width: 80%;
+            margin-left: auto;
+        }
+
+        .chat-bubble-received {
+            background: rgba(255, 255, 255, 0.9);
+            color: #1f2937;
+            border-radius: 18px 18px 18px 4px;
+            max-width: 80%;
+            border: 0.5px solid var(--glass-border);
+        }
+
+        /* ========================================
+           PLAYER SELECTION
+        ======================================== */
+        .player-select-btn {
+            transition: all 0.2s ease;
+        }
+
+        .player-select-btn.selected {
+            background: rgba(250, 204, 21, 0.3);
+            border-color: var(--color-primary);
+        }
+
+        .player-select-btn.selected-sub {
+            background: rgba(59, 130, 246, 0.2);
+            border-color: #3b82f6;
+        }
+    </style>
+</head>
+<body class="text-gray-900">
+    <div id="app">
+        <div class="min-h-screen flex items-center justify-center">
+            <div class="text-center">
+                <div class="w-10 h-10 border-2 border-yellow-400 border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
+                <p class="text-gray-400 text-sm">Loading...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // ========================================
+    // CONFIGURATION
+    // ========================================
+    const CONFIG = {
+        SPREADSHEET_ID: '1sMHiLgwRAsnu2zWRCfdHWwuEMfefpOe30BIo_Zv01IE',
+        API_KEY: 'AIzaSyAkb76g25dIADs9Ty5CD3V7BguWe3ahLPs',
+        BADGE_IMG: 'egerton-tracker.png',
+        APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycby6a_XWdPHAjEcId0-A57dRG26w_VJlF38lsVuBqnPGzeXAo3RTM76phbB7RA5n9zuwAA/exec',
+        TEAM_NAME: 'Egerton U15 Lions',
+        SEASON: '2025/26'
+    };
+
+    const STATUS = {
+        SCHEDULED: 'Scheduled',
+        PLAYED: 'Played',
+        POSTPONED: 'Postponed'
+    };
+
+    const RESULT = {
+        WIN: 'Win',
+        DRAW: 'Draw',
+        LOSS: 'Loss'
+    };
+
+    const APP_STATE = {
+        LOGIN: 'login',
+        WELCOME: 'welcome',
+        BADGE: 'badge',
+        MAIN: 'main'
+    };
+
+    const FORMATIONS = [
+        '4-3-3',
+        '4-4-2',
+        '4-2-3-1',
+        '3-5-2',
+        '3-4-3',
+        '5-3-2',
+        '4-5-1'
+    ];
+
+    // ========================================
+    // STATE MANAGEMENT
+    // ========================================
+    const state = {
+        app: APP_STATE.LOGIN,
+        currentTab: 'dashboard',
+        loggedInManager: null,
+        managers: [],
+        allMatches: [],
+        fixtures: [],
+        results: [],
+        players: [],
+        messages: [],
+        lineups: [],
+        // Login
+        loginUsername: '',
+        loginPassword: '',
+        loginError: '',
+        // Messages
+        selectedChatPlayer: null,
+        newMessage: '',
+        // Lineup Builder
+        selectedMatchForLineup: null,
+        selectedFormation: '4-3-3',
+        startingEleven: [],
+        subs: [],
+        lineupNotes: ''
+    };
+
+    // ========================================
+    // UTILITY FUNCTIONS
+    // ========================================
+    function escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    function parseDate(dateStr) {
+        if (!dateStr) return null;
+        const months = { 'january': 0, 'february': 1, 'march': 2, 'april': 3, 'may': 4, 'june': 5, 'july': 6, 'august': 7, 'september': 8, 'october': 9, 'november': 10, 'december': 11 };
+        const parts = dateStr.toLowerCase().split(' ');
+        if (parts.length >= 3) {
+            const day = parseInt(parts[0]), month = months[parts[1]], year = parseInt(parts[2]);
+            if (!isNaN(day) && month !== undefined && !isNaN(year)) return new Date(year, month, day);
+        }
+        return null;
+    }
+
+    function formatShortDate(dateStr) {
+        const d = parseDate(dateStr);
+        if (!d) return dateStr || '';
+        return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+    }
+
+    function formatTimestamp(dateStr) {
+        if (!dateStr) return '';
+        const d = new Date(dateStr);
+        if (isNaN(d)) return dateStr;
+        return d.toLocaleString('en-GB', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+    }
+
+    function getResultCounts() {
+        return {
+            wins: state.results.filter(r => r.result === RESULT.WIN).length,
+            draws: state.results.filter(r => r.result === RESULT.DRAW).length,
+            losses: state.results.filter(r => r.result === RESULT.LOSS).length
+        };
+    }
+
+    function getHeadToHead(opponent) {
+        return state.results.filter(r => 
+            r.opponent.toLowerCase().includes(opponent.toLowerCase()) ||
+            opponent.toLowerCase().includes(r.opponent.toLowerCase())
+        );
+    }
+
+    // ========================================
+    // DATA FETCHING
+    // ========================================
+    async function fetchSheetData() {
+        try {
+            const sheets = ['Fixtures', 'Players', 'Managers', 'Messages', 'Lineups'];
+            const responses = await Promise.all(
+                sheets.map(sheet => 
+                    fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SPREADSHEET_ID}/values/${sheet}?key=${CONFIG.API_KEY}`)
+                )
+            );
+            
+            const [fixturesData, playersData, managersData, messagesData, lineupsData] = await Promise.all(
+                responses.map(r => r.json())
+            );
+
+            // Parse Fixtures
+            if (fixturesData.values?.length > 1) {
+                state.allMatches = fixturesData.values.slice(1)
+                    .filter(row => row?.length >= 11 && row[0])
+                    .map(row => ({
+                        id: row[0],
+                        date: row[1] || '',
+                        dateObj: parseDate(row[1]),
+                        kickOffTime: row[2] || '',
+                        opponent: row[3] || '',
+                        venue: row[4] || '',
+                        competition: row[5] || '',
+                        ourScore: row[6] || '',
+                        goalScorers: row[7] || '',
+                        notes: row[8] || '',
+                        theirScore: row[9] || '',
+                        status: row[10] || '',
+                        motm: row[11] || ''
+                    }));
+
+                state.fixtures = state.allMatches.filter(m => 
+                    m.status?.toLowerCase() === STATUS.SCHEDULED.toLowerCase() || 
+                    m.status?.toLowerCase() === STATUS.POSTPONED.toLowerCase()
+                );
+
+                state.results = state.allMatches
+                    .filter(m => m.status?.toLowerCase() === STATUS.PLAYED.toLowerCase())
+                    .map(match => {
+                        const ourScore = parseInt(match.ourScore) || 0;
+                        const theirScore = parseInt(match.theirScore) || 0;
+                        const result = ourScore > theirScore ? RESULT.WIN : ourScore < theirScore ? RESULT.LOSS : RESULT.DRAW;
+                        return { ...match, goalsFor: ourScore, goalsAgainst: theirScore, result };
+                    })
+                    .sort((a, b) => (b.dateObj || 0) - (a.dateObj || 0));
+            }
+
+            // Parse Players
+            if (playersData.values?.length > 1) {
+                state.players = playersData.values.slice(1)
+                    .filter(row => row?.length >= 2 && row[1])
+                    .map(row => ({
+                        shirtNumber: row[0] || '',
+                        name: row[1] || '',
+                        position: row[2] || '',
+                        goals: parseInt(row[3]) || 0,
+                        motm: parseInt(row[4]) || 0,
+                        foot: row[5] || '',
+                        appearances: parseInt(row[6]) || 0
+                    }));
+            }
+
+            // Parse Managers
+            if (managersData.values?.length > 1) {
+                state.managers = managersData.values.slice(1)
+                    .filter(row => row?.length >= 4)
+                    .map(row => ({
+                        id: row[0] || '',
+                        name: row[1] || '',
+                        username: row[2] || '',
+                        password: row[3] || ''
+                    }));
+            }
+
+            // Parse Messages
+            if (messagesData.values?.length > 1) {
+                state.messages = messagesData.values.slice(1)
+                    .filter(row => row?.length >= 5)
+                    .map(row => ({
+                        id: row[0] || '',
+                        from: row[1] || '',
+                        fromType: row[2] || '',
+                        to: row[3] || '',
+                        message: row[4] || '',
+                        timestamp: row[5] || ''
+                    }));
+            }
+
+            // Parse Lineups
+            if (lineupsData.values?.length > 1) {
+                state.lineups = lineupsData.values.slice(1)
+                    .filter(row => row?.length >= 6)
+                    .map(row => ({
+                        matchId: row[0] || '',
+                        formation: row[1] || '',
+                        starting11: row[2] || '',
+                        subs: row[3] || '',
+                        notes: row[4] || '',
+                        createdBy: row[5] || '',
+                        timestamp: row[6] || ''
+                    }));
+            }
+
+            renderApp();
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            document.getElementById('app').innerHTML = `
+                <div class="min-h-screen flex items-center justify-center p-6">
+                    <div class="text-center">
+                        <p class="text-red-500 mb-4">Error loading data</p>
+                        <button onclick="fetchSheetData()" class="btn-primary px-6 py-3 rounded-2xl font-semibold">Retry</button>
+                    </div>
+                </div>
+            `;
+        }
+    }
+
+    // ========================================
+    // AUTHENTICATION
+    // ========================================
+    function handleLoginUsernameInput(value) {
+        state.loginUsername = value;
+        state.loginError = '';
+    }
+
+    function handleLoginPasswordInput(value) {
+        state.loginPassword = value;
+        state.loginError = '';
+    }
+
+    function attemptLogin() {
+        const username = state.loginUsername.toLowerCase().trim();
+        const password = state.loginPassword.trim();
+
+        const manager = state.managers.find(m => 
+            m.username.toLowerCase() === username && m.password === password
+        );
+
+        if (manager) {
+            state.loggedInManager = manager;
+            state.loginError = '';
+            startWelcomeSequence();
+        } else {
+            state.loginError = 'Invalid username or password';
+            const form = document.getElementById('loginForm');
+            if (form) {
+                form.classList.add('shake');
+                setTimeout(() => form.classList.remove('shake'), 400);
+            }
+        }
+    }
+
+    function startWelcomeSequence() {
+        state.app = APP_STATE.WELCOME;
+        renderApp();
+        
+        setTimeout(() => {
+            state.app = APP_STATE.BADGE;
+            renderApp();
+            
+            setTimeout(() => {
+                state.app = APP_STATE.MAIN;
+                renderApp();
+            }, 1200);
+        }, 1800);
+    }
+
+    function logout() {
+        state.app = APP_STATE.LOGIN;
+        state.loggedInManager = null;
+        state.loginUsername = '';
+        state.loginPassword = '';
+        state.loginError = '';
+        state.currentTab = 'dashboard';
+        state.selectedChatPlayer = null;
+        state.selectedMatchForLineup = null;
+        renderApp();
+    }
+
+    // ========================================
+    // NAVIGATION
+    // ========================================
+    function setActiveTab(tab) {
+        state.currentTab = tab;
+        state.selectedChatPlayer = null;
+        state.selectedMatchForLineup = null;
+        renderApp();
+    }
+
+    // ========================================
+    // MESSAGING
+    // ========================================
+    function openChat(playerName) {
+        state.selectedChatPlayer = playerName;
+        state.newMessage = '';
+        renderApp();
+        setTimeout(() => {
+            const container = document.getElementById('chatMessages');
+            if (container) container.scrollTop = container.scrollHeight;
+        }, 100);
+    }
+
+    function closeChat() {
+        state.selectedChatPlayer = null;
+        renderApp();
+    }
+
+    function handleMessageInput(value) {
+        state.newMessage = value;
+    }
+
+    function getConversation(playerName) {
+        const managerName = state.loggedInManager.name;
+        return state.messages.filter(m => 
+            (m.from === managerName && m.to === playerName) ||
+            (m.from === playerName && m.to === managerName)
+        ).sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+    }
+
+    function getUnreadCount(playerName) {
+        // For now just return 0, could implement read tracking later
+        return 0;
+    }
+
+    async function sendMessage() {
+        if (!state.newMessage.trim() || !state.selectedChatPlayer) return;
+
+        const messageData = {
+            action: 'sendMessage',
+            from: state.loggedInManager.name,
+            fromType: 'manager',
+            to: state.selectedChatPlayer,
+            message: state.newMessage.trim(),
+            timestamp: new Date().toISOString()
+        };
+
+        try {
+            await fetch(CONFIG.APPS_SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(messageData)
+            });
+
+            // Optimistically add to local state
+            state.messages.push({
+                id: Date.now().toString(),
+                ...messageData
+            });
+
+            state.newMessage = '';
+            renderApp();
+            
+            setTimeout(() => {
+                const container = document.getElementById('chatMessages');
+                if (container) container.scrollTop = container.scrollHeight;
+            }, 100);
+        } catch (error) {
+            console.error('Error sending message:', error);
+        }
+    }
+
+    // ========================================
+    // LINEUP BUILDER
+    // ========================================
+    function selectMatchForLineup(matchId) {
+        state.selectedMatchForLineup = matchId;
+        state.startingEleven = [];
+        state.subs = [];
+        state.lineupNotes = '';
+        state.selectedFormation = '4-3-3';
+
+        // Load existing lineup if any
+        const existingLineup = state.lineups.find(l => l.matchId === matchId);
+        if (existingLineup) {
+            state.selectedFormation = existingLineup.formation || '4-3-3';
+            state.startingEleven = existingLineup.starting11 ? existingLineup.starting11.split(',').map(s => s.trim()) : [];
+            state.subs = existingLineup.subs ? existingLineup.subs.split(',').map(s => s.trim()) : [];
+            state.lineupNotes = existingLineup.notes || '';
+        }
+
+        renderApp();
+    }
+
+    function cancelLineupEdit() {
+        state.selectedMatchForLineup = null;
+        state.startingEleven = [];
+        state.subs = [];
+        state.lineupNotes = '';
+        renderApp();
+    }
+
+    function setFormation(formation) {
+        state.selectedFormation = formation;
+        renderApp();
+    }
+
+    function togglePlayerSelection(playerName) {
+        const inStarting = state.startingEleven.includes(playerName);
+        const inSubs = state.subs.includes(playerName);
+
+        if (inStarting) {
+            // Remove from starting, add to subs
+            state.startingEleven = state.startingEleven.filter(p => p !== playerName);
+            state.subs.push(playerName);
+        } else if (inSubs) {
+            // Remove from subs
+            state.subs = state.subs.filter(p => p !== playerName);
+        } else {
+            // Add to starting if < 11, else add to subs
+            if (state.startingEleven.length < 11) {
+                state.startingEleven.push(playerName);
+            } else {
+                state.subs.push(playerName);
+            }
+        }
+        renderApp();
+    }
+
+    function handleLineupNotesInput(value) {
+        state.lineupNotes = value;
+    }
+
+    async function saveLineup() {
+        if (!state.selectedMatchForLineup) return;
+
+        const lineupData = {
+            action: 'saveLineup',
+            matchId: state.selectedMatchForLineup,
+            formation: state.selectedFormation,
+            starting11: state.startingEleven.join(', '),
+            subs: state.subs.join(', '),
+            notes: state.lineupNotes,
+            createdBy: state.loggedInManager.name,
+            timestamp: new Date().toISOString()
+        };
+
+        try {
+            await fetch(CONFIG.APPS_SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(lineupData)
+            });
+
+            // Update local state
+            const existingIndex = state.lineups.findIndex(l => l.matchId === state.selectedMatchForLineup);
+            if (existingIndex >= 0) {
+                state.lineups[existingIndex] = lineupData;
+            } else {
+                state.lineups.push(lineupData);
+            }
+
+            alert('Lineup saved!');
+            state.selectedMatchForLineup = null;
+            renderApp();
+        } catch (error) {
+            console.error('Error saving lineup:', error);
+            alert('Error saving lineup');
+        }
+    }
+
+    // ========================================
+    // COMPONENT RENDERERS
+    // ========================================
+    function renderLineupGraphic(matchId) {
+        const lineup = state.lineups.find(l => l.matchId === matchId);
+        const match = state.fixtures.find(f => f.id === matchId);
+        
+        if (!lineup || !match) return '';
+
+        const starting = lineup.starting11 ? lineup.starting11.split(',').map(s => s.trim()) : [];
+        const subs = lineup.subs ? lineup.subs.split(',').map(s => s.trim()) : [];
+
+        return `
+            <div class="lineup-graphic">
+                <div class="flex items-center justify-between mb-4">
+                    <img src="${CONFIG.BADGE_IMG}" class="w-12 h-12 rounded-xl" alt="Badge">
+                    <div class="text-right">
+                        <p class="text-xs opacity-70">vs ${escapeHtml(match.opponent)}</p>
+                        <p class="text-xs opacity-70">${formatShortDate(match.date)}</p>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-2xl font-bold">STARTING</h2>
+                    <span class="text-4xl font-bold opacity-20">XI</span>
+                </div>
+                <div class="mb-4">
+                    ${starting.map((name, i) => {
+                        const player = state.players.find(p => p.name === name);
+                        return `
+                            <div class="lineup-player">
+                                <div class="lineup-number">${player?.shirtNumber || i + 1}</div>
+                                <span class="font-semibold">${escapeHtml(name)}</span>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+                ${subs.length > 0 ? `
+                    <div class="mt-4 pt-4 border-t border-black/20">
+                        <p class="text-sm font-bold mb-2 opacity-70">SUBS</p>
+                        <p class="text-sm opacity-70">${subs.map(s => escapeHtml(s)).join(', ')}</p>
+                    </div>
+                ` : ''}
+                ${lineup.notes ? `
+                    <div class="mt-3 pt-3 border-t border-black/20">
+                        <p class="text-xs opacity-70">${escapeHtml(lineup.notes)}</p>
+                    </div>
+                ` : ''}
+            </div>
+        `;
+    }
+
+    // ========================================
+    // PAGE RENDERERS
+    // ========================================
+    function renderDashboard() {
+        const { wins, draws, losses } = getResultCounts();
+        const played = state.results.length;
+        const nextMatch = state.fixtures[0];
+
+        return `
+            <h2 class="text-xl font-bold text-gray-900 mb-4">Dashboard</h2>
+            
+            <!-- Quick Stats -->
+            <div class="grid grid-cols-4 gap-2 md:gap-4 mb-4">
+                <div class="glass-card rounded-2xl p-3 text-center">
+                    <p class="text-xs text-gray-400 mb-0.5">Played</p>
+                    <p class="text-2xl font-bold number-display">${played}</p>
+                </div>
+                <div class="glass-card rounded-2xl p-3 text-center" style="background: rgba(220, 252, 231, 0.6);">
+                    <p class="text-xs text-green-600 mb-0.5">W</p>
+                    <p class="text-2xl font-bold text-green-600 number-display">${wins}</p>
+                </div>
+                <div class="glass-card rounded-2xl p-3 text-center" style="background: rgba(254, 249, 195, 0.6);">
+                    <p class="text-xs text-yellow-600 mb-0.5">D</p>
+                    <p class="text-2xl font-bold text-yellow-600 number-display">${draws}</p>
+                </div>
+                <div class="glass-card rounded-2xl p-3 text-center" style="background: rgba(254, 226, 226, 0.6);">
+                    <p class="text-xs text-red-500 mb-0.5">L</p>
+                    <p class="text-2xl font-bold text-red-500 number-display">${losses}</p>
+                </div>
+            </div>
+
+            <!-- Next Match -->
+            ${nextMatch ? `
+                <div class="glass-card-yellow glass-card rounded-2xl p-4 mb-4">
+                    <p class="text-xs font-medium text-yellow-700 uppercase tracking-wide mb-2">Next Match</p>
+                    <div class="flex items-center justify-between mb-2">
+                        <div>
+                            <p class="text-lg font-semibold text-gray-900">${escapeHtml(nextMatch.opponent)}</p>
+                            <p class="text-sm text-gray-500">${formatShortDate(nextMatch.date)} · ${escapeHtml(nextMatch.kickOffTime)}</p>
+                        </div>
+                        <span class="pill ${nextMatch.venue === 'Home' ? 'pill-home' : 'pill-away'} px-3 py-1 rounded-full text-xs font-medium">${escapeHtml(nextMatch.venue)}</span>
+                    </div>
+                    ${(() => {
+                        const h2h = getHeadToHead(nextMatch.opponent);
+                        if (h2h.length > 0) {
+                            const lastMatch = h2h[0];
+                            return `
+                                <div class="mt-3 pt-3 border-t border-yellow-300/50">
+                                    <p class="text-xs text-yellow-700">Last time: <strong>${lastMatch.goalsFor}-${lastMatch.goalsAgainst}</strong> (${lastMatch.result})</p>
+                                </div>
+                            `;
+                        }
+                        return '<p class="text-xs text-yellow-700 mt-2">First meeting</p>';
+                    })()}
+                </div>
+
+                <!-- Lineup Status -->
+                ${(() => {
+                    const lineup = state.lineups.find(l => l.matchId === nextMatch.id);
+                    if (lineup) {
+                        return `
+                            <div class="mb-4">
+                                ${renderLineupGraphic(nextMatch.id)}
+                            </div>
+                        `;
+                    }
+                    return `
+                        <div class="glass-card rounded-2xl p-4 mb-4 border-2 border-dashed border-yellow-300">
+                            <div class="text-center">
+                                <p class="text-gray-500 mb-2">No lineup set for this match</p>
+                                <button onclick="setActiveTab('lineup')" class="btn-primary px-4 py-2 rounded-xl text-sm font-semibold">
+                                    Create Lineup
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                })()}
+            ` : '<p class="text-gray-400 text-center py-8">No upcoming fixtures</p>'}
+
+            <!-- Squad Overview -->
+            <div class="glass-card rounded-2xl p-4">
+                <p class="text-xs font-medium text-gray-400 uppercase tracking-wide mb-3">Squad (${state.players.length} players)</p>
+                <div class="grid grid-cols-2 gap-2">
+                    <div class="text-center p-3 bg-gray-50 rounded-xl">
+                        <p class="text-2xl font-bold">${state.players.reduce((sum, p) => sum + p.goals, 0)}</p>
+                        <p class="text-xs text-gray-400">Total Goals</p>
+                    </div>
+                    <div class="text-center p-3 bg-gray-50 rounded-xl">
+                        <p class="text-2xl font-bold">${state.players.reduce((sum, p) => sum + p.appearances, 0)}</p>
+                        <p class="text-xs text-gray-400">Total Apps</p>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    function renderLineupBuilder() {
+        // If no match selected, show fixture list
+        if (!state.selectedMatchForLineup) {
+            return `
+                <h2 class="text-xl font-bold text-gray-900 mb-4">Create Lineup</h2>
+                <p class="text-gray-500 text-sm mb-4">Select a fixture to create the team sheet</p>
+                <div class="space-y-2">
+                    ${state.fixtures.length > 0 ? state.fixtures.map(f => {
+                        const hasLineup = state.lineups.some(l => l.matchId === f.id);
+                        return `
+                            <div onclick="selectMatchForLineup('${f.id}')" class="glass-card rounded-2xl p-4 cursor-pointer">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="font-semibold text-gray-900">${escapeHtml(f.opponent)}</p>
+                                        <p class="text-sm text-gray-500">${formatShortDate(f.date)} · ${escapeHtml(f.kickOffTime)}</p>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        ${hasLineup ? '<span class="text-xs text-green-600 font-medium">✓ Lineup Set</span>' : ''}
+                                        <span class="pill ${f.venue === 'Home' ? 'pill-home' : 'pill-away'} px-2.5 py-0.5 rounded-full text-xs font-medium">${escapeHtml(f.venue)}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('') : '<p class="text-gray-400 text-center py-8">No upcoming fixtures</p>'}
+                </div>
+            `;
+        }
+
+        // Show lineup builder
+        const match = state.fixtures.find(f => f.id === state.selectedMatchForLineup);
+        if (!match) return '';
+
+        return `
+            <div class="flex items-center justify-between mb-4">
+                <div>
+                    <button onclick="cancelLineupEdit()" class="text-yellow-600 text-sm font-medium mb-1">← Back</button>
+                    <h2 class="text-xl font-bold text-gray-900">${escapeHtml(match.opponent)}</h2>
+                    <p class="text-sm text-gray-500">${formatShortDate(match.date)} · ${escapeHtml(match.venue)}</p>
+                </div>
+            </div>
+
+            <!-- Formation Selector -->
+            <div class="glass-card rounded-2xl p-4 mb-4">
+                <p class="text-xs font-medium text-gray-400 uppercase tracking-wide mb-2">Formation</p>
+                <div class="flex flex-wrap gap-2">
+                    ${FORMATIONS.map(f => `
+                        <button onclick="setFormation('${f}')" class="btn-glass px-3 py-1.5 rounded-lg text-sm font-medium ${state.selectedFormation === f ? 'active' : ''}">
+                            ${f}
+                        </button>
+                    `).join('')}
+                </div>
+            </div>
+
+            <!-- Player Selection -->
+            <div class="glass-card rounded-2xl p-4 mb-4">
+                <div class="flex items-center justify-between mb-3">
+                    <p class="text-xs font-medium text-gray-400 uppercase tracking-wide">Select Players</p>
+                    <p class="text-xs text-gray-500">
+                        <span class="text-yellow-600 font-bold">${state.startingEleven.length}/11</span> starting · 
+                        <span class="text-blue-600 font-bold">${state.subs.length}</span> subs
+                    </p>
+                </div>
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-2">
+                    ${state.players.map(p => {
+                        const inStarting = state.startingEleven.includes(p.name);
+                        const inSubs = state.subs.includes(p.name);
+                        return `
+                            <button onclick="togglePlayerSelection('${escapeHtml(p.name)}')" class="player-select-btn flex items-center gap-2 p-2 rounded-xl border border-gray-200 text-left ${inStarting ? 'selected' : ''} ${inSubs ? 'selected-sub' : ''}">
+                                <div class="w-8 h-8 rounded-lg ${inStarting ? 'bg-yellow-400' : inSubs ? 'bg-blue-400' : 'bg-gray-200'} flex items-center justify-center text-sm font-bold ${inStarting || inSubs ? 'text-white' : 'text-gray-600'}">${escapeHtml(p.shirtNumber)}</div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm font-medium truncate">${escapeHtml(p.name)}</p>
+                                    <p class="text-[10px] text-gray-400">${escapeHtml(p.position)}</p>
+                                </div>
+                            </button>
+                        `;
+                    }).join('')}
+                </div>
+                <div class="mt-3 text-xs text-gray-400">
+                    <span class="inline-block w-3 h-3 bg-yellow-400 rounded mr-1"></span> Starting XI
+                    <span class="inline-block w-3 h-3 bg-blue-400 rounded ml-3 mr-1"></span> Substitute
+                </div>
+            </div>
+
+            <!-- Notes -->
+            <div class="glass-card rounded-2xl p-4 mb-4">
+                <p class="text-xs font-medium text-gray-400 uppercase tracking-wide mb-2">Match Notes</p>
+                <textarea 
+                    class="glass-input w-full p-3 rounded-xl text-sm resize-none" 
+                    rows="3" 
+                    placeholder="Any notes for the team..."
+                    oninput="handleLineupNotesInput(this.value)"
+                >${escapeHtml(state.lineupNotes)}</textarea>
+            </div>
+
+            <!-- Preview -->
+            ${state.startingEleven.length > 0 ? `
+                <div class="mb-4">
+                    <p class="text-xs font-medium text-gray-400 uppercase tracking-wide mb-2">Preview</p>
+                    ${renderLineupGraphic(state.selectedMatchForLineup) || `
+                        <div class="lineup-graphic">
+                            <div class="flex items-center justify-between mb-4">
+                                <img src="${CONFIG.BADGE_IMG}" class="w-12 h-12 rounded-xl" alt="Badge">
+                                <div class="text-right">
+                                    <p class="text-xs opacity-70">vs ${escapeHtml(match.opponent)}</p>
+                                    <p class="text-xs opacity-70">${formatShortDate(match.date)}</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between mb-4">
+                                <h2 class="text-2xl font-bold">STARTING</h2>
+                                <span class="text-4xl font-bold opacity-20">XI</span>
+                            </div>
+                            <div class="mb-4">
+                                ${state.startingEleven.map((name, i) => {
+                                    const player = state.players.find(p => p.name === name);
+                                    return `
+                                        <div class="lineup-player">
+                                            <div class="lineup-number">${player?.shirtNumber || i + 1}</div>
+                                            <span class="font-semibold">${escapeHtml(name)}</span>
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                            ${state.subs.length > 0 ? `
+                                <div class="mt-4 pt-4 border-t border-black/20">
+                                    <p class="text-sm font-bold mb-2 opacity-70">SUBS</p>
+                                    <p class="text-sm opacity-70">${state.subs.map(s => escapeHtml(s)).join(', ')}</p>
+                                </div>
+                            ` : ''}
+                        </div>
+                    `}
+                </div>
+            ` : ''}
+
+            <!-- Save Button -->
+            <div class="flex gap-2">
+                <button onclick="cancelLineupEdit()" class="flex-1 btn-glass py-3 rounded-xl font-semibold text-gray-700">Cancel</button>
+                <button onclick="saveLineup()" class="flex-1 btn-primary py-3 rounded-xl font-semibold" ${state.startingEleven.length === 0 ? 'disabled style="opacity: 0.5;"' : ''}>
+                    Save Lineup
+                </button>
+            </div>
+        `;
+    }
+
+    function renderMessages() {
+        // If chat is open
+        if (state.selectedChatPlayer) {
+            const conversation = getConversation(state.selectedChatPlayer);
+            const player = state.players.find(p => p.name === state.selectedChatPlayer);
+
+            return `
+                <!-- Chat Header -->
+                <div class="flex items-center gap-3 mb-4">
+                    <button onclick="closeChat()" class="text-yellow-600 font-medium">← Back</button>
+                    <div class="flex items-center gap-2">
+                        <div class="w-10 h-10 rounded-xl bg-yellow-400 flex items-center justify-center font-bold">${player?.shirtNumber || '?'}</div>
+                        <div>
+                            <p class="font-semibold">${escapeHtml(state.selectedChatPlayer)}</p>
+                            <p class="text-xs text-gray-400">${player?.position || 'Player'}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chat Messages -->
+                <div id="chatMessages" class="glass-card rounded-2xl p-4 mb-4 h-80 overflow-y-auto">
+                    ${conversation.length > 0 ? `
+                        <div class="space-y-3">
+                            ${conversation.map(m => {
+                                const isSent = m.fromType === 'manager';
+                                return `
+                                    <div class="flex ${isSent ? 'justify-end' : 'justify-start'}">
+                                        <div class="${isSent ? 'chat-bubble-sent' : 'chat-bubble-received'} px-4 py-2">
+                                            <p class="text-sm">${escapeHtml(m.message)}</p>
+                                            <p class="text-[10px] ${isSent ? 'text-yellow-800/60' : 'text-gray-400'} mt-1">${formatTimestamp(m.timestamp)}</p>
+                                        </div>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    ` : `
+                        <div class="h-full flex items-center justify-center">
+                            <p class="text-gray-400 text-sm">No messages yet. Start the conversation!</p>
+                        </div>
+                    `}
+                </div>
+
+                <!-- Message Input -->
+                <div class="flex gap-2">
+                    <input 
+                        type="text" 
+                        id="messageInput"
+                        class="glass-input flex-1 py-3 px-4 rounded-xl" 
+                        placeholder="Type a message..."
+                        value="${escapeHtml(state.newMessage)}"
+                        oninput="handleMessageInput(this.value)"
+                        onkeydown="if(event.key === 'Enter') sendMessage()"
+                    >
+                    <button onclick="sendMessage()" class="btn-primary px-6 rounded-xl font-semibold">Send</button>
+                </div>
+            `;
+        }
+
+        // Player list
+        return `
+            <h2 class="text-xl font-bold text-gray-900 mb-4">Messages</h2>
+            <p class="text-gray-500 text-sm mb-4">Select a player to message</p>
+            <div class="space-y-2">
+                ${state.players.map(p => {
+                    const conversation = getConversation(p.name);
+                    const lastMessage = conversation[conversation.length - 1];
+                    return `
+                        <div onclick="openChat('${escapeHtml(p.name)}')" class="glass-card rounded-2xl p-4 cursor-pointer">
+                            <div class="flex items-center gap-3">
+                                <div class="w-11 h-11 rounded-xl bg-yellow-400 flex items-center justify-center font-bold text-gray-900">${escapeHtml(p.shirtNumber)}</div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="font-semibold text-gray-900">${escapeHtml(p.name)}</p>
+                                    <p class="text-xs text-gray-400 truncate">${lastMessage ? escapeHtml(lastMessage.message) : 'No messages yet'}</p>
+                                </div>
+                                ${conversation.length > 0 ? `
+                                    <div class="text-right">
+                                        <p class="text-[10px] text-gray-400">${formatTimestamp(lastMessage?.timestamp)}</p>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                    `;
+                }).join('')}
+            </div>
+        `;
+    }
+
+    function renderFixtures() {
+        return `
+            <h2 class="text-xl font-bold text-gray-900 mb-4">Fixtures</h2>
+            <div class="space-y-2">
+                ${state.fixtures.length > 0 ? state.fixtures.map(f => {
+                    const h2h = getHeadToHead(f.opponent);
+                    const hasLineup = state.lineups.some(l => l.matchId === f.id);
+                    
+                    return `
+                        <div class="glass-card rounded-2xl p-4">
+                            <div class="flex items-center justify-between mb-2">
+                                <div>
+                                    <p class="font-semibold text-gray-900">${escapeHtml(f.opponent)}</p>
+                                    <p class="text-sm text-gray-500">${formatShortDate(f.date)} · ${escapeHtml(f.kickOffTime)}</p>
+                                </div>
+                                <span class="pill ${f.venue === 'Home' ? 'pill-home' : 'pill-away'} px-2.5 py-0.5 rounded-full text-xs font-medium">${escapeHtml(f.venue)}</span>
+                            </div>
+                            ${h2h.length > 0 ? `
+                                <div class="mt-2 pt-2 border-t border-gray-100">
+                                    <p class="text-xs text-gray-500">
+                                        Previous: ${h2h.map(m => `<span class="font-medium ${m.result === 'Win' ? 'text-green-600' : m.result === 'Loss' ? 'text-red-500' : 'text-yellow-600'}">${m.goalsFor}-${m.goalsAgainst}</span>`).join(', ')}
+                                    </p>
+                                </div>
+                            ` : ''}
+                            <div class="mt-2 flex items-center justify-between">
+                                ${hasLineup ? '<span class="text-xs text-green-600">✓ Lineup ready</span>' : '<span class="text-xs text-orange-500">No lineup</span>'}
+                                ${f.status === STATUS.POSTPONED ? '<span class="text-xs text-orange-500 font-medium">Postponed</span>' : ''}
+                            </div>
+                        </div>
+                    `;
+                }).join('') : '<p class="text-gray-400 text-center py-8">No upcoming fixtures</p>'}
+            </div>
+        `;
+    }
+
+    function renderSquad() {
+        return `
+            <h2 class="text-xl font-bold text-gray-900 mb-4">Squad</h2>
+            <div class="space-y-2">
+                ${state.players.map(p => `
+                    <div class="glass-card rounded-2xl p-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-11 h-11 rounded-xl bg-yellow-400 flex items-center justify-center font-bold text-gray-900">${escapeHtml(p.shirtNumber)}</div>
+                            <div class="flex-1">
+                                <p class="font-semibold text-gray-900">${escapeHtml(p.name)}</p>
+                                <p class="text-xs text-gray-400">${escapeHtml(p.position)}${p.foot ? ' · ' + escapeHtml(p.foot) : ''}</p>
+                            </div>
+                            <div class="flex items-center gap-4 text-center">
+                                <div><p class="text-base font-bold">${p.appearances}</p><p class="text-[10px] text-gray-400">Apps</p></div>
+                                <div><p class="text-base font-bold">${p.goals}</p><p class="text-[10px] text-gray-400">Goals</p></div>
+                                <div><p class="text-base font-bold ${p.motm > 0 ? 'text-yellow-500' : ''}">${p.motm}</p><p class="text-[10px] text-gray-400">MOTM</p></div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+    }
+
+    // ========================================
+    // MAIN RENDER FUNCTION
+    // ========================================
+    function renderApp() {
+        const app = document.getElementById('app');
+        
+        // Login Screen
+        if (state.app === APP_STATE.LOGIN) {
+            app.innerHTML = `
+                <div class="min-h-screen flex flex-col items-center justify-center px-6" style="background: linear-gradient(180deg, rgba(250, 204, 21, 0.08) 0%, rgba(255, 255, 255, 1) 50%);">
+                    <div class="w-full max-w-md">
+                        <div class="text-center mb-8">
+                            <img src="${CONFIG.BADGE_IMG}" class="w-24 h-24 rounded-3xl shadow-lg mx-auto mb-4" alt="Badge">
+                            <h1 class="text-2xl font-bold text-gray-900">${CONFIG.TEAM_NAME}</h1>
+                            <p class="text-gray-400">Manager Portal</p>
+                        </div>
+                        
+                        <div id="loginForm" class="space-y-4">
+                            <div>
+                                <input 
+                                    type="text" 
+                                    id="usernameInput"
+                                    class="login-input w-full py-4 px-5 rounded-2xl text-lg text-center text-gray-900 placeholder-gray-400"
+                                    placeholder="Username"
+                                    value="${escapeHtml(state.loginUsername)}"
+                                    oninput="handleLoginUsernameInput(this.value)"
+                                    onkeydown="if(event.key === 'Enter') document.getElementById('passwordInput').focus()"
+                                    autocomplete="off"
+                                    autocapitalize="none"
+                                >
+                            </div>
+                            <div>
+                                <input 
+                                    type="password" 
+                                    id="passwordInput"
+                                    class="login-input w-full py-4 px-5 rounded-2xl text-lg text-center text-gray-900 placeholder-gray-400"
+                                    placeholder="Password"
+                                    value="${escapeHtml(state.loginPassword)}"
+                                    oninput="handleLoginPasswordInput(this.value)"
+                                    onkeydown="if(event.key === 'Enter') attemptLogin()"
+                                >
+                            </div>
+                            
+                            ${state.loginError ? `<p class="text-red-500 text-sm text-center">${escapeHtml(state.loginError)}</p>` : ''}
+                            
+                            <button onclick="attemptLogin()" class="btn-primary w-full py-4 rounded-2xl text-lg font-semibold">
+                                Sign In
+                            </button>
+                        </div>
+                        
+                        <p class="text-center text-xs text-gray-400 mt-6">Manager access only</p>
+                    </div>
+                </div>
+            `;
+            setTimeout(() => document.getElementById('usernameInput')?.focus(), 100);
+            return;
+        }
+
+        // Welcome Screen
+        if (state.app === APP_STATE.WELCOME) {
+            const name = state.loggedInManager.name.split(' ')[0];
+            app.innerHTML = `
+                <div class="min-h-screen flex items-center justify-center gradient-bg">
+                    <div class="text-center welcome-text">
+                        <p class="text-gray-400 text-lg mb-2">Welcome back,</p>
+                        <h1 class="text-4xl font-bold text-gray-900">${escapeHtml(name)}</h1>
+                    </div>
+                </div>
+            `;
+            return;
+        }
+
+        // Badge Screen
+        if (state.app === APP_STATE.BADGE) {
+            app.innerHTML = `
+                <div class="min-h-screen flex items-center justify-center gradient-bg">
+                    <div class="text-center badge-animate">
+                        <img src="${CONFIG.BADGE_IMG}" class="w-32 h-32 rounded-3xl shadow-2xl mx-auto" alt="Badge">
+                    </div>
+                </div>
+            `;
+            return;
+        }
+
+        // Main App
+        const displayName = state.loggedInManager.name.split(' ')[0];
+        
+        const tabContent = {
+            dashboard: renderDashboard,
+            lineup: renderLineupBuilder,
+            messages: renderMessages,
+            fixtures: renderFixtures,
+            squad: renderSquad
+        };
+
+        const tabs = [
+            { id: 'dashboard', label: 'Dashboard', icon: '📊' },
+            { id: 'lineup', label: 'Lineup', icon: '📋' },
+            { id: 'messages', label: 'Messages', icon: '💬' },
+            { id: 'fixtures', label: 'Fixtures', icon: '📅' },
+            { id: 'squad', label: 'Squad', icon: '👥' }
+        ];
+
+        app.innerHTML = `
+            <div class="min-h-screen flex home-slide-in">
+                <!-- Sidebar - Desktop -->
+                <aside class="sidebar hidden md:flex flex-col w-64 fixed left-0 top-0 bottom-0 z-40 safe-top">
+                    <div class="p-4 border-b border-gray-100/50">
+                        <div class="flex items-center gap-3">
+                            <img src="${CONFIG.BADGE_IMG}" class="w-12 h-12 rounded-xl shadow-sm" alt="Badge">
+                            <div>
+                                <h1 class="text-base font-semibold text-gray-900">${CONFIG.TEAM_NAME}</h1>
+                                <p class="text-xs text-gray-400">Manager Portal</p>
+                            </div>
+                        </div>
+                    </div>
+                    <nav class="flex-1 p-3 space-y-1">
+                        ${tabs.map(tab => `
+                            <button onclick="setActiveTab('${tab.id}')" class="sidebar-item ${state.currentTab === tab.id ? 'active' : ''} w-full flex items-center gap-3 px-3 py-2.5 text-left">
+                                <span class="text-lg">${tab.icon}</span>
+                                <span class="font-medium ${state.currentTab === tab.id ? 'text-yellow-700' : 'text-gray-700'}">${tab.label}</span>
+                            </button>
+                        `).join('')}
+                    </nav>
+                    <div class="p-3 border-t border-gray-100/50">
+                        <button onclick="logout()" class="sidebar-item w-full flex items-center gap-3 px-3 py-2.5 text-left">
+                            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                            <span class="font-medium text-gray-500">Logout</span>
+                        </button>
+                    </div>
+                </aside>
+
+                <!-- Main Content -->
+                <div class="flex-1 md:ml-64 flex flex-col min-h-screen">
+                    <!-- Header - Mobile -->
+                    <header class="glass-header safe-top sticky top-0 z-40 px-4 py-3 md:hidden">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <img src="${CONFIG.BADGE_IMG}" class="w-9 h-9 rounded-lg shadow-sm" alt="Badge">
+                                <div>
+                                    <h1 class="text-base font-semibold text-gray-900">${CONFIG.TEAM_NAME}</h1>
+                                    <p class="text-xs text-gray-400">Manager</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full pill-manager">
+                                <span class="text-xs font-medium">${escapeHtml(displayName)}</span>
+                            </div>
+                        </div>
+                    </header>
+
+                    <!-- Desktop User Badge -->
+                    <div class="hidden md:flex items-center justify-end p-4 gap-3">
+                        <div class="flex items-center gap-2 px-4 py-2 rounded-full pill-manager">
+                            <span class="text-sm font-medium">${escapeHtml(displayName)}</span>
+                            <span class="text-xs opacity-60">Manager</span>
+                        </div>
+                        <button onclick="logout()" class="btn-glass px-4 py-2 rounded-full text-sm text-gray-500">Logout</button>
+                    </div>
+
+                    <!-- Page Content -->
+                    <main class="flex-1 scroll-container px-4 md:px-8 pb-28 md:pb-8 pt-4 md:pt-2">
+                        <div class="page-content">
+                            ${tabContent[state.currentTab]()}
+                        </div>
+                    </main>
+
+                    <!-- Bottom Nav - Mobile -->
+                    <nav class="glass-nav fixed bottom-4 left-4 right-4 rounded-[28px] flex justify-around py-2 z-50 md:hidden">
+                        ${tabs.map(tab => `
+                            <button onclick="setActiveTab('${tab.id}')" class="nav-item ${state.currentTab === tab.id ? 'active' : ''} flex flex-col items-center py-2 px-3">
+                                <span class="text-lg mb-0.5 ${state.currentTab === tab.id ? '' : 'grayscale opacity-60'}">${tab.icon}</span>
+                                <span class="text-[10px] font-medium ${state.currentTab === tab.id ? 'text-yellow-600' : 'text-gray-400'}">${tab.label}</span>
+                            </button>
+                        `).join('')}
+                    </nav>
+                </div>
+            </div>
+        `;
+    }
+
+    // ========================================
+    // INITIALIZE
+    // ========================================
+    fetchSheetData();
+    </script>
+</body>
+</html>
