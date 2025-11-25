@@ -2,55 +2,139 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Egerton U15 Lions Tracker</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Egerton U15 Lions</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
+        * {
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            background: linear-gradient(180deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+        }
+        
+        /* Liquid Glass Effect */
+        .glass {
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+        
+        .glass-light {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(16px) saturate(150%);
+            -webkit-backdrop-filter: blur(16px) saturate(150%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(40px) saturate(200%);
+            -webkit-backdrop-filter: blur(40px) saturate(200%);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            box-shadow: 
+                0 -4px 30px rgba(0, 0, 0, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3),
+                inset 0 -1px 0 rgba(255, 255, 255, 0.1);
+        }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(12px) saturate(150%);
+            -webkit-backdrop-filter: blur(12px) saturate(150%);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 
+                0 4px 24px rgba(0, 0, 0, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.15);
+        }
+        
+        .glass-button {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .glass-button:active {
+            transform: scale(0.97);
+            background: rgba(255, 255, 255, 0.25);
+        }
+        
+        .glass-button.active {
+            background: rgba(250, 204, 21, 0.3);
+            border-color: rgba(250, 204, 21, 0.5);
+            box-shadow: 
+                0 0 20px rgba(250, 204, 21, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        }
+
+        /* Tooltip */
         .tooltip {
             position: relative;
-            cursor: help;
         }
         .tooltip .tooltiptext {
             visibility: hidden;
-            width: 250px;
-            background-color: #1f2937;
+            width: 200px;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
             color: #fff;
             text-align: left;
-            border-radius: 6px;
-            padding: 12px;
+            border-radius: 12px;
+            padding: 10px;
             position: absolute;
             z-index: 1000;
             bottom: 125%;
             left: 50%;
-            margin-left: -125px;
+            margin-left: -100px;
             opacity: 0;
             transition: opacity 0.3s;
-            font-size: 14px;
-            line-height: 1.5;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            font-size: 13px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
-        .tooltip .tooltiptext::after {
-            content: "";
-            position: absolute;
-            top: 100%;
-            left: 50%;
-            margin-left: -5px;
-            border-width: 5px;
-            border-style: solid;
-            border-color: #1f2937 transparent transparent transparent;
-        }
-        .tooltip:hover .tooltiptext {
+        .tooltip:hover .tooltiptext,
+        .tooltip:active .tooltiptext {
             visibility: visible;
             opacity: 1;
         }
+        
+        /* Safe area for notch */
+        .safe-top {
+            padding-top: env(safe-area-inset-top, 20px);
+        }
+        .safe-bottom {
+            padding-bottom: env(safe-area-inset-bottom, 20px);
+        }
+        
+        /* Smooth scrolling */
+        .scroll-container {
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        /* Nav item animation */
+        .nav-item {
+            transition: all 0.2s ease;
+        }
+        .nav-item:active {
+            transform: scale(0.9);
+        }
     </style>
 </head>
-<body class="bg-gray-50">
+<body class="text-white">
     <div id="app">
         <div class="min-h-screen flex items-center justify-center">
             <div class="text-center">
-                <div class="w-16 h-16 border-4 border-yellow-400 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                <p class="text-gray-600">Loading Egerton U15 Lions data...</p>
+                <div class="w-12 h-12 border-3 border-yellow-400 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                <p class="text-white/60 text-sm">Loading...</p>
             </div>
         </div>
     </div>
@@ -84,41 +168,31 @@
             if (!scorersText || scorersText === 'NO GOALS') {
                 return 'No goals scored';
             }
-
-            // Split the scorers and their goal counts
             const scorers = scorersText.split(',').map(s => s.trim());
             const goalCounts = notesText ? notesText.split(',').map(s => s.trim()) : [];
-
-            // Match them up
             const formatted = scorers.map((scorer, index) => {
                 const goals = goalCounts[index] || '1';
                 return `${scorer} (${goals})`;
             });
-
             return formatted.join(', ');
         }
 
         function parseDate(dateStr) {
-            // Parse date in format like "14 September 2025" or "28 September 2025"
             if (!dateStr) return null;
-            
             const months = {
                 'january': 0, 'february': 1, 'march': 2, 'april': 3,
                 'may': 4, 'june': 5, 'july': 6, 'august': 7,
                 'september': 8, 'october': 9, 'november': 10, 'december': 11
             };
-            
             const parts = dateStr.toLowerCase().split(' ');
             if (parts.length >= 3) {
                 const day = parseInt(parts[0]);
                 const month = months[parts[1]];
                 const year = parseInt(parts[2]);
-                
                 if (!isNaN(day) && month !== undefined && !isNaN(year)) {
                     return new Date(year, month, day);
                 }
             }
-            
             return null;
         }
 
@@ -132,13 +206,9 @@
                 const fixturesData = await fixturesRes.json();
                 const playersData = await playersRes.json();
 
-                console.log('Raw fixtures data:', fixturesData);
-                console.log('Raw players data:', playersData);
-
-                // Parse fixtures data (skip header row)
                 if (fixturesData.values && fixturesData.values.length > 1) {
                     allMatches = fixturesData.values.slice(1)
-                        .filter(row => row && row.length >= 11 && row[0]) // Has ID and enough columns
+                        .filter(row => row && row.length >= 11 && row[0])
                         .map(row => ({
                             id: row[0],
                             date: row[1] || '',
@@ -154,9 +224,6 @@
                             status: row[10] || ''
                         }));
 
-                    console.log('All matches:', allMatches);
-
-                    // Split into fixtures and results based on status
                     fixtures = allMatches.filter(m => 
                         m.status && (m.status.toLowerCase() === 'scheduled' || m.status.toLowerCase() === 'postponed')
                     );
@@ -169,30 +236,18 @@
                         let result = 'Draw';
                         if (ourScore > theirScore) result = 'Win';
                         else if (ourScore < theirScore) result = 'Loss';
-                        
-                        return {
-                            ...match,
-                            goalsFor: ourScore,
-                            goalsAgainst: theirScore,
-                            result: result
-                        };
+                        return { ...match, goalsFor: ourScore, goalsAgainst: theirScore, result: result };
                     });
 
-                    // Sort results by date (most recent first)
                     results.sort((a, b) => {
                         if (!a.dateObj || !b.dateObj) return 0;
-                        return b.dateObj - a.dateObj; // Descending order (newest first)
+                        return b.dateObj - a.dateObj;
                     });
-
-                    console.log('Fixtures:', fixtures);
-                    console.log('Results (sorted):', results);
                 }
 
-                // Parse players data
-                // Expected columns: Shirt Number, Name, Position, Goals, MOTM
                 if (playersData.values && playersData.values.length > 1) {
                     players = playersData.values.slice(1)
-                        .filter(row => row && row.length >= 2 && row[1]) // Must have at least shirt number and name
+                        .filter(row => row && row.length >= 2 && row[1])
                         .map(row => ({
                             shirtNumber: row[0] || '',
                             name: row[1] || '',
@@ -200,18 +255,16 @@
                             goals: parseInt(row[3]) || 0,
                             motm: parseInt(row[4]) || 0
                         }));
-
-                    console.log('Players:', players);
                 }
 
                 renderApp();
             } catch (error) {
                 console.error('Error fetching data:', error);
                 document.getElementById('app').innerHTML = `
-                    <div class="min-h-screen flex items-center justify-center">
+                    <div class="min-h-screen flex items-center justify-center p-6">
                         <div class="text-center">
-                            <p class="text-red-600 mb-4">Error loading data. Please check console for details.</p>
-                            <button onclick="fetchSheetData()" class="px-4 py-2 bg-yellow-400 text-gray-900 rounded-lg hover:bg-yellow-500">
+                            <p class="text-red-400 mb-4">Error loading data</p>
+                            <button onclick="fetchSheetData()" class="glass-button px-6 py-3 rounded-2xl text-white">
                                 Retry
                             </button>
                         </div>
@@ -227,528 +280,319 @@
             return { wins, draws, losses };
         }
 
-        function createScorelineWithTooltip(match) {
-            const formattedScorers = formatGoalScorers(match.goalScorers, match.notes);
-            
-            return `
-                <div class="tooltip inline-block">
-                    <span class="font-semibold">${match.goalsFor}-${match.goalsAgainst}</span>
-                    <span class="tooltiptext">
-                        <div class="font-semibold mb-2">Goal Scorers:</div>
-                        <div>${formattedScorers}</div>
-                    </span>
-                </div>
-            `;
-        }
-
         function renderApp() {
             const { wins, draws, losses } = getResultCounts();
             const played = results.length;
-            const upcomingFixtures = fixtures.slice(0, 3);
-            const recentResults = results.slice(0, 3); // Already sorted by date (most recent first)
+            const upcomingFixtures = fixtures.slice(0, 5);
+            const recentResults = results.slice(0, 5);
             
-            const topScorers = [...players]
-                .sort((a, b) => b.goals - a.goals)
-                .slice(0, 3);
+            const topScorers = [...players].sort((a, b) => b.goals - a.goals).slice(0, 3);
             
-            const topMOTM = [...players]
-                .filter(p => p.motm > 0)
-                .sort((a, b) => b.motm - a.motm)
-                .slice(0, 1);
-
             let filteredResults = results;
             if (resultFilter) {
                 filteredResults = results.filter(r => r.result === resultFilter);
             }
 
             document.getElementById('app').innerHTML = `
-                <div class="min-h-screen flex flex-col md:flex-row">
-                    <!-- Mobile Header -->
-                    <div class="md:hidden bg-gray-900 text-white p-4 flex items-center justify-between">
-                        <div class="flex items-center gap-3">
-                            <img src="${BADGE_IMG}" class="w-10 h-10" alt="Egerton FC Badge">
-                            <div>
-                                <h1 class="text-lg font-bold text-yellow-400">Egerton U15 Lions</h1>
-                            </div>
-                        </div>
-                        <button onclick="fetchSheetData()" class="text-gray-400 p-2">
-                            🔄
-                        </button>
-                    </div>
-
-                    <!-- Desktop Sidebar -->
-                    <div class="hidden md:flex w-64 bg-gray-900 text-white flex-col fixed h-full">
-                        <div class="p-6 border-b border-gray-700">
+                <div class="min-h-screen flex flex-col">
+                    <!-- Header -->
+                    <header class="glass safe-top sticky top-0 z-40 px-4 py-3">
+                        <div class="flex items-center justify-between">
                             <div class="flex items-center gap-3">
-                                <img src="${BADGE_IMG}" class="w-12 h-12" alt="Egerton FC Badge">
+                                <img src="${BADGE_IMG}" class="w-10 h-10 rounded-xl" alt="Badge">
                                 <div>
-                                    <h1 class="text-xl font-bold text-yellow-400">Egerton U15 Lions</h1>
-                                    <p class="text-sm text-gray-400">Season 2025/26</p>
+                                    <h1 class="text-lg font-semibold text-white">Egerton U15</h1>
+                                    <p class="text-xs text-white/50">Season 2025/26</p>
                                 </div>
                             </div>
-                        </div>
-                        
-                        <nav class="flex-1 p-4">
-                            <button onclick="setActiveTab('overview')" 
-                                class="w-full text-left px-4 py-3 rounded-lg mb-2 transition-colors ${currentTab === 'overview' ? 'bg-yellow-400 text-gray-900 font-semibold' : 'text-gray-300 hover:bg-gray-800'}">
-                                📊 Overview
-                            </button>
-                            <button onclick="setActiveTab('fixtures')" 
-                                class="w-full text-left px-4 py-3 rounded-lg mb-2 transition-colors ${currentTab === 'fixtures' ? 'bg-yellow-400 text-gray-900 font-semibold' : 'text-gray-300 hover:bg-gray-800'}">
-                                📅 Fixtures
-                            </button>
-                            <button onclick="setActiveTab('results')" 
-                                class="w-full text-left px-4 py-3 rounded-lg mb-2 transition-colors ${currentTab === 'results' ? 'bg-yellow-400 text-gray-900 font-semibold' : 'text-gray-300 hover:bg-gray-800'}">
-                                🏆 Results
-                            </button>
-                            <button onclick="setActiveTab('players')" 
-                                class="w-full text-left px-4 py-3 rounded-lg mb-2 transition-colors ${currentTab === 'players' ? 'bg-yellow-400 text-gray-900 font-semibold' : 'text-gray-300 hover:bg-gray-800'}">
-                                👥 Players
-                            </button>
-                            <button onclick="setActiveTab('admin')" 
-                                class="w-full text-left px-4 py-3 rounded-lg transition-colors ${currentTab === 'admin' ? 'bg-yellow-400 text-gray-900 font-semibold' : 'text-gray-300 hover:bg-gray-800'}">
-                                ⚙️ Admin
-                            </button>
-                        </nav>
-
-                        <div class="p-4 border-t border-gray-700">
-                            <button onclick="fetchSheetData()" 
-                                class="w-full px-4 py-2 bg-gray-800 text-gray-300 rounded-lg hover:bg-gray-700 transition-colors text-sm">
-                                🔄 Refresh Data
+                            <button onclick="fetchSheetData()" class="glass-button w-10 h-10 rounded-full flex items-center justify-center">
+                                <span class="text-lg">↻</span>
                             </button>
                         </div>
-                    </div>
+                    </header>
 
                     <!-- Main Content -->
-                    <main class="flex-1 p-4 md:p-8 md:ml-64 pb-24 md:pb-8">
+                    <main class="flex-1 scroll-container px-4 pb-28 pt-4">
+                        
                         ${currentTab === 'overview' ? `
-                            <div class="mb-6 md:mb-8 flex items-center gap-3 md:gap-4">
-                                <img src="${BADGE_IMG}" class="w-14 h-14 md:w-20 md:h-20" alt="Egerton FC Badge">
-                                <div>
-                                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900 mb-1 md:mb-2">Season Overview</h2>
-                                    <p class="text-sm md:text-base text-gray-600">Track your team's performance</p>
+                            <!-- Stats Grid -->
+                            <div class="grid grid-cols-2 gap-3 mb-6">
+                                <div class="glass-card rounded-3xl p-4">
+                                    <p class="text-white/50 text-xs uppercase tracking-wider mb-1">Played</p>
+                                    <p class="text-3xl font-bold text-white">${played}</p>
+                                </div>
+                                <div onclick="filterResults('Win')" class="glass-card rounded-3xl p-4 cursor-pointer active:scale-95 transition-transform" style="background: rgba(34, 197, 94, 0.15); border-color: rgba(34, 197, 94, 0.3);">
+                                    <p class="text-green-400/70 text-xs uppercase tracking-wider mb-1">Wins</p>
+                                    <p class="text-3xl font-bold text-green-400">${wins}</p>
+                                </div>
+                                <div onclick="filterResults('Draw')" class="glass-card rounded-3xl p-4 cursor-pointer active:scale-95 transition-transform" style="background: rgba(250, 204, 21, 0.15); border-color: rgba(250, 204, 21, 0.3);">
+                                    <p class="text-yellow-400/70 text-xs uppercase tracking-wider mb-1">Draws</p>
+                                    <p class="text-3xl font-bold text-yellow-400">${draws}</p>
+                                </div>
+                                <div onclick="filterResults('Loss')" class="glass-card rounded-3xl p-4 cursor-pointer active:scale-95 transition-transform" style="background: rgba(239, 68, 68, 0.15); border-color: rgba(239, 68, 68, 0.3);">
+                                    <p class="text-red-400/70 text-xs uppercase tracking-wider mb-1">Losses</p>
+                                    <p class="text-3xl font-bold text-red-400">${losses}</p>
                                 </div>
                             </div>
 
-                            <!-- Stats Cards -->
-                            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 mb-6 md:mb-8">
-                                <div class="bg-white rounded-lg border border-gray-200 p-4 md:p-6">
-                                    <div class="text-xs md:text-sm font-medium text-gray-500 mb-1">Played</div>
-                                    <div class="text-2xl md:text-3xl font-bold text-gray-900">${played}</div>
-                                </div>
-                                <div onclick="filterResults('Win')" class="bg-green-50 rounded-lg border border-green-200 p-4 md:p-6 cursor-pointer hover:bg-green-100 transition-colors">
-                                    <div class="text-xs md:text-sm font-medium text-green-700 mb-1">Wins</div>
-                                    <div class="text-2xl md:text-3xl font-bold text-green-600">${wins}</div>
-                                </div>
-                                <div onclick="filterResults('Draw')" class="bg-yellow-50 rounded-lg border border-yellow-200 p-4 md:p-6 cursor-pointer hover:bg-yellow-100 transition-colors">
-                                    <div class="text-xs md:text-sm font-medium text-yellow-700 mb-1">Draws</div>
-                                    <div class="text-2xl md:text-3xl font-bold text-yellow-600">${draws}</div>
-                                </div>
-                                <div onclick="filterResults('Loss')" class="bg-red-50 rounded-lg border border-red-200 p-4 md:p-6 cursor-pointer hover:bg-red-100 transition-colors">
-                                    <div class="text-xs md:text-sm font-medium text-red-700 mb-1">Losses</div>
-                                    <div class="text-2xl md:text-3xl font-bold text-red-600">${losses}</div>
-                                </div>
-                            </div>
-
-                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-                                <!-- Upcoming Fixtures -->
-                                <div class="bg-white rounded-lg border border-gray-200">
-                                    <div class="p-5 border-b border-gray-100">
-                                        <h2 class="text-lg font-semibold text-gray-900">Upcoming Fixtures</h2>
-                                    </div>
-                                    <div class="p-5">
-                                        ${upcomingFixtures.length > 0 ? upcomingFixtures.map(fixture => `
-                                            <div class="flex items-center justify-between py-3 border-b border-gray-100 last:border-b-0">
-                                                <div class="flex-1">
-                                                    <div class="font-medium text-gray-900">${fixture.opponent}</div>
-                                                    <div class="text-sm text-gray-500">${fixture.date} • ${fixture.kickOffTime}</div>
-                                                    <div class="text-sm text-gray-500">${fixture.competition}</div>
-                                                </div>
-                                                <div class="text-right">
-                                                    <span class="px-3 py-1 rounded-full text-xs font-medium ${fixture.venue === 'Home' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'}">
-                                                        ${fixture.venue}
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        `).join('') : '<p class="text-gray-500 text-center py-4">No upcoming fixtures</p>'}
-                                    </div>
-                                </div>
-
-                                <!-- Recent Results -->
-                                <div class="bg-white rounded-lg border border-gray-200">
-                                    <div class="p-5 border-b border-gray-100">
-                                        <h2 class="text-lg font-semibold text-gray-900">Recent Results</h2>
-                                    </div>
-                                    <div class="p-5">
-                                        ${recentResults.length > 0 ? recentResults.map(result => `
-                                            <div class="flex items-center justify-between py-3 border-b border-gray-100 last:border-b-0">
-                                                <div class="flex-1">
-                                                    <div class="font-medium text-gray-900">${result.opponent}</div>
-                                                    <div class="text-sm text-gray-500">${result.date}</div>
-                                                </div>
-                                                <div class="text-right">
-                                                    <div class="mb-1">
-                                                        ${createScorelineWithTooltip(result)}
-                                                    </div>
-                                                    <span class="px-2 py-1 rounded text-xs font-medium ${
-                                                        result.result === 'Win' ? 'bg-green-100 text-green-700' :
-                                                        result.result === 'Draw' ? 'bg-yellow-100 text-yellow-700' :
-                                                        'bg-red-100 text-red-700'
-                                                    }">
-                                                        ${result.result}
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        `).join('') : '<p class="text-gray-500 text-center py-4">No results yet</p>'}
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Top Performers -->
-                            ${topScorers.length > 0 || topMOTM.length > 0 ? `
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    ${topScorers.length > 0 ? `
-                                        <div class="bg-white rounded-lg border border-gray-200">
-                                            <div class="p-5 border-b border-gray-100">
-                                                <h2 class="text-sm font-semibold text-gray-900">Top Scorers</h2>
-                                            </div>
-                                            <div class="p-5">
-                                                ${topScorers.map((player, idx) => `
-                                                    <div class="flex items-center justify-between ${idx < topScorers.length - 1 ? 'mb-4' : ''}">
-                                                        <div class="flex items-center gap-3">
-                                                            <div class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-sm font-medium text-gray-600">
-                                                                ${idx + 1}
-                                                            </div>
-                                                            <div>
-                                                                <div class="font-medium text-gray-900 text-sm">${player.name}</div>
-                                                                <div class="text-xs text-gray-500">${player.position}</div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="text-xl font-semibold text-gray-900">${player.goals}</div>
-                                                    </div>
-                                                `).join('')}
-                                            </div>
+                            <!-- Next Match -->
+                            ${upcomingFixtures.length > 0 ? `
+                                <div class="glass-card rounded-3xl p-5 mb-6">
+                                    <p class="text-white/50 text-xs uppercase tracking-wider mb-3">Next Match</p>
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <p class="text-xl font-semibold text-white">${upcomingFixtures[0].opponent}</p>
+                                            <p class="text-white/50 text-sm mt-1">${upcomingFixtures[0].date}</p>
+                                            <p class="text-white/40 text-sm">${upcomingFixtures[0].kickOffTime}</p>
                                         </div>
-                                    ` : ''}
+                                        <div class="glass-button px-4 py-2 rounded-2xl">
+                                            <span class="text-sm font-medium ${upcomingFixtures[0].venue === 'Home' ? 'text-green-400' : 'text-blue-400'}">${upcomingFixtures[0].venue}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            ` : ''}
 
-                                    ${topMOTM.length > 0 ? `
-                                        <div class="bg-white rounded-lg border border-gray-200">
-                                            <div class="p-5 border-b border-gray-100">
-                                                <h2 class="text-sm font-semibold text-gray-900">Top MOTM Awards</h2>
+                            <!-- Top Scorers -->
+                            ${topScorers.length > 0 ? `
+                                <div class="glass-card rounded-3xl p-5 mb-6">
+                                    <p class="text-white/50 text-xs uppercase tracking-wider mb-4">Top Scorers</p>
+                                    <div class="space-y-3">
+                                        ${topScorers.map((player, idx) => `
+                                            <div class="flex items-center justify-between">
+                                                <div class="flex items-center gap-3">
+                                                    <div class="w-8 h-8 rounded-full glass-button flex items-center justify-center text-sm font-bold text-yellow-400">
+                                                        ${idx + 1}
+                                                    </div>
+                                                    <div>
+                                                        <p class="text-white font-medium text-sm">${player.name}</p>
+                                                        <p class="text-white/40 text-xs">${player.position}</p>
+                                                    </div>
+                                                </div>
+                                                <p class="text-2xl font-bold text-white">${player.goals}</p>
                                             </div>
-                                            <div class="p-5">
-                                                <div class="flex items-center gap-4">
-                                                    <div class="w-16 h-16 rounded-full bg-yellow-100 flex items-center justify-center">
-                                                        <span class="text-lg font-semibold text-yellow-700">${topMOTM[0].name.split(' ').map(n => n[0]).join('')}</span>
-                                                    </div>
-                                                    <div class="flex-1">
-                                                        <div class="font-semibold text-gray-900">${topMOTM[0].name}</div>
-                                                        <div class="text-sm text-gray-500">${topMOTM[0].position}</div>
-                                                    </div>
-                                                    <div class="text-3xl font-semibold text-gray-900">${topMOTM[0].motm}</div>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                            ` : ''}
+
+                            <!-- Recent Results -->
+                            ${recentResults.length > 0 ? `
+                                <div class="glass-card rounded-3xl p-5">
+                                    <p class="text-white/50 text-xs uppercase tracking-wider mb-4">Recent Results</p>
+                                    <div class="space-y-3">
+                                        ${recentResults.slice(0, 3).map(result => `
+                                            <div class="flex items-center justify-between py-2">
+                                                <div>
+                                                    <p class="text-white font-medium text-sm">${result.opponent}</p>
+                                                    <p class="text-white/40 text-xs">${result.date}</p>
+                                                </div>
+                                                <div class="flex items-center gap-3">
+                                                    <span class="text-xl font-bold text-white">${result.goalsFor}-${result.goalsAgainst}</span>
+                                                    <span class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${
+                                                        result.result === 'Win' ? 'bg-green-500/20 text-green-400' :
+                                                        result.result === 'Draw' ? 'bg-yellow-500/20 text-yellow-400' :
+                                                        'bg-red-500/20 text-red-400'
+                                                    }">${result.result[0]}</span>
                                                 </div>
                                             </div>
-                                        </div>
-                                    ` : ''}
+                                        `).join('')}
+                                    </div>
                                 </div>
                             ` : ''}
                         ` : ''}
 
                         ${currentTab === 'fixtures' ? `
-                            <div class="mb-8">
-                                <h2 class="text-3xl font-bold text-gray-900 mb-2">Fixtures</h2>
-                                <p class="text-gray-600">Upcoming matches for the season</p>
-                            </div>
-
-                            <div class="bg-white rounded-lg border border-gray-200">
-                                <div class="overflow-x-auto">
-                                    <table class="w-full">
-                                        <thead class="bg-gray-50 border-b border-gray-200">
-                                            <tr>
-                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
-                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Time</th>
-                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Opponent</th>
-                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Venue</th>
-                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Competition</th>
-                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody class="divide-y divide-gray-200">
-                                            ${fixtures.length > 0 ? fixtures.map(fixture => `
-                                                <tr class="hover:bg-gray-50">
-                                                    <td class="px-6 py-4 text-sm text-gray-900">${fixture.date}</td>
-                                                    <td class="px-6 py-4 text-sm text-gray-900">${fixture.kickOffTime}</td>
-                                                    <td class="px-6 py-4 text-sm font-medium text-gray-900">${fixture.opponent}</td>
-                                                    <td class="px-6 py-4 text-sm">
-                                                        <span class="px-2 py-1 rounded-full text-xs font-medium ${fixture.venue === 'Home' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'}">
-                                                            ${fixture.venue}
-                                                        </span>
-                                                    </td>
-                                                    <td class="px-6 py-4 text-sm text-gray-900">${fixture.competition}</td>
-                                                    <td class="px-6 py-4 text-sm">
-                                                        <span class="px-2 py-1 rounded-full text-xs font-medium ${
-                                                            fixture.status.toLowerCase() === 'scheduled' ? 'bg-gray-100 text-gray-700' : 'bg-orange-100 text-orange-700'
-                                                        }">
-                                                            ${fixture.status}
-                                                        </span>
-                                                    </td>
-                                                </tr>
-                                            `).join('') : `
-                                                <tr>
-                                                    <td colspan="6" class="px-6 py-8 text-center text-gray-500">No fixtures scheduled</td>
-                                                </tr>
-                                            `}
-                                        </tbody>
-                                    </table>
-                                </div>
+                            <h2 class="text-2xl font-bold text-white mb-4">Fixtures</h2>
+                            <div class="space-y-3">
+                                ${fixtures.length > 0 ? fixtures.map(fixture => `
+                                    <div class="glass-card rounded-2xl p-4">
+                                        <div class="flex items-center justify-between mb-2">
+                                            <p class="text-white font-semibold">${fixture.opponent}</p>
+                                            <span class="glass-button px-3 py-1 rounded-xl text-xs font-medium ${fixture.venue === 'Home' ? 'text-green-400' : 'text-blue-400'}">${fixture.venue}</span>
+                                        </div>
+                                        <div class="flex items-center justify-between text-sm">
+                                            <p class="text-white/50">${fixture.date} · ${fixture.kickOffTime}</p>
+                                            ${fixture.status === 'Postponed' ? '<span class="text-orange-400 text-xs">Postponed</span>' : ''}
+                                        </div>
+                                        <p class="text-white/30 text-xs mt-1">${fixture.competition}</p>
+                                    </div>
+                                `).join('') : '<p class="text-white/50 text-center py-8">No fixtures</p>'}
                             </div>
                         ` : ''}
 
                         ${currentTab === 'results' ? `
-                            <div class="mb-8">
-                                <h2 class="text-3xl font-bold text-gray-900 mb-2">Results ${resultFilter ? `- ${resultFilter}s` : ''}</h2>
-                                <p class="text-gray-600">Match results for the season</p>
+                            <div class="flex items-center justify-between mb-4">
+                                <h2 class="text-2xl font-bold text-white">Results</h2>
                                 ${resultFilter ? `
-                                    <button onclick="resultFilter = null; renderApp()" class="mt-2 text-sm text-blue-600 hover:text-blue-700">
-                                        ← Show all results
-                                    </button>
+                                    <button onclick="resultFilter = null; renderApp()" class="glass-button px-3 py-1 rounded-xl text-xs text-white/70">Clear</button>
                                 ` : ''}
                             </div>
-
-                            <div class="bg-white rounded-lg border border-gray-200">
-                                <div class="overflow-x-auto">
-                                    <table class="w-full">
-                                        <thead class="bg-gray-50 border-b border-gray-200">
-                                            <tr>
-                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
-                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Opponent</th>
-                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Venue</th>
-                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Competition</th>
-                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Score</th>
-                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Result</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody class="divide-y divide-gray-200">
-                                            ${filteredResults.length > 0 ? filteredResults.map(result => `
-                                                <tr class="hover:bg-gray-50">
-                                                    <td class="px-6 py-4 text-sm text-gray-900">${result.date}</td>
-                                                    <td class="px-6 py-4 text-sm font-medium text-gray-900">${result.opponent}</td>
-                                                    <td class="px-6 py-4 text-sm">
-                                                        <span class="px-2 py-1 rounded-full text-xs font-medium ${result.venue === 'Home' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'}">
-                                                            ${result.venue}
-                                                        </span>
-                                                    </td>
-                                                    <td class="px-6 py-4 text-sm text-gray-900">${result.competition}</td>
-                                                    <td class="px-6 py-4 text-sm">
-                                                        ${createScorelineWithTooltip(result)}
-                                                    </td>
-                                                    <td class="px-6 py-4 text-sm">
-                                                        <span class="px-2 py-1 rounded-full text-xs font-medium ${
-                                                            result.result === 'Win' ? 'bg-green-100 text-green-700' :
-                                                            result.result === 'Draw' ? 'bg-yellow-100 text-yellow-700' :
-                                                            'bg-red-100 text-red-700'
-                                                        }">
-                                                            ${result.result}
-                                                        </span>
-                                                    </td>
-                                                </tr>
-                                            `).join('') : `
-                                                <tr>
-                                                    <td colspan="6" class="px-6 py-8 text-center text-gray-500">
-                                                        ${resultFilter ? `No ${resultFilter.toLowerCase()}s found` : 'No results yet'}
-                                                    </td>
-                                                </tr>
-                                            `}
-                                        </tbody>
-                                    </table>
-                                </div>
+                            <div class="space-y-3">
+                                ${filteredResults.length > 0 ? filteredResults.map(result => `
+                                    <div class="glass-card rounded-2xl p-4">
+                                        <div class="flex items-center justify-between mb-2">
+                                            <p class="text-white font-semibold">${result.opponent}</p>
+                                            <div class="flex items-center gap-2">
+                                                <span class="text-xl font-bold text-white">${result.goalsFor}-${result.goalsAgainst}</span>
+                                                <span class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${
+                                                    result.result === 'Win' ? 'bg-green-500/20 text-green-400' :
+                                                    result.result === 'Draw' ? 'bg-yellow-500/20 text-yellow-400' :
+                                                    'bg-red-500/20 text-red-400'
+                                                }">${result.result[0]}</span>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center justify-between text-sm">
+                                            <p class="text-white/50">${result.date}</p>
+                                            <span class="glass-button px-3 py-1 rounded-xl text-xs font-medium ${result.venue === 'Home' ? 'text-green-400' : 'text-blue-400'}">${result.venue}</span>
+                                        </div>
+                                        ${result.goalScorers ? `<p class="text-white/40 text-xs mt-2">⚽ ${formatGoalScorers(result.goalScorers, result.notes)}</p>` : ''}
+                                    </div>
+                                `).join('') : '<p class="text-white/50 text-center py-8">No results</p>'}
                             </div>
                         ` : ''}
 
                         ${currentTab === 'players' ? `
-                            <div class="mb-8">
-                                <h2 class="text-3xl font-bold text-gray-900 mb-2">Squad</h2>
-                                <p class="text-gray-600">Player statistics for the season</p>
-                            </div>
-
-                            <div class="bg-white rounded-lg border border-gray-200">
-                                <div class="overflow-x-auto">
-                                    <table class="w-full">
-                                        <thead class="bg-gray-50 border-b border-gray-200">
-                                            <tr>
-                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Shirt</th>
-                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Player</th>
-                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Position</th>
-                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Goals</th>
-                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">MOTM</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody class="divide-y divide-gray-200">
-                                            ${players.length > 0 ? players.map(player => `
-                                                <tr class="hover:bg-gray-50">
-                                                    <td class="px-6 py-4">
-                                                        <div class="w-10 h-10 rounded-full bg-gray-900 text-white flex items-center justify-center font-bold">
-                                                            ${player.shirtNumber}
-                                                        </div>
-                                                    </td>
-                                                    <td class="px-6 py-4">
-                                                        <span class="font-medium text-gray-900">${player.name}</span>
-                                                    </td>
-                                                    <td class="px-6 py-4 text-sm text-gray-900">${player.position}</td>
-                                                    <td class="px-6 py-4 text-sm font-semibold text-gray-900">${player.goals}</td>
-                                                    <td class="px-6 py-4 text-sm">
-                                                        ${player.motm > 0 ? `<span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-yellow-100 text-yellow-700 font-semibold">${player.motm}</span>` : '-'}
-                                                    </td>
-                                                </tr>
-                                            `).join('') : `
-                                                <tr>
-                                                    <td colspan="5" class="px-6 py-8 text-center text-gray-500">No player data available</td>
-                                                </tr>
-                                            `}
-                                        </tbody>
-                                    </table>
-                                </div>
+                            <h2 class="text-2xl font-bold text-white mb-4">Squad</h2>
+                            <div class="space-y-3">
+                                ${players.length > 0 ? players.map(player => `
+                                    <div class="glass-card rounded-2xl p-4">
+                                        <div class="flex items-center gap-4">
+                                            <div class="w-12 h-12 rounded-2xl glass-button flex items-center justify-center font-bold text-lg text-yellow-400">
+                                                ${player.shirtNumber}
+                                            </div>
+                                            <div class="flex-1">
+                                                <p class="text-white font-semibold">${player.name}</p>
+                                                <p class="text-white/40 text-sm">${player.position}</p>
+                                            </div>
+                                            <div class="flex items-center gap-4 text-center">
+                                                <div>
+                                                    <p class="text-xl font-bold text-white">${player.goals}</p>
+                                                    <p class="text-white/40 text-xs">Goals</p>
+                                                </div>
+                                                ${player.motm > 0 ? `
+                                                    <div>
+                                                        <p class="text-xl font-bold text-yellow-400">${player.motm}</p>
+                                                        <p class="text-white/40 text-xs">MOTM</p>
+                                                    </div>
+                                                ` : ''}
+                                            </div>
+                                        </div>
+                                    </div>
+                                `).join('') : '<p class="text-white/50 text-center py-8">No players</p>'}
                             </div>
                         ` : ''}
 
                         ${currentTab === 'admin' ? `
-                            <div class="max-w-xl">
-                                <!-- Header -->
-                                <div class="mb-10">
-                                    <h2 class="text-4xl font-semibold text-gray-900 tracking-tight">Admin</h2>
-                                    <p class="text-lg text-gray-500 mt-2">Update match results</p>
-                                </div>
-
-                                <!-- Match Cards -->
-                                <div class="space-y-3" id="matchCards">
-                                    ${allMatches.filter(m => m.status === 'Scheduled' || m.status === 'Postponed').length > 0 ? 
-                                        allMatches.filter(m => m.status === 'Scheduled' || m.status === 'Postponed').map(match => `
-                                        <div onclick="selectMatch('${match.id}')" 
-                                             id="card-${match.id}"
-                                             class="bg-white rounded-2xl p-5 cursor-pointer transition-all duration-200 hover:shadow-md border-2 border-transparent hover:border-yellow-400">
-                                            <div class="flex items-center justify-between">
-                                                <div>
-                                                    <div class="font-semibold text-gray-900 text-lg">${match.opponent}</div>
-                                                    <div class="text-gray-500 mt-1">${match.date} · ${match.kickOffTime}</div>
-                                                </div>
-                                                <div class="flex items-center gap-3">
-                                                    <span class="px-3 py-1 rounded-full text-sm font-medium ${match.venue === 'Home' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'}">
-                                                        ${match.venue}
-                                                    </span>
-                                                    ${match.status === 'Postponed' ? '<span class="px-3 py-1 rounded-full text-sm font-medium bg-orange-100 text-orange-700">Postponed</span>' : ''}
-                                                </div>
+                            <h2 class="text-2xl font-bold text-white mb-2">Admin</h2>
+                            <p class="text-white/50 text-sm mb-6">Update match results</p>
+                            
+                            <div class="space-y-3" id="matchCards">
+                                ${allMatches.filter(m => m.status === 'Scheduled' || m.status === 'Postponed').length > 0 ? 
+                                    allMatches.filter(m => m.status === 'Scheduled' || m.status === 'Postponed').map(match => `
+                                    <div onclick="selectMatch('${match.id}')" class="glass-card rounded-2xl p-4 cursor-pointer active:scale-98 transition-transform">
+                                        <div class="flex items-center justify-between">
+                                            <div>
+                                                <p class="text-white font-semibold">${match.opponent}</p>
+                                                <p class="text-white/50 text-sm">${match.date} · ${match.kickOffTime}</p>
+                                            </div>
+                                            <div class="flex items-center gap-2">
+                                                <span class="glass-button px-3 py-1 rounded-xl text-xs font-medium ${match.venue === 'Home' ? 'text-green-400' : 'text-blue-400'}">${match.venue}</span>
+                                                ${match.status === 'Postponed' ? '<span class="text-orange-400 text-xs">PP</span>' : ''}
                                             </div>
                                         </div>
-                                    `).join('') : '<p class="text-gray-500 text-center py-8">No upcoming matches to update</p>'}
-                                </div>
-
-                                <!-- Edit Form (hidden by default) -->
-                                <div id="matchForm" class="hidden mt-8">
-                                    <div class="bg-white rounded-2xl p-8 shadow-sm">
-                                        <!-- Match Header -->
-                                        <div id="matchInfo" class="mb-8 pb-6 border-b border-gray-100"></div>
-
-                                        <!-- Status -->
-                                        <div class="mb-8">
-                                            <label class="block text-sm font-medium text-gray-500 uppercase tracking-wide mb-3">Status</label>
-                                            <div class="grid grid-cols-2 gap-3">
-                                                <button type="button" onclick="setStatus('Played')" id="btn-Played" class="status-btn py-3 px-4 rounded-xl border-2 border-gray-200 text-gray-700 font-medium transition-all">Played</button>
-                                                <button type="button" onclick="setStatus('Postponed')" id="btn-Postponed" class="status-btn py-3 px-4 rounded-xl border-2 border-gray-200 text-gray-700 font-medium transition-all">Postponed</button>
-                                            </div>
-                                        </div>
-
-                                        <!-- Score Section -->
-                                        <div id="scoreSection" class="hidden">
-                                            <!-- Score Inputs -->
-                                            <div class="mb-8">
-                                                <label class="block text-sm font-medium text-gray-500 uppercase tracking-wide mb-3">Final Score</label>
-                                                <div class="flex items-center gap-4">
-                                                    <div class="flex-1">
-                                                        <div class="text-center text-sm text-gray-500 mb-2">Egerton</div>
-                                                        <input type="number" id="adminOurScore" min="0" 
-                                                               class="w-full text-center text-4xl font-bold py-4 border-2 border-gray-200 rounded-xl focus:border-yellow-400 focus:outline-none transition-colors" 
-                                                               placeholder="0">
-                                                    </div>
-                                                    <div class="text-3xl text-gray-300 font-light">-</div>
-                                                    <div class="flex-1">
-                                                        <div class="text-center text-sm text-gray-500 mb-2" id="opponentName">Opponent</div>
-                                                        <input type="number" id="adminTheirScore" min="0" 
-                                                               class="w-full text-center text-4xl font-bold py-4 border-2 border-gray-200 rounded-xl focus:border-yellow-400 focus:outline-none transition-colors" 
-                                                               placeholder="0">
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <!-- Goal Scorers -->
-                                            <div class="mb-8">
-                                                <label class="block text-sm font-medium text-gray-500 uppercase tracking-wide mb-3">Goal Scorers</label>
-                                                <input type="text" id="adminGoalScorers" 
-                                                       class="w-full py-4 px-5 border-2 border-gray-200 rounded-xl focus:border-yellow-400 focus:outline-none transition-colors text-gray-900" 
-                                                       placeholder="Finley Jones, Jack Stiles">
-                                                <p class="text-sm text-gray-400 mt-2">Separate names with commas</p>
-                                            </div>
-
-                                            <!-- Goals Each -->
-                                            <div class="mb-8">
-                                                <label class="block text-sm font-medium text-gray-500 uppercase tracking-wide mb-3">Goals Each</label>
-                                                <input type="text" id="adminNotes" 
-                                                       class="w-full py-4 px-5 border-2 border-gray-200 rounded-xl focus:border-yellow-400 focus:outline-none transition-colors text-gray-900" 
-                                                       placeholder="2, 1">
-                                                <p class="text-sm text-gray-400 mt-2">Match the order above</p>
-                                            </div>
-
-                                            <!-- MOTM -->
-                                            <div class="mb-8">
-                                                <label class="block text-sm font-medium text-gray-500 uppercase tracking-wide mb-3">Man of the Match</label>
-                                                <select id="adminMOTM" class="w-full py-4 px-5 border-2 border-gray-200 rounded-xl focus:border-yellow-400 focus:outline-none transition-colors text-gray-900 bg-white appearance-none cursor-pointer" style="background-image: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 20 20%22 fill=%22%236b7280%22><path fill-rule=%22evenodd%22 d=%22M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z%22 clip-rule=%22evenodd%22/></svg>'); background-repeat: no-repeat; background-position: right 1rem center; background-size: 1.5rem;">
-                                                    <option value="">Select player...</option>
-                                                    ${players.map(p => `<option value="${p.name}">${p.name}</option>`).join('')}
-                                                </select>
-                                            </div>
-                                        </div>
-
-                                        <!-- Hidden status field -->
-                                        <input type="hidden" id="adminStatus" value="Scheduled">
-
-                                        <!-- Buttons -->
-                                        <div class="flex gap-3">
-                                            <button onclick="cancelEdit()" class="flex-1 py-4 px-6 rounded-xl border-2 border-gray-200 text-gray-700 font-semibold transition-all hover:bg-gray-50">
-                                                Cancel
-                                            </button>
-                                            <button onclick="saveMatch()" class="flex-1 py-4 px-6 rounded-xl bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-semibold transition-all">
-                                                Save
-                                            </button>
-                                        </div>
-
-                                        <!-- Status Message -->
-                                        <div id="adminMessage" class="mt-6 text-center hidden"></div>
                                     </div>
+                                `).join('') : '<p class="text-white/50 text-center py-8">No matches to update</p>'}
+                            </div>
+
+                            <div id="matchForm" class="hidden">
+                                <div class="glass-card rounded-3xl p-6">
+                                    <div id="matchInfo" class="mb-6 pb-4 border-b border-white/10"></div>
+
+                                    <div class="mb-6">
+                                        <p class="text-white/50 text-xs uppercase tracking-wider mb-3">Status</p>
+                                        <div class="grid grid-cols-2 gap-3">
+                                            <button type="button" onclick="setStatus('Played')" id="btn-Played" class="status-btn glass-button py-3 rounded-2xl text-white font-medium">Played</button>
+                                            <button type="button" onclick="setStatus('Postponed')" id="btn-Postponed" class="status-btn glass-button py-3 rounded-2xl text-white font-medium">Postponed</button>
+                                        </div>
+                                    </div>
+
+                                    <div id="scoreSection" class="hidden">
+                                        <div class="mb-6">
+                                            <p class="text-white/50 text-xs uppercase tracking-wider mb-3">Score</p>
+                                            <div class="flex items-center gap-4">
+                                                <div class="flex-1">
+                                                    <p class="text-center text-white/50 text-xs mb-2">Egerton</p>
+                                                    <input type="number" id="adminOurScore" min="0" 
+                                                           class="w-full text-center text-3xl font-bold py-4 bg-white/10 border border-white/20 rounded-2xl text-white focus:border-yellow-400 focus:outline-none" 
+                                                           placeholder="0">
+                                                </div>
+                                                <span class="text-2xl text-white/30">-</span>
+                                                <div class="flex-1">
+                                                    <p class="text-center text-white/50 text-xs mb-2" id="opponentName">Opponent</p>
+                                                    <input type="number" id="adminTheirScore" min="0" 
+                                                           class="w-full text-center text-3xl font-bold py-4 bg-white/10 border border-white/20 rounded-2xl text-white focus:border-yellow-400 focus:outline-none" 
+                                                           placeholder="0">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="mb-6">
+                                            <p class="text-white/50 text-xs uppercase tracking-wider mb-3">Goal Scorers</p>
+                                            <input type="text" id="adminGoalScorers" 
+                                                   class="w-full py-4 px-4 bg-white/10 border border-white/20 rounded-2xl text-white placeholder-white/30 focus:border-yellow-400 focus:outline-none" 
+                                                   placeholder="Name, Name">
+                                        </div>
+
+                                        <div class="mb-6">
+                                            <p class="text-white/50 text-xs uppercase tracking-wider mb-3">Goals Each</p>
+                                            <input type="text" id="adminNotes" 
+                                                   class="w-full py-4 px-4 bg-white/10 border border-white/20 rounded-2xl text-white placeholder-white/30 focus:border-yellow-400 focus:outline-none" 
+                                                   placeholder="2, 1">
+                                        </div>
+
+                                        <div class="mb-6">
+                                            <p class="text-white/50 text-xs uppercase tracking-wider mb-3">Man of the Match</p>
+                                            <select id="adminMOTM" class="w-full py-4 px-4 bg-white/10 border border-white/20 rounded-2xl text-white focus:border-yellow-400 focus:outline-none appearance-none">
+                                                <option value="" class="bg-gray-900">Select player...</option>
+                                                ${players.map(p => `<option value="${p.name}" class="bg-gray-900">${p.name}</option>`).join('')}
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <input type="hidden" id="adminStatus" value="Scheduled">
+
+                                    <div class="flex gap-3">
+                                        <button onclick="cancelEdit()" class="flex-1 glass-button py-4 rounded-2xl text-white font-semibold">Cancel</button>
+                                        <button onclick="saveMatch()" class="flex-1 py-4 rounded-2xl bg-yellow-400 text-gray-900 font-semibold active:scale-95 transition-transform">Save</button>
+                                    </div>
+
+                                    <div id="adminMessage" class="mt-4 text-center hidden"></div>
                                 </div>
                             </div>
                         ` : ''}
                     </main>
 
-                    <!-- Mobile Bottom Navigation -->
-                    <nav class="md:hidden fixed bottom-4 left-4 right-4 bg-white/70 backdrop-blur-xl border border-white/30 rounded-3xl flex justify-around py-3 px-2 z-50 shadow-lg shadow-black/10">
-                        <button onclick="setActiveTab('overview')" class="flex flex-col items-center py-2 px-3 ${currentTab === 'overview' ? 'text-yellow-500' : 'text-gray-500'}">
-                            <span class="text-xl">📊</span>
-                            <span class="text-xs mt-1 font-medium">Overview</span>
+                    <!-- Bottom Navigation -->
+                    <nav class="glass-nav fixed bottom-4 left-4 right-4 rounded-3xl flex justify-around py-2 z-50 safe-bottom">
+                        <button onclick="setActiveTab('overview')" class="nav-item flex flex-col items-center py-2 px-4 ${currentTab === 'overview' ? 'text-yellow-400' : 'text-white/50'}">
+                            <span class="text-xl mb-1">📊</span>
+                            <span class="text-[10px] font-medium">Home</span>
                         </button>
-                        <button onclick="setActiveTab('fixtures')" class="flex flex-col items-center py-2 px-3 ${currentTab === 'fixtures' ? 'text-yellow-500' : 'text-gray-500'}">
-                            <span class="text-xl">📅</span>
-                            <span class="text-xs mt-1 font-medium">Fixtures</span>
+                        <button onclick="setActiveTab('fixtures')" class="nav-item flex flex-col items-center py-2 px-4 ${currentTab === 'fixtures' ? 'text-yellow-400' : 'text-white/50'}">
+                            <span class="text-xl mb-1">📅</span>
+                            <span class="text-[10px] font-medium">Fixtures</span>
                         </button>
-                        <button onclick="setActiveTab('results')" class="flex flex-col items-center py-2 px-3 ${currentTab === 'results' ? 'text-yellow-500' : 'text-gray-500'}">
-                            <span class="text-xl">🏆</span>
-                            <span class="text-xs mt-1 font-medium">Results</span>
+                        <button onclick="setActiveTab('results')" class="nav-item flex flex-col items-center py-2 px-4 ${currentTab === 'results' ? 'text-yellow-400' : 'text-white/50'}">
+                            <span class="text-xl mb-1">🏆</span>
+                            <span class="text-[10px] font-medium">Results</span>
                         </button>
-                        <button onclick="setActiveTab('players')" class="flex flex-col items-center py-2 px-3 ${currentTab === 'players' ? 'text-yellow-500' : 'text-gray-500'}">
-                            <span class="text-xl">👥</span>
-                            <span class="text-xs mt-1 font-medium">Players</span>
+                        <button onclick="setActiveTab('players')" class="nav-item flex flex-col items-center py-2 px-4 ${currentTab === 'players' ? 'text-yellow-400' : 'text-white/50'}">
+                            <span class="text-xl mb-1">👥</span>
+                            <span class="text-[10px] font-medium">Squad</span>
                         </button>
-                        <button onclick="setActiveTab('admin')" class="flex flex-col items-center py-2 px-3 ${currentTab === 'admin' ? 'text-yellow-500' : 'text-gray-500'}">
-                            <span class="text-xl">⚙️</span>
-                            <span class="text-xs mt-1 font-medium">Admin</span>
+                        <button onclick="setActiveTab('admin')" class="nav-item flex flex-col items-center py-2 px-4 ${currentTab === 'admin' ? 'text-yellow-400' : 'text-white/50'}">
+                            <span class="text-xl mb-1">⚙️</span>
+                            <span class="text-[10px] font-medium">Admin</span>
                         </button>
                     </nav>
                 </div>
@@ -765,21 +609,17 @@
             const match = allMatches.find(m => m.id === matchId);
             if (!match) return;
 
-            // Hide cards, show form
             cards.classList.add('hidden');
             form.classList.remove('hidden');
 
-            // Set match info
             document.getElementById('matchInfo').innerHTML = `
-                <div class="text-2xl font-semibold text-gray-900">${match.opponent}</div>
-                <div class="text-gray-500 mt-1">${match.date} · ${match.kickOffTime} · ${match.venue}</div>
+                <p class="text-xl font-semibold text-white">${match.opponent}</p>
+                <p class="text-white/50 text-sm mt-1">${match.date} · ${match.kickOffTime} · ${match.venue}</p>
             `;
 
-            // Set opponent name in score section
             const opponentNameEl = document.getElementById('opponentName');
             if (opponentNameEl) opponentNameEl.textContent = match.opponent.split(' ')[0];
 
-            // Reset form
             document.getElementById('adminStatus').value = 'Scheduled';
             document.getElementById('adminOurScore').value = '';
             document.getElementById('adminTheirScore').value = '';
@@ -788,32 +628,25 @@
             const motmSelect = document.getElementById('adminMOTM');
             if (motmSelect) motmSelect.value = '';
 
-            // Reset status buttons
             document.querySelectorAll('.status-btn').forEach(btn => {
-                btn.classList.remove('border-yellow-400', 'bg-yellow-50');
-                btn.classList.add('border-gray-200');
+                btn.classList.remove('active');
             });
 
-            // Hide score section
             document.getElementById('scoreSection').classList.add('hidden');
         }
 
         function setStatus(status) {
             document.getElementById('adminStatus').value = status;
             
-            // Update button styles
             document.querySelectorAll('.status-btn').forEach(btn => {
-                btn.classList.remove('border-yellow-400', 'bg-yellow-50');
-                btn.classList.add('border-gray-200');
+                btn.classList.remove('active');
             });
             
             const activeBtn = document.getElementById('btn-' + status);
             if (activeBtn) {
-                activeBtn.classList.remove('border-gray-200');
-                activeBtn.classList.add('border-yellow-400', 'bg-yellow-50');
+                activeBtn.classList.add('active');
             }
 
-            // Show/hide score section
             const scoreSection = document.getElementById('scoreSection');
             if (status === 'Played') {
                 scoreSection.classList.remove('hidden');
@@ -840,7 +673,7 @@
             const status = document.getElementById('adminStatus').value;
             
             if (status === 'Scheduled') {
-                showAdminMessage('Please select Played or Postponed', 'error');
+                showAdminMessage('Select status first', 'error');
                 return;
             }
 
@@ -872,7 +705,7 @@
                     body: JSON.stringify(data)
                 });
 
-                showAdminMessage('Saved! ✓', 'success');
+                showAdminMessage('Saved ✓', 'success');
                 
                 setTimeout(() => {
                     selectedMatchId = null;
@@ -881,7 +714,7 @@
 
             } catch (error) {
                 console.error('Error saving match:', error);
-                showAdminMessage('Error: ' + error.message, 'error');
+                showAdminMessage('Error', 'error');
             }
         }
 
@@ -889,16 +722,16 @@
             const message = document.getElementById('adminMessage');
             if (!message) return;
             
-            message.classList.remove('hidden', 'text-green-600', 'text-red-600', 'text-blue-600');
+            message.classList.remove('hidden');
+            message.className = 'mt-4 text-center text-sm';
             
-            if (type === 'success') message.classList.add('text-green-600');
-            else if (type === 'error') message.classList.add('text-red-600');
-            else message.classList.add('text-blue-600');
+            if (type === 'success') message.classList.add('text-green-400');
+            else if (type === 'error') message.classList.add('text-red-400');
+            else message.classList.add('text-blue-400');
             
             message.textContent = text;
         }
 
-        // Load data on page load
         fetchSheetData();
     </script>
 </body>
