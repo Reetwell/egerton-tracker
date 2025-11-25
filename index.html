@@ -403,17 +403,21 @@
         }
 
         function getPlayerMatches(playerName) {
-            const name = playerName.toLowerCase();
+            const name = playerName.toLowerCase().trim();
+            const firstName = name.split(' ')[0];
             return results.filter(m => {
                 if (!m.goalScorers) return false;
-                return m.goalScorers.toLowerCase().includes(name);
+                const scorersLower = m.goalScorers.toLowerCase();
+                // Match full name OR first name
+                return scorersLower.includes(name) || scorersLower.includes(firstName);
             }).map(m => {
-                // Find how many goals this player scored in this match
                 const scorers = m.goalScorers.split(',').map(s => s.trim().toLowerCase());
                 const goals = m.notes ? m.notes.split(',').map(g => g.trim()) : [];
                 let playerGoals = 0;
                 scorers.forEach((scorer, i) => {
-                    if (scorer.includes(name) || name.includes(scorer)) {
+                    // Match if scorer contains player name OR first name, or vice versa
+                    if (scorer.includes(name) || name.includes(scorer) || 
+                        scorer.includes(firstName) || firstName === scorer) {
                         playerGoals += parseInt(goals[i]) || 1;
                     }
                 });
