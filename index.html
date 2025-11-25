@@ -243,6 +243,18 @@
         }
         .shake { animation: shake 0.4s ease; }
 
+        /* Absent player buttons */
+        .absent-btn {
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+        
+        .absent-btn.selected {
+            background: rgba(254, 226, 226, 0.8);
+            color: #dc2626;
+            border-color: rgba(239, 68, 68, 0.4);
+        }
+
         /* Number styling */
         .number-display {
             font-variant-numeric: tabular-nums;
@@ -272,11 +284,82 @@
         let fixtures = [];
         let results = [];
         let players = [];
+        let searchOpen = false;
+        let searchQuery = '';
+        let selectedPlayer = null;
+        let absentPlayers = [];
 
         function setActiveTab(tab) {
             currentTab = tab;
             resultFilter = null;
             renderApp();
+        }
+
+        function openSearch() {
+            searchOpen = true;
+            searchQuery = '';
+            renderApp();
+            setTimeout(() => {
+                const input = document.getElementById('searchInput');
+                if (input) input.focus();
+            }, 100);
+        }
+
+        function closeSearch() {
+            searchOpen = false;
+            searchQuery = '';
+            renderApp();
+        }
+
+        function handleSearch(value) {
+            searchQuery = value;
+            renderApp();
+            // Keep focus on input after re-render
+            setTimeout(() => {
+                const input = document.getElementById('searchInput');
+                if (input) {
+                    input.focus();
+                    input.setSelectionRange(value.length, value.length);
+                }
+            }, 0);
+        }
+
+        function getSearchResults() {
+            if (!searchQuery.trim()) return { players: [], matches: [] };
+            const q = searchQuery.toLowerCase();
+            const matchedPlayers = players.filter(p => p.name.toLowerCase().includes(q));
+            const matchedMatches = allMatches.filter(m => m.opponent.toLowerCase().includes(q));
+            return { players: matchedPlayers, matches: matchedMatches };
+        }
+
+        function openPlayerProfile(playerName) {
+            selectedPlayer = players.find(p => p.name === playerName);
+            searchOpen = false;
+            renderApp();
+        }
+
+        function closePlayerProfile() {
+            selectedPlayer = null;
+            renderApp();
+        }
+
+        function getPlayerMatches(playerName) {
+            const name = playerName.toLowerCase();
+            return results.filter(m => {
+                if (!m.goalScorers) return false;
+                return m.goalScorers.toLowerCase().includes(name);
+            }).map(m => {
+                // Find how many goals this player scored in this match
+                const scorers = m.goalScorers.split(',').map(s => s.trim().toLowerCase());
+                const goals = m.notes ? m.notes.split(',').map(g => g.trim()) : [];
+                let playerGoals = 0;
+                scorers.forEach((scorer, i) => {
+                    if (scorer.includes(name) || name.includes(scorer)) {
+                        playerGoals += parseInt(goals[i]) || 1;
+                    }
+                });
+                return { ...m, playerGoals };
+            });
         }
 
         function filterResults(type) {
@@ -336,7 +419,8 @@
                 if (playersData.values && playersData.values.length > 1) {
                     players = playersData.values.slice(1).filter(row => row && row.length >= 2 && row[1]).map(row => ({
                         shirtNumber: row[0] || '', name: row[1] || '', position: row[2] || '',
-                        goals: parseInt(row[3]) || 0, motm: parseInt(row[4]) || 0
+                        goals: parseInt(row[3]) || 0, motm: parseInt(row[4]) || 0, foot: row[5] || '',
+                        appearances: parseInt(row[6]) || 0
                     }));
                 }
                 renderApp();
@@ -368,11 +452,145 @@
                                     <p class="text-xs text-gray-400">2025/26</p>
                                 </div>
                             </div>
-                            <button onclick="fetchSheetData()" class="btn-glass w-9 h-9 rounded-full flex items-center justify-center text-gray-500">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
-                            </button>
+                            <div class="flex items-center gap-2">
+                                <button onclick="openSearch()" class="btn-glass w-9 h-9 rounded-full flex items-center justify-center text-gray-500">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                                </button>
+                                <button onclick="fetchSheetData()" class="btn-glass w-9 h-9 rounded-full flex items-center justify-center text-gray-500">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                                </button>
+                            </div>
                         </div>
                     </header>
+
+                    <!-- Search Overlay -->
+                    <div id="searchOverlay" class="fixed inset-0 z-50 ${searchOpen ? '' : 'hidden'}" style="background: rgba(255,255,255,0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);">
+                        <div class="safe-top px-4 py-3">
+                            <div class="flex items-center gap-3">
+                                <div class="flex-1 relative">
+                                    <svg class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                                    <input type="text" id="searchInput" class="w-full py-3 pl-10 pr-4 bg-gray-100 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-400" placeholder="Search players or matches..." oninput="handleSearch(this.value)" value="${searchQuery}">
+                                </div>
+                                <button onclick="closeSearch()" class="text-yellow-600 font-medium">Cancel</button>
+                            </div>
+                        </div>
+                        
+                        <div class="px-4 py-2 overflow-y-auto" style="max-height: calc(100vh - 80px);">
+                            ${searchQuery.length > 0 ? `
+                                ${getSearchResults().players.length > 0 ? `
+                                    <p class="text-xs font-medium text-gray-400 uppercase tracking-wide mb-2">Players</p>
+                                    <div class="space-y-2 mb-4">
+                                        ${getSearchResults().players.map(p => `
+                                            <div onclick="openPlayerProfile('${p.name}')" class="glass-card rounded-2xl p-4 cursor-pointer">
+                                                <div class="flex items-center gap-3">
+                                                    <div class="w-10 h-10 rounded-xl bg-yellow-400 flex items-center justify-center font-bold text-gray-900">${p.shirtNumber}</div>
+                                                    <div>
+                                                        <p class="font-semibold text-gray-900">${p.name}</p>
+                                                        <p class="text-xs text-gray-400">${p.position} · ${p.goals} goals</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                ` : ''}
+                                
+                                ${getSearchResults().matches.length > 0 ? `
+                                    <p class="text-xs font-medium text-gray-400 uppercase tracking-wide mb-2">Matches</p>
+                                    <div class="space-y-2">
+                                        ${getSearchResults().matches.map(m => `
+                                            <div class="glass-card rounded-2xl p-4">
+                                                <div class="flex items-center justify-between">
+                                                    <div>
+                                                        <p class="font-semibold text-gray-900">${m.opponent}</p>
+                                                        <p class="text-xs text-gray-400">${formatShortDate(m.date)}</p>
+                                                    </div>
+                                                    ${m.status.toLowerCase() === 'played' ? `
+                                                        <span class="text-lg font-bold">${m.ourScore}-${m.theirScore}</span>
+                                                    ` : `
+                                                        <span class="text-xs text-gray-400">${m.status}</span>
+                                                    `}
+                                                </div>
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                ` : ''}
+                                
+                                ${getSearchResults().players.length === 0 && getSearchResults().matches.length === 0 ? `
+                                    <p class="text-gray-400 text-center py-8">No results for "${searchQuery}"</p>
+                                ` : ''}
+                            ` : `
+                                <p class="text-gray-400 text-center py-8">Search for players or opponents</p>
+                            `}
+                        </div>
+                    </div>
+
+                    <!-- Player Profile Overlay -->
+                    <div id="playerProfile" class="fixed inset-0 z-50 ${selectedPlayer ? '' : 'hidden'}" style="background: rgba(255,255,255,0.98); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);">
+                        ${selectedPlayer ? `
+                            <div class="safe-top px-4 py-3 border-b border-gray-100">
+                                <div class="flex items-center justify-between">
+                                    <button onclick="closePlayerProfile()" class="flex items-center gap-1 text-yellow-600 font-medium">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                                        Back
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="px-4 py-6 overflow-y-auto" style="max-height: calc(100vh - 60px);">
+                                <!-- Player Header -->
+                                <div class="text-center mb-6">
+                                    <div class="w-20 h-20 rounded-2xl bg-yellow-400 flex items-center justify-center text-3xl font-bold text-gray-900 mx-auto mb-3">${selectedPlayer.shirtNumber}</div>
+                                    <h1 class="text-2xl font-bold text-gray-900">${selectedPlayer.name}</h1>
+                                    <p class="text-gray-500">${selectedPlayer.position}</p>
+                                </div>
+                                
+                                <!-- Stats Grid -->
+                                <div class="grid grid-cols-4 gap-2 mb-6">
+                                    <div class="glass-card rounded-2xl p-3 text-center">
+                                        <p class="text-xl font-bold text-gray-900">${selectedPlayer.appearances}</p>
+                                        <p class="text-[10px] text-gray-400">Apps</p>
+                                    </div>
+                                    <div class="glass-card rounded-2xl p-3 text-center">
+                                        <p class="text-xl font-bold text-gray-900">${selectedPlayer.goals}</p>
+                                        <p class="text-[10px] text-gray-400">Goals</p>
+                                    </div>
+                                    <div class="glass-card rounded-2xl p-3 text-center">
+                                        <p class="text-xl font-bold text-yellow-500">${selectedPlayer.motm}</p>
+                                        <p class="text-[10px] text-gray-400">MOTM</p>
+                                    </div>
+                                    <div class="glass-card rounded-2xl p-3 text-center">
+                                        <p class="text-xl font-bold text-gray-900">${selectedPlayer.foot || '-'}</p>
+                                        <p class="text-[10px] text-gray-400">Foot</p>
+                                    </div>
+                                </div>
+                                
+                                <!-- Matches Scored In -->
+                                ${getPlayerMatches(selectedPlayer.name).length > 0 ? `
+                                    <div class="glass-card rounded-2xl p-4">
+                                        <p class="text-xs font-medium text-gray-400 uppercase tracking-wide mb-3">Matches Scored In</p>
+                                        <div class="space-y-3">
+                                            ${getPlayerMatches(selectedPlayer.name).map(m => `
+                                                <div class="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">
+                                                    <div>
+                                                        <p class="font-medium text-gray-900">${m.opponent}</p>
+                                                        <p class="text-xs text-gray-400">${formatShortDate(m.date)}</p>
+                                                    </div>
+                                                    <div class="text-right">
+                                                        <p class="font-bold">${m.ourScore}-${m.theirScore}</p>
+                                                        <p class="text-xs text-yellow-600">⚽ ${m.playerGoals}</p>
+                                                    </div>
+                                                </div>
+                                            `).join('')}
+                                        </div>
+                                    </div>
+                                ` : `
+                                    <div class="glass-card rounded-2xl p-4">
+                                        <p class="text-gray-400 text-center py-4">No goals scored yet</p>
+                                    </div>
+                                `}
+                            </div>
+                        ` : ''}
+                    </div>
 
                     <!-- Main Content -->
                     <main class="flex-1 scroll-container px-4 pb-28 pt-4">
@@ -503,20 +721,25 @@
                             <h2 class="text-xl font-bold text-gray-900 mb-4">Squad</h2>
                             <div class="space-y-2">
                                 ${players.length > 0 ? players.map(p => `
-                                    <div class="glass-card rounded-2xl p-4">
+                                    <div onclick="openPlayerProfile('${p.name}')" class="glass-card rounded-2xl p-4 cursor-pointer">
                                         <div class="flex items-center gap-3">
                                             <div class="w-11 h-11 rounded-xl bg-yellow-400 flex items-center justify-center font-bold text-gray-900">${p.shirtNumber}</div>
                                             <div class="flex-1">
                                                 <p class="font-semibold text-gray-900">${p.name}</p>
-                                                <p class="text-xs text-gray-400">${p.position}</p>
+                                                <p class="text-xs text-gray-400">${p.position}${p.foot ? ' · ' + p.foot : ''}</p>
                                             </div>
-                                            <div class="flex items-center gap-4 text-center">
+                                            <div class="flex items-center gap-3 text-center">
                                                 <div>
-                                                    <p class="text-lg font-bold number-display">${p.goals}</p>
-                                                    <p class="text-xs text-gray-400">Goals</p>
+                                                    <p class="text-base font-bold number-display">${p.appearances}</p>
+                                                    <p class="text-[10px] text-gray-400">Apps</p>
                                                 </div>
-                                                ${p.motm > 0 ? `<div><p class="text-lg font-bold text-yellow-500 number-display">${p.motm}</p><p class="text-xs text-gray-400">MOTM</p></div>` : ''}
+                                                <div>
+                                                    <p class="text-base font-bold number-display">${p.goals}</p>
+                                                    <p class="text-[10px] text-gray-400">Goals</p>
+                                                </div>
+                                                ${p.motm > 0 ? `<div><p class="text-base font-bold text-yellow-500 number-display">${p.motm}</p><p class="text-[10px] text-gray-400">MOTM</p></div>` : ''}
                                             </div>
+                                            <svg class="w-4 h-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                                         </div>
                                     </div>
                                 `).join('') : '<p class="text-gray-400 text-center py-8">No players</p>'}
@@ -617,6 +840,18 @@
                                                 ${players.map(p => `<option value="${p.name}">${p.name}</option>`).join('')}
                                             </select>
                                         </div>
+
+                                        <div class="mb-5">
+                                            <p class="text-xs font-medium text-gray-400 uppercase tracking-wide mb-2">Absent Players</p>
+                                            <p class="text-xs text-gray-400 mb-3">Tap players who didn't attend</p>
+                                            <div class="flex flex-wrap gap-2" id="absentSelector">
+                                                ${players.map(p => `
+                                                    <button type="button" onclick="toggleAbsent('${p.name}')" id="absent-${p.name.replace(/\s+/g, '-')}" class="absent-btn px-4 py-2.5 rounded-full text-sm font-medium transition-all bg-white/60 text-gray-600 border border-gray-200 active:scale-95">
+                                                        ${p.name.split(' ')[0]}
+                                                    </button>
+                                                `).join('')}
+                                            </div>
+                                        </div>
                                     </div>
 
                                     <input type="hidden" id="adminStatus" value="Scheduled">
@@ -709,8 +944,20 @@
             });
         }
 
+        // Keyboard support for passcode
+        document.addEventListener('keydown', function(e) {
+            if (currentTab !== 'admin' || adminUnlocked) return;
+            
+            if (e.key >= '0' && e.key <= '9') {
+                enterPasscode(parseInt(e.key));
+            } else if (e.key === 'Backspace' || e.key === 'Delete') {
+                deletePasscode();
+            }
+        });
+
         function selectMatch(matchId) {
             selectedMatchId = matchId;
+            absentPlayers = [];
             const form = document.getElementById('matchForm');
             const cards = document.getElementById('matchCards');
             const match = allMatches.find(m => m.id === matchId);
@@ -747,6 +994,25 @@
             document.getElementById('scoreSection').classList.toggle('hidden', status !== 'Played');
         }
 
+        function toggleAbsent(playerName) {
+            const btnId = 'absent-' + playerName.replace(/\s+/g, '-');
+            const btn = document.getElementById(btnId);
+            if (!btn) return;
+            
+            const index = absentPlayers.indexOf(playerName);
+            if (index > -1) {
+                // Remove from absent list (player attended)
+                absentPlayers.splice(index, 1);
+                btn.classList.remove('bg-red-100', 'text-red-600', 'border-red-300');
+                btn.classList.add('bg-white/60', 'text-gray-600', 'border-gray-200');
+            } else {
+                // Add to absent list (player didn't attend)
+                absentPlayers.push(playerName);
+                btn.classList.remove('bg-white/60', 'text-gray-600', 'border-gray-200');
+                btn.classList.add('bg-red-100', 'text-red-600', 'border-red-300');
+            }
+        }
+
         function cancelEdit() {
             selectedMatchId = null;
             document.getElementById('matchForm').classList.add('hidden');
@@ -765,6 +1031,7 @@
                 data.goalScorers = document.getElementById('adminGoalScorers').value || '';
                 data.notes = document.getElementById('adminNotes').value || '';
                 data.motm = document.getElementById('adminMOTM').value || '';
+                data.absentPlayers = absentPlayers;
             } else {
                 data.ourScore = ''; data.theirScore = ''; data.goalScorers = ''; data.notes = '';
             }
