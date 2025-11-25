@@ -405,20 +405,42 @@
         function getPlayerMatches(playerName) {
             const name = playerName.toLowerCase().trim();
             const firstName = name.split(' ')[0];
+            const lastName = name.split(' ').slice(1).join(' ');
+            
+            // Check if there are other players with same first name
+            const sameFirstName = players.filter(p => 
+                p.name.toLowerCase().trim().split(' ')[0] === firstName
+            ).length > 1;
+            
             return results.filter(m => {
                 if (!m.goalScorers) return false;
                 const scorersLower = m.goalScorers.toLowerCase();
-                // Match full name OR first name
-                return scorersLower.includes(name) || scorersLower.includes(firstName);
+                
+                // If multiple players share first name, require fuller match
+                if (sameFirstName) {
+                    // Must match full name OR last name must be present
+                    return scorersLower.includes(name) || 
+                           (lastName && scorersLower.includes(lastName));
+                } else {
+                    // Safe to match first name only
+                    return scorersLower.includes(name) || scorersLower.includes(firstName);
+                }
             }).map(m => {
                 const scorers = m.goalScorers.split(',').map(s => s.trim().toLowerCase());
                 const goals = m.notes ? m.notes.split(',').map(g => g.trim()) : [];
                 let playerGoals = 0;
                 scorers.forEach((scorer, i) => {
-                    // Match if scorer contains player name OR first name, or vice versa
-                    if (scorer.includes(name) || name.includes(scorer) || 
-                        scorer.includes(firstName) || firstName === scorer) {
-                        playerGoals += parseInt(goals[i]) || 1;
+                    if (sameFirstName) {
+                        // Stricter matching when multiple players share first name
+                        if (scorer.includes(name) || name.includes(scorer) ||
+                            (lastName && (scorer.includes(lastName) || lastName.includes(scorer)))) {
+                            playerGoals += parseInt(goals[i]) || 1;
+                        }
+                    } else {
+                        if (scorer.includes(name) || name.includes(scorer) || 
+                            scorer.includes(firstName) || firstName === scorer) {
+                            playerGoals += parseInt(goals[i]) || 1;
+                        }
                     }
                 });
                 return { ...m, playerGoals };
@@ -576,63 +598,72 @@
                     </header>
 
                     <!-- Search Overlay -->
-                    <div id="searchOverlay" class="fixed inset-0 z-50 ${searchOpen ? '' : 'hidden'}" style="background: rgba(255,255,255,0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);">
-                        <div class="safe-top px-4 py-3">
-                            <div class="flex items-center gap-3">
-                                <div class="flex-1 relative">
-                                    <svg class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                                    <input type="text" id="searchInput" class="w-full py-3 pl-10 pr-4 bg-gray-100 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-400" placeholder="Search players or matches..." oninput="handleSearch(this.value)" value="${searchQuery}">
+                    <div id="searchOverlay" class="fixed inset-0 z-50 ${searchOpen ? '' : 'hidden'}" style="background: linear-gradient(180deg, rgba(250, 204, 21, 0.1) 0%, rgba(255, 255, 255, 0.95) 50%); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);">
+                        <div class="flex flex-col items-center justify-center min-h-screen px-4 -mt-20">
+                            <!-- Logo/Badge -->
+                            <img src="${BADGE_IMG}" class="w-20 h-20 rounded-2xl shadow-lg mb-8" alt="Badge">
+                            
+                            <!-- Search Box -->
+                            <div class="w-full max-w-2xl">
+                                <div class="relative">
+                                    <div class="glass-card rounded-2xl p-1" style="background: rgba(255,255,255,0.7); border: 1px solid rgba(255,255,255,0.8); box-shadow: 0 8px 32px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.9);">
+                                        <div class="flex items-center gap-3 px-4 py-3">
+                                            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                                            <input type="text" id="searchInput" class="flex-1 bg-transparent text-lg text-gray-900 placeholder-gray-400 focus:outline-none" placeholder="Search players or matches..." oninput="handleSearch(this.value)" value="${searchQuery}">
+                                            <button onclick="closeSearch()" class="text-yellow-600 font-medium hover:text-yellow-700">Cancel</button>
+                                        </div>
+                                    </div>
                                 </div>
-                                <button onclick="closeSearch()" class="text-yellow-600 font-medium">Cancel</button>
+                                
+                                <!-- Search Results -->
+                                <div class="mt-4 max-h-80 overflow-y-auto">
+                                    ${searchQuery.length > 0 ? `
+                                        ${getSearchResults().players.length > 0 ? `
+                                            <p class="text-xs font-medium text-gray-400 uppercase tracking-wide mb-2 px-2">Players</p>
+                                            <div class="space-y-2 mb-4">
+                                                ${getSearchResults().players.map(p => `
+                                                    <div onclick="openPlayerProfile('${p.name}')" class="glass-card rounded-2xl p-4 cursor-pointer" style="background: rgba(255,255,255,0.8);">
+                                                        <div class="flex items-center gap-3">
+                                                            <div class="w-10 h-10 rounded-xl bg-yellow-400 flex items-center justify-center font-bold text-gray-900">${p.shirtNumber}</div>
+                                                            <div>
+                                                                <p class="font-semibold text-gray-900">${p.name}</p>
+                                                                <p class="text-xs text-gray-400">${p.position} · ${p.goals} goals</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                `).join('')}
+                                            </div>
+                                        ` : ''}
+                                        
+                                        ${getSearchResults().matches.length > 0 ? `
+                                            <p class="text-xs font-medium text-gray-400 uppercase tracking-wide mb-2 px-2">Matches</p>
+                                            <div class="space-y-2">
+                                                ${getSearchResults().matches.map(m => `
+                                                    <div class="glass-card rounded-2xl p-4" style="background: rgba(255,255,255,0.8);">
+                                                        <div class="flex items-center justify-between">
+                                                            <div>
+                                                                <p class="font-semibold text-gray-900">${m.opponent}</p>
+                                                                <p class="text-xs text-gray-400">${formatShortDate(m.date)}</p>
+                                                            </div>
+                                                            ${m.status.toLowerCase() === 'played' ? `
+                                                                <span class="text-lg font-bold">${m.ourScore}-${m.theirScore}</span>
+                                                            ` : `
+                                                                <span class="text-xs text-gray-400">${m.status}</span>
+                                                            `}
+                                                        </div>
+                                                    </div>
+                                                `).join('')}
+                                            </div>
+                                        ` : ''}
+                                        
+                                        ${getSearchResults().players.length === 0 && getSearchResults().matches.length === 0 ? `
+                                            <p class="text-gray-400 text-center py-8">No results for "${searchQuery}"</p>
+                                        ` : ''}
+                                    ` : `
+                                        <p class="text-gray-400 text-center py-4">Search for players or opponents</p>
+                                    `}
+                                </div>
                             </div>
-                        </div>
-                        
-                        <div class="px-4 py-2 overflow-y-auto" style="max-height: calc(100vh - 80px);">
-                            ${searchQuery.length > 0 ? `
-                                ${getSearchResults().players.length > 0 ? `
-                                    <p class="text-xs font-medium text-gray-400 uppercase tracking-wide mb-2">Players</p>
-                                    <div class="space-y-2 mb-4">
-                                        ${getSearchResults().players.map(p => `
-                                            <div onclick="openPlayerProfile('${p.name}')" class="glass-card rounded-2xl p-4 cursor-pointer">
-                                                <div class="flex items-center gap-3">
-                                                    <div class="w-10 h-10 rounded-xl bg-yellow-400 flex items-center justify-center font-bold text-gray-900">${p.shirtNumber}</div>
-                                                    <div>
-                                                        <p class="font-semibold text-gray-900">${p.name}</p>
-                                                        <p class="text-xs text-gray-400">${p.position} · ${p.goals} goals</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        `).join('')}
-                                    </div>
-                                ` : ''}
-                                
-                                ${getSearchResults().matches.length > 0 ? `
-                                    <p class="text-xs font-medium text-gray-400 uppercase tracking-wide mb-2">Matches</p>
-                                    <div class="space-y-2">
-                                        ${getSearchResults().matches.map(m => `
-                                            <div class="glass-card rounded-2xl p-4">
-                                                <div class="flex items-center justify-between">
-                                                    <div>
-                                                        <p class="font-semibold text-gray-900">${m.opponent}</p>
-                                                        <p class="text-xs text-gray-400">${formatShortDate(m.date)}</p>
-                                                    </div>
-                                                    ${m.status.toLowerCase() === 'played' ? `
-                                                        <span class="text-lg font-bold">${m.ourScore}-${m.theirScore}</span>
-                                                    ` : `
-                                                        <span class="text-xs text-gray-400">${m.status}</span>
-                                                    `}
-                                                </div>
-                                            </div>
-                                        `).join('')}
-                                    </div>
-                                ` : ''}
-                                
-                                ${getSearchResults().players.length === 0 && getSearchResults().matches.length === 0 ? `
-                                    <p class="text-gray-400 text-center py-8">No results for "${searchQuery}"</p>
-                                ` : ''}
-                            ` : `
-                                <p class="text-gray-400 text-center py-8">Search for players or opponents</p>
-                            `}
                         </div>
                     </div>
 
@@ -957,7 +988,10 @@
                                                     <p class="text-base font-bold number-display">${p.goals}</p>
                                                     <p class="text-[10px] text-gray-400">Goals</p>
                                                 </div>
-                                                ${p.motm > 0 ? `<div><p class="text-base font-bold text-yellow-500 number-display">${p.motm}</p><p class="text-[10px] text-gray-400">MOTM</p></div>` : ''}
+                                                <div>
+                                                    <p class="text-base font-bold ${p.motm > 0 ? 'text-yellow-500' : 'text-gray-900'} number-display">${p.motm}</p>
+                                                    <p class="text-[10px] text-gray-400">MOTM</p>
+                                                </div>
                                             </div>
                                             <svg class="w-4 h-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                                         </div>
