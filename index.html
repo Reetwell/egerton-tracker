@@ -4,137 +4,250 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <title>Egerton U15 Lions</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         * {
             -webkit-tap-highlight-color: transparent;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --yellow-club: #FACC15;
+            --yellow-light: #FEF9C3;
+            --yellow-dark: #CA8A04;
         }
         
         body {
-            background: linear-gradient(180deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            background: linear-gradient(180deg, #f8f8f8 0%, #f0f0f5 100%);
             min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
         }
-        
-        /* Liquid Glass Effect */
-        .glass {
-            background: rgba(255, 255, 255, 0.12);
-            backdrop-filter: blur(20px) saturate(180%);
-            -webkit-backdrop-filter: blur(20px) saturate(180%);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 
-                0 8px 32px rgba(0, 0, 0, 0.3),
-                inset 0 1px 0 rgba(255, 255, 255, 0.2);
-        }
-        
-        .glass-light {
-            background: rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(16px) saturate(150%);
-            -webkit-backdrop-filter: blur(16px) saturate(150%);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
+
+        /* Liquid Glass Navigation - Apple Style */
         .glass-nav {
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(40px) saturate(200%);
-            -webkit-backdrop-filter: blur(40px) saturate(200%);
-            border: 1px solid rgba(255, 255, 255, 0.25);
+            background: rgba(255, 255, 255, 0.65);
+            backdrop-filter: blur(40px) saturate(180%);
+            -webkit-backdrop-filter: blur(40px) saturate(180%);
+            border: 0.5px solid rgba(255, 255, 255, 0.6);
             box-shadow: 
-                0 -4px 30px rgba(0, 0, 0, 0.2),
-                inset 0 1px 0 rgba(255, 255, 255, 0.3),
-                inset 0 -1px 0 rgba(255, 255, 255, 0.1);
+                0 -1px 0 rgba(0, 0, 0, 0.04),
+                0 8px 32px rgba(0, 0, 0, 0.08),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8),
+                inset 0 -0.5px 0 rgba(0, 0, 0, 0.05);
         }
-        
+
+        /* Liquid Glass Header */
+        .glass-header {
+            background: rgba(255, 255, 255, 0.72);
+            backdrop-filter: blur(30px) saturate(180%);
+            -webkit-backdrop-filter: blur(30px) saturate(180%);
+            border-bottom: 0.5px solid rgba(0, 0, 0, 0.06);
+            box-shadow: 
+                0 1px 3px rgba(0, 0, 0, 0.04),
+                inset 0 -0.5px 0 rgba(0, 0, 0, 0.02);
+        }
+
+        /* Glass Cards */
         .glass-card {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(12px) saturate(150%);
-            -webkit-backdrop-filter: blur(12px) saturate(150%);
-            border: 1px solid rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(20px) saturate(150%);
+            -webkit-backdrop-filter: blur(20px) saturate(150%);
+            border: 0.5px solid rgba(0, 0, 0, 0.06);
             box-shadow: 
-                0 4px 24px rgba(0, 0, 0, 0.2),
-                inset 0 1px 0 rgba(255, 255, 255, 0.15);
+                0 2px 12px rgba(0, 0, 0, 0.04),
+                0 1px 2px rgba(0, 0, 0, 0.02),
+                inset 0 1px 0 rgba(255, 255, 255, 0.9);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
         
-        .glass-button {
-            background: rgba(255, 255, 255, 0.15);
+        .glass-card:active {
+            transform: scale(0.98);
+        }
+
+        /* Yellow accent cards */
+        .glass-card-yellow {
+            background: rgba(254, 249, 195, 0.5);
+            border: 0.5px solid rgba(250, 204, 21, 0.3);
+            box-shadow: 
+                0 2px 12px rgba(250, 204, 21, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.9);
+        }
+
+        /* Stat cards with colors */
+        .stat-win {
+            background: rgba(220, 252, 231, 0.6);
+            border-color: rgba(34, 197, 94, 0.2);
+        }
+        .stat-draw {
+            background: rgba(254, 249, 195, 0.6);
+            border-color: rgba(250, 204, 21, 0.3);
+        }
+        .stat-loss {
+            background: rgba(254, 226, 226, 0.6);
+            border-color: rgba(239, 68, 68, 0.2);
+        }
+
+        /* Navigation item */
+        .nav-item {
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+        
+        .nav-item::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 50%;
+            transform: translateX(-50%) scaleX(0);
+            width: 4px;
+            height: 4px;
+            background: var(--yellow-club);
+            border-radius: 50%;
+            transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .nav-item.active::after {
+            transform: translateX(-50%) scaleX(1);
+        }
+        
+        .nav-item:active {
+            transform: scale(0.9);
+        }
+
+        /* Page transitions */
+        .page-content {
+            animation: fadeSlideIn 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        @keyframes fadeSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Input styling */
+        .glass-input {
+            background: rgba(255, 255, 255, 0.8);
+            border: 0.5px solid rgba(0, 0, 0, 0.1);
+            transition: all 0.2s ease;
+        }
+        
+        .glass-input:focus {
+            background: rgba(255, 255, 255, 0.95);
+            border-color: var(--yellow-club);
+            box-shadow: 0 0 0 3px rgba(250, 204, 21, 0.2);
+            outline: none;
+        }
+
+        /* Button styles */
+        .btn-primary {
+            background: var(--yellow-club);
+            color: #1f2937;
+            transition: all 0.2s ease;
+        }
+        
+        .btn-primary:active {
+            transform: scale(0.97);
+            background: var(--yellow-dark);
+        }
+
+        .btn-glass {
+            background: rgba(255, 255, 255, 0.6);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            transition: all 0.3s ease;
+            border: 0.5px solid rgba(0, 0, 0, 0.08);
+            transition: all 0.2s ease;
         }
         
-        .glass-button:active {
+        .btn-glass:active {
             transform: scale(0.97);
-            background: rgba(255, 255, 255, 0.25);
+            background: rgba(255, 255, 255, 0.8);
         }
         
-        .glass-button.active {
-            background: rgba(250, 204, 21, 0.3);
+        .btn-glass.active {
+            background: rgba(250, 204, 21, 0.25);
             border-color: rgba(250, 204, 21, 0.5);
-            box-shadow: 
-                0 0 20px rgba(250, 204, 21, 0.3),
-                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        }
+
+        /* Badge/pill styling */
+        .pill {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 0.5px solid rgba(0, 0, 0, 0.06);
+        }
+        
+        .pill-home {
+            background: rgba(220, 252, 231, 0.7);
+            color: #15803d;
+        }
+        
+        .pill-away {
+            background: rgba(219, 234, 254, 0.7);
+            color: #1d4ed8;
+        }
+
+        /* Result badges */
+        .result-w { background: rgba(34, 197, 94, 0.15); color: #15803d; }
+        .result-d { background: rgba(250, 204, 21, 0.2); color: #a16207; }
+        .result-l { background: rgba(239, 68, 68, 0.15); color: #dc2626; }
+
+        /* Safe areas */
+        .safe-top { padding-top: env(safe-area-inset-top, 0px); }
+        .safe-bottom { padding-bottom: env(safe-area-inset-bottom, 0px); }
+
+        /* Smooth scroll */
+        .scroll-container {
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
         /* Tooltip */
-        .tooltip {
-            position: relative;
-        }
+        .tooltip { position: relative; }
         .tooltip .tooltiptext {
             visibility: hidden;
-            width: 200px;
-            background: rgba(0, 0, 0, 0.8);
+            width: 180px;
+            background: rgba(0, 0, 0, 0.85);
             backdrop-filter: blur(10px);
             color: #fff;
             text-align: left;
             border-radius: 12px;
-            padding: 10px;
+            padding: 10px 12px;
             position: absolute;
             z-index: 1000;
-            bottom: 125%;
+            bottom: 130%;
             left: 50%;
-            margin-left: -100px;
+            margin-left: -90px;
             opacity: 0;
-            transition: opacity 0.3s;
-            font-size: 13px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: opacity 0.2s;
+            font-size: 12px;
         }
         .tooltip:hover .tooltiptext,
         .tooltip:active .tooltiptext {
             visibility: visible;
             opacity: 1;
         }
-        
-        /* Safe area for notch */
-        .safe-top {
-            padding-top: env(safe-area-inset-top, 20px);
-        }
-        .safe-bottom {
-            padding-bottom: env(safe-area-inset-bottom, 20px);
-        }
-        
-        /* Smooth scrolling */
-        .scroll-container {
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-        }
-        
-        /* Nav item animation */
-        .nav-item {
-            transition: all 0.2s ease;
-        }
-        .nav-item:active {
-            transform: scale(0.9);
+
+        /* Number styling */
+        .number-display {
+            font-variant-numeric: tabular-nums;
+            font-feature-settings: "tnum";
         }
     </style>
 </head>
-<body class="text-white">
+<body class="text-gray-900">
     <div id="app">
         <div class="min-h-screen flex items-center justify-center">
             <div class="text-center">
-                <div class="w-12 h-12 border-3 border-yellow-400 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                <p class="text-white/60 text-sm">Loading...</p>
+                <div class="w-10 h-10 border-2 border-yellow-400 border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
+                <p class="text-gray-400 text-sm">Loading...</p>
             </div>
         </div>
     </div>
@@ -165,35 +278,27 @@
         }
 
         function formatGoalScorers(scorersText, notesText) {
-            if (!scorersText || scorersText === 'NO GOALS') {
-                return 'No goals scored';
-            }
+            if (!scorersText || scorersText === 'NO GOALS') return 'No goals';
             const scorers = scorersText.split(',').map(s => s.trim());
             const goalCounts = notesText ? notesText.split(',').map(s => s.trim()) : [];
-            const formatted = scorers.map((scorer, index) => {
-                const goals = goalCounts[index] || '1';
-                return `${scorer} (${goals})`;
-            });
-            return formatted.join(', ');
+            return scorers.map((scorer, i) => `${scorer} (${goalCounts[i] || '1'})`).join(', ');
         }
 
         function parseDate(dateStr) {
             if (!dateStr) return null;
-            const months = {
-                'january': 0, 'february': 1, 'march': 2, 'april': 3,
-                'may': 4, 'june': 5, 'july': 6, 'august': 7,
-                'september': 8, 'october': 9, 'november': 10, 'december': 11
-            };
+            const months = { 'january': 0, 'february': 1, 'march': 2, 'april': 3, 'may': 4, 'june': 5, 'july': 6, 'august': 7, 'september': 8, 'october': 9, 'november': 10, 'december': 11 };
             const parts = dateStr.toLowerCase().split(' ');
             if (parts.length >= 3) {
-                const day = parseInt(parts[0]);
-                const month = months[parts[1]];
-                const year = parseInt(parts[2]);
-                if (!isNaN(day) && month !== undefined && !isNaN(year)) {
-                    return new Date(year, month, day);
-                }
+                const day = parseInt(parts[0]), month = months[parts[1]], year = parseInt(parts[2]);
+                if (!isNaN(day) && month !== undefined && !isNaN(year)) return new Date(year, month, day);
             }
             return null;
+        }
+
+        function formatShortDate(dateStr) {
+            const d = parseDate(dateStr);
+            if (!d) return dateStr;
+            return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
         }
 
         async function fetchSheetData() {
@@ -202,173 +307,119 @@
                     fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/Fixtures?key=${API_KEY}`),
                     fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/Players?key=${API_KEY}`)
                 ]);
-
                 const fixturesData = await fixturesRes.json();
                 const playersData = await playersRes.json();
 
                 if (fixturesData.values && fixturesData.values.length > 1) {
-                    allMatches = fixturesData.values.slice(1)
-                        .filter(row => row && row.length >= 11 && row[0])
-                        .map(row => ({
-                            id: row[0],
-                            date: row[1] || '',
-                            dateObj: parseDate(row[1]),
-                            kickOffTime: row[2] || '',
-                            opponent: row[3] || '',
-                            venue: row[4] || '',
-                            competition: row[5] || '',
-                            ourScore: row[6] || '',
-                            goalScorers: row[7] || '',
-                            notes: row[8] || '',
-                            theirScore: row[9] || '',
-                            status: row[10] || ''
-                        }));
-
-                    fixtures = allMatches.filter(m => 
-                        m.status && (m.status.toLowerCase() === 'scheduled' || m.status.toLowerCase() === 'postponed')
-                    );
-                    
-                    results = allMatches.filter(m => 
-                        m.status && m.status.toLowerCase() === 'played'
-                    ).map(match => {
-                        const ourScore = parseInt(match.ourScore) || 0;
-                        const theirScore = parseInt(match.theirScore) || 0;
-                        let result = 'Draw';
-                        if (ourScore > theirScore) result = 'Win';
-                        else if (ourScore < theirScore) result = 'Loss';
-                        return { ...match, goalsFor: ourScore, goalsAgainst: theirScore, result: result };
+                    allMatches = fixturesData.values.slice(1).filter(row => row && row.length >= 11 && row[0]).map(row => ({
+                        id: row[0], date: row[1] || '', dateObj: parseDate(row[1]), kickOffTime: row[2] || '',
+                        opponent: row[3] || '', venue: row[4] || '', competition: row[5] || '',
+                        ourScore: row[6] || '', goalScorers: row[7] || '', notes: row[8] || '',
+                        theirScore: row[9] || '', status: row[10] || ''
+                    }));
+                    fixtures = allMatches.filter(m => m.status && (m.status.toLowerCase() === 'scheduled' || m.status.toLowerCase() === 'postponed'));
+                    results = allMatches.filter(m => m.status && m.status.toLowerCase() === 'played').map(match => {
+                        const ourScore = parseInt(match.ourScore) || 0, theirScore = parseInt(match.theirScore) || 0;
+                        let result = ourScore > theirScore ? 'Win' : ourScore < theirScore ? 'Loss' : 'Draw';
+                        return { ...match, goalsFor: ourScore, goalsAgainst: theirScore, result };
                     });
-
-                    results.sort((a, b) => {
-                        if (!a.dateObj || !b.dateObj) return 0;
-                        return b.dateObj - a.dateObj;
-                    });
+                    results.sort((a, b) => (b.dateObj || 0) - (a.dateObj || 0));
                 }
-
                 if (playersData.values && playersData.values.length > 1) {
-                    players = playersData.values.slice(1)
-                        .filter(row => row && row.length >= 2 && row[1])
-                        .map(row => ({
-                            shirtNumber: row[0] || '',
-                            name: row[1] || '',
-                            position: row[2] || '',
-                            goals: parseInt(row[3]) || 0,
-                            motm: parseInt(row[4]) || 0
-                        }));
+                    players = playersData.values.slice(1).filter(row => row && row.length >= 2 && row[1]).map(row => ({
+                        shirtNumber: row[0] || '', name: row[1] || '', position: row[2] || '',
+                        goals: parseInt(row[3]) || 0, motm: parseInt(row[4]) || 0
+                    }));
                 }
-
                 renderApp();
             } catch (error) {
-                console.error('Error fetching data:', error);
-                document.getElementById('app').innerHTML = `
-                    <div class="min-h-screen flex items-center justify-center p-6">
-                        <div class="text-center">
-                            <p class="text-red-400 mb-4">Error loading data</p>
-                            <button onclick="fetchSheetData()" class="glass-button px-6 py-3 rounded-2xl text-white">
-                                Retry
-                            </button>
-                        </div>
-                    </div>
-                `;
+                console.error('Error:', error);
+                document.getElementById('app').innerHTML = `<div class="min-h-screen flex items-center justify-center p-6"><div class="text-center"><p class="text-red-500 mb-4">Error loading data</p><button onclick="fetchSheetData()" class="btn-primary px-6 py-3 rounded-2xl font-semibold">Retry</button></div></div>`;
             }
         }
 
         function getResultCounts() {
-            const wins = results.filter(r => r.result === 'Win').length;
-            const draws = results.filter(r => r.result === 'Draw').length;
-            const losses = results.filter(r => r.result === 'Loss').length;
-            return { wins, draws, losses };
+            return { wins: results.filter(r => r.result === 'Win').length, draws: results.filter(r => r.result === 'Draw').length, losses: results.filter(r => r.result === 'Loss').length };
         }
 
         function renderApp() {
             const { wins, draws, losses } = getResultCounts();
             const played = results.length;
-            const upcomingFixtures = fixtures.slice(0, 5);
-            const recentResults = results.slice(0, 5);
-            
             const topScorers = [...players].sort((a, b) => b.goals - a.goals).slice(0, 3);
-            
-            let filteredResults = results;
-            if (resultFilter) {
-                filteredResults = results.filter(r => r.result === resultFilter);
-            }
+            let filteredResults = resultFilter ? results.filter(r => r.result === resultFilter) : results;
 
             document.getElementById('app').innerHTML = `
                 <div class="min-h-screen flex flex-col">
                     <!-- Header -->
-                    <header class="glass safe-top sticky top-0 z-40 px-4 py-3">
+                    <header class="glass-header safe-top sticky top-0 z-40 px-4 py-3">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-3">
-                                <img src="${BADGE_IMG}" class="w-10 h-10 rounded-xl" alt="Badge">
+                                <img src="${BADGE_IMG}" class="w-9 h-9 rounded-lg shadow-sm" alt="Badge">
                                 <div>
-                                    <h1 class="text-lg font-semibold text-white">Egerton U15</h1>
-                                    <p class="text-xs text-white/50">Season 2025/26</p>
+                                    <h1 class="text-base font-semibold text-gray-900">Egerton U15 Lions</h1>
+                                    <p class="text-xs text-gray-400">2025/26</p>
                                 </div>
                             </div>
-                            <button onclick="fetchSheetData()" class="glass-button w-10 h-10 rounded-full flex items-center justify-center">
-                                <span class="text-lg">↻</span>
+                            <button onclick="fetchSheetData()" class="btn-glass w-9 h-9 rounded-full flex items-center justify-center text-gray-500">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
                             </button>
                         </div>
                     </header>
 
                     <!-- Main Content -->
                     <main class="flex-1 scroll-container px-4 pb-28 pt-4">
+                        <div class="page-content">
                         
                         ${currentTab === 'overview' ? `
-                            <!-- Stats Grid -->
-                            <div class="grid grid-cols-2 gap-3 mb-6">
-                                <div class="glass-card rounded-3xl p-4">
-                                    <p class="text-white/50 text-xs uppercase tracking-wider mb-1">Played</p>
-                                    <p class="text-3xl font-bold text-white">${played}</p>
+                            <!-- Stats -->
+                            <div class="grid grid-cols-4 gap-2 mb-5">
+                                <div class="glass-card rounded-2xl p-3 text-center">
+                                    <p class="text-xs text-gray-400 mb-0.5">Played</p>
+                                    <p class="text-2xl font-bold number-display">${played}</p>
                                 </div>
-                                <div onclick="filterResults('Win')" class="glass-card rounded-3xl p-4 cursor-pointer active:scale-95 transition-transform" style="background: rgba(34, 197, 94, 0.15); border-color: rgba(34, 197, 94, 0.3);">
-                                    <p class="text-green-400/70 text-xs uppercase tracking-wider mb-1">Wins</p>
-                                    <p class="text-3xl font-bold text-green-400">${wins}</p>
+                                <div class="glass-card stat-win rounded-2xl p-3 text-center cursor-pointer" onclick="filterResults('Win')">
+                                    <p class="text-xs text-green-600 mb-0.5">W</p>
+                                    <p class="text-2xl font-bold text-green-600 number-display">${wins}</p>
                                 </div>
-                                <div onclick="filterResults('Draw')" class="glass-card rounded-3xl p-4 cursor-pointer active:scale-95 transition-transform" style="background: rgba(250, 204, 21, 0.15); border-color: rgba(250, 204, 21, 0.3);">
-                                    <p class="text-yellow-400/70 text-xs uppercase tracking-wider mb-1">Draws</p>
-                                    <p class="text-3xl font-bold text-yellow-400">${draws}</p>
+                                <div class="glass-card stat-draw rounded-2xl p-3 text-center cursor-pointer" onclick="filterResults('Draw')">
+                                    <p class="text-xs text-yellow-600 mb-0.5">D</p>
+                                    <p class="text-2xl font-bold text-yellow-600 number-display">${draws}</p>
                                 </div>
-                                <div onclick="filterResults('Loss')" class="glass-card rounded-3xl p-4 cursor-pointer active:scale-95 transition-transform" style="background: rgba(239, 68, 68, 0.15); border-color: rgba(239, 68, 68, 0.3);">
-                                    <p class="text-red-400/70 text-xs uppercase tracking-wider mb-1">Losses</p>
-                                    <p class="text-3xl font-bold text-red-400">${losses}</p>
+                                <div class="glass-card stat-loss rounded-2xl p-3 text-center cursor-pointer" onclick="filterResults('Loss')">
+                                    <p class="text-xs text-red-500 mb-0.5">L</p>
+                                    <p class="text-2xl font-bold text-red-500 number-display">${losses}</p>
                                 </div>
                             </div>
 
                             <!-- Next Match -->
-                            ${upcomingFixtures.length > 0 ? `
-                                <div class="glass-card rounded-3xl p-5 mb-6">
-                                    <p class="text-white/50 text-xs uppercase tracking-wider mb-3">Next Match</p>
+                            ${fixtures.length > 0 ? `
+                                <div class="glass-card-yellow glass-card rounded-2xl p-4 mb-5">
+                                    <p class="text-xs font-medium text-yellow-700 uppercase tracking-wide mb-2">Next Match</p>
                                     <div class="flex items-center justify-between">
                                         <div>
-                                            <p class="text-xl font-semibold text-white">${upcomingFixtures[0].opponent}</p>
-                                            <p class="text-white/50 text-sm mt-1">${upcomingFixtures[0].date}</p>
-                                            <p class="text-white/40 text-sm">${upcomingFixtures[0].kickOffTime}</p>
+                                            <p class="text-lg font-semibold text-gray-900">${fixtures[0].opponent}</p>
+                                            <p class="text-sm text-gray-500">${formatShortDate(fixtures[0].date)} · ${fixtures[0].kickOffTime}</p>
                                         </div>
-                                        <div class="glass-button px-4 py-2 rounded-2xl">
-                                            <span class="text-sm font-medium ${upcomingFixtures[0].venue === 'Home' ? 'text-green-400' : 'text-blue-400'}">${upcomingFixtures[0].venue}</span>
-                                        </div>
+                                        <span class="pill ${fixtures[0].venue === 'Home' ? 'pill-home' : 'pill-away'} px-3 py-1 rounded-full text-xs font-medium">${fixtures[0].venue}</span>
                                     </div>
                                 </div>
                             ` : ''}
 
                             <!-- Top Scorers -->
-                            ${topScorers.length > 0 ? `
-                                <div class="glass-card rounded-3xl p-5 mb-6">
-                                    <p class="text-white/50 text-xs uppercase tracking-wider mb-4">Top Scorers</p>
+                            ${topScorers.length > 0 && topScorers[0].goals > 0 ? `
+                                <div class="glass-card rounded-2xl p-4 mb-5">
+                                    <p class="text-xs font-medium text-gray-400 uppercase tracking-wide mb-3">Top Scorers</p>
                                     <div class="space-y-3">
-                                        ${topScorers.map((player, idx) => `
+                                        ${topScorers.filter(p => p.goals > 0).map((player, i) => `
                                             <div class="flex items-center justify-between">
                                                 <div class="flex items-center gap-3">
-                                                    <div class="w-8 h-8 rounded-full glass-button flex items-center justify-center text-sm font-bold text-yellow-400">
-                                                        ${idx + 1}
-                                                    </div>
+                                                    <span class="w-6 h-6 rounded-full ${i === 0 ? 'bg-yellow-400 text-gray-900' : 'bg-gray-100 text-gray-500'} flex items-center justify-center text-xs font-bold">${i + 1}</span>
                                                     <div>
-                                                        <p class="text-white font-medium text-sm">${player.name}</p>
-                                                        <p class="text-white/40 text-xs">${player.position}</p>
+                                                        <p class="text-sm font-medium text-gray-900">${player.name}</p>
+                                                        <p class="text-xs text-gray-400">${player.position}</p>
                                                     </div>
                                                 </div>
-                                                <p class="text-2xl font-bold text-white">${player.goals}</p>
+                                                <p class="text-xl font-bold text-gray-900 number-display">${player.goals}</p>
                                             </div>
                                         `).join('')}
                                     </div>
@@ -376,23 +427,19 @@
                             ` : ''}
 
                             <!-- Recent Results -->
-                            ${recentResults.length > 0 ? `
-                                <div class="glass-card rounded-3xl p-5">
-                                    <p class="text-white/50 text-xs uppercase tracking-wider mb-4">Recent Results</p>
-                                    <div class="space-y-3">
-                                        ${recentResults.slice(0, 3).map(result => `
-                                            <div class="flex items-center justify-between py-2">
-                                                <div>
-                                                    <p class="text-white font-medium text-sm">${result.opponent}</p>
-                                                    <p class="text-white/40 text-xs">${result.date}</p>
+                            ${results.length > 0 ? `
+                                <div class="glass-card rounded-2xl p-4">
+                                    <p class="text-xs font-medium text-gray-400 uppercase tracking-wide mb-3">Recent</p>
+                                    <div class="space-y-2">
+                                        ${results.slice(0, 4).map(r => `
+                                            <div class="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">
+                                                <div class="flex-1">
+                                                    <p class="text-sm font-medium text-gray-900">${r.opponent}</p>
+                                                    <p class="text-xs text-gray-400">${formatShortDate(r.date)}</p>
                                                 </div>
-                                                <div class="flex items-center gap-3">
-                                                    <span class="text-xl font-bold text-white">${result.goalsFor}-${result.goalsAgainst}</span>
-                                                    <span class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${
-                                                        result.result === 'Win' ? 'bg-green-500/20 text-green-400' :
-                                                        result.result === 'Draw' ? 'bg-yellow-500/20 text-yellow-400' :
-                                                        'bg-red-500/20 text-red-400'
-                                                    }">${result.result[0]}</span>
+                                                <div class="flex items-center gap-2">
+                                                    <span class="text-base font-bold number-display">${r.goalsFor}-${r.goalsAgainst}</span>
+                                                    <span class="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold result-${r.result[0].toLowerCase()}">${r.result[0]}</span>
                                                 </div>
                                             </div>
                                         `).join('')}
@@ -402,197 +449,176 @@
                         ` : ''}
 
                         ${currentTab === 'fixtures' ? `
-                            <h2 class="text-2xl font-bold text-white mb-4">Fixtures</h2>
-                            <div class="space-y-3">
-                                ${fixtures.length > 0 ? fixtures.map(fixture => `
+                            <h2 class="text-xl font-bold text-gray-900 mb-4">Fixtures</h2>
+                            <div class="space-y-2">
+                                ${fixtures.length > 0 ? fixtures.map(f => `
                                     <div class="glass-card rounded-2xl p-4">
-                                        <div class="flex items-center justify-between mb-2">
-                                            <p class="text-white font-semibold">${fixture.opponent}</p>
-                                            <span class="glass-button px-3 py-1 rounded-xl text-xs font-medium ${fixture.venue === 'Home' ? 'text-green-400' : 'text-blue-400'}">${fixture.venue}</span>
+                                        <div class="flex items-center justify-between mb-1">
+                                            <p class="font-semibold text-gray-900">${f.opponent}</p>
+                                            <span class="pill ${f.venue === 'Home' ? 'pill-home' : 'pill-away'} px-2.5 py-0.5 rounded-full text-xs font-medium">${f.venue}</span>
                                         </div>
-                                        <div class="flex items-center justify-between text-sm">
-                                            <p class="text-white/50">${fixture.date} · ${fixture.kickOffTime}</p>
-                                            ${fixture.status === 'Postponed' ? '<span class="text-orange-400 text-xs">Postponed</span>' : ''}
+                                        <div class="flex items-center justify-between">
+                                            <p class="text-sm text-gray-500">${formatShortDate(f.date)} · ${f.kickOffTime}</p>
+                                            ${f.status === 'Postponed' ? '<span class="text-xs text-orange-500 font-medium">Postponed</span>' : ''}
                                         </div>
-                                        <p class="text-white/30 text-xs mt-1">${fixture.competition}</p>
                                     </div>
-                                `).join('') : '<p class="text-white/50 text-center py-8">No fixtures</p>'}
+                                `).join('') : '<p class="text-gray-400 text-center py-8">No fixtures</p>'}
                             </div>
                         ` : ''}
 
                         ${currentTab === 'results' ? `
                             <div class="flex items-center justify-between mb-4">
-                                <h2 class="text-2xl font-bold text-white">Results</h2>
-                                ${resultFilter ? `
-                                    <button onclick="resultFilter = null; renderApp()" class="glass-button px-3 py-1 rounded-xl text-xs text-white/70">Clear</button>
-                                ` : ''}
+                                <h2 class="text-xl font-bold text-gray-900">Results</h2>
+                                ${resultFilter ? `<button onclick="resultFilter = null; renderApp()" class="text-xs text-yellow-600 font-medium">Clear filter</button>` : ''}
                             </div>
-                            <div class="space-y-3">
-                                ${filteredResults.length > 0 ? filteredResults.map(result => `
+                            <div class="space-y-2">
+                                ${filteredResults.length > 0 ? filteredResults.map(r => `
                                     <div class="glass-card rounded-2xl p-4">
-                                        <div class="flex items-center justify-between mb-2">
-                                            <p class="text-white font-semibold">${result.opponent}</p>
+                                        <div class="flex items-center justify-between mb-1">
+                                            <p class="font-semibold text-gray-900">${r.opponent}</p>
                                             <div class="flex items-center gap-2">
-                                                <span class="text-xl font-bold text-white">${result.goalsFor}-${result.goalsAgainst}</span>
-                                                <span class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${
-                                                    result.result === 'Win' ? 'bg-green-500/20 text-green-400' :
-                                                    result.result === 'Draw' ? 'bg-yellow-500/20 text-yellow-400' :
-                                                    'bg-red-500/20 text-red-400'
-                                                }">${result.result[0]}</span>
+                                                <span class="text-lg font-bold number-display">${r.goalsFor}-${r.goalsAgainst}</span>
+                                                <span class="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold result-${r.result[0].toLowerCase()}">${r.result[0]}</span>
                                             </div>
                                         </div>
-                                        <div class="flex items-center justify-between text-sm">
-                                            <p class="text-white/50">${result.date}</p>
-                                            <span class="glass-button px-3 py-1 rounded-xl text-xs font-medium ${result.venue === 'Home' ? 'text-green-400' : 'text-blue-400'}">${result.venue}</span>
+                                        <div class="flex items-center justify-between">
+                                            <p class="text-sm text-gray-500">${formatShortDate(r.date)}</p>
+                                            <span class="pill ${r.venue === 'Home' ? 'pill-home' : 'pill-away'} px-2.5 py-0.5 rounded-full text-xs font-medium">${r.venue}</span>
                                         </div>
-                                        ${result.goalScorers ? `<p class="text-white/40 text-xs mt-2">⚽ ${formatGoalScorers(result.goalScorers, result.notes)}</p>` : ''}
+                                        ${r.goalScorers ? `<p class="text-xs text-gray-400 mt-2">⚽ ${formatGoalScorers(r.goalScorers, r.notes)}</p>` : ''}
                                     </div>
-                                `).join('') : '<p class="text-white/50 text-center py-8">No results</p>'}
+                                `).join('') : '<p class="text-gray-400 text-center py-8">No results</p>'}
                             </div>
                         ` : ''}
 
                         ${currentTab === 'players' ? `
-                            <h2 class="text-2xl font-bold text-white mb-4">Squad</h2>
-                            <div class="space-y-3">
-                                ${players.length > 0 ? players.map(player => `
+                            <h2 class="text-xl font-bold text-gray-900 mb-4">Squad</h2>
+                            <div class="space-y-2">
+                                ${players.length > 0 ? players.map(p => `
                                     <div class="glass-card rounded-2xl p-4">
-                                        <div class="flex items-center gap-4">
-                                            <div class="w-12 h-12 rounded-2xl glass-button flex items-center justify-center font-bold text-lg text-yellow-400">
-                                                ${player.shirtNumber}
-                                            </div>
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-11 h-11 rounded-xl bg-yellow-400 flex items-center justify-center font-bold text-gray-900">${p.shirtNumber}</div>
                                             <div class="flex-1">
-                                                <p class="text-white font-semibold">${player.name}</p>
-                                                <p class="text-white/40 text-sm">${player.position}</p>
+                                                <p class="font-semibold text-gray-900">${p.name}</p>
+                                                <p class="text-xs text-gray-400">${p.position}</p>
                                             </div>
                                             <div class="flex items-center gap-4 text-center">
                                                 <div>
-                                                    <p class="text-xl font-bold text-white">${player.goals}</p>
-                                                    <p class="text-white/40 text-xs">Goals</p>
+                                                    <p class="text-lg font-bold number-display">${p.goals}</p>
+                                                    <p class="text-xs text-gray-400">Goals</p>
                                                 </div>
-                                                ${player.motm > 0 ? `
-                                                    <div>
-                                                        <p class="text-xl font-bold text-yellow-400">${player.motm}</p>
-                                                        <p class="text-white/40 text-xs">MOTM</p>
-                                                    </div>
-                                                ` : ''}
+                                                ${p.motm > 0 ? `<div><p class="text-lg font-bold text-yellow-500 number-display">${p.motm}</p><p class="text-xs text-gray-400">MOTM</p></div>` : ''}
                                             </div>
                                         </div>
                                     </div>
-                                `).join('') : '<p class="text-white/50 text-center py-8">No players</p>'}
+                                `).join('') : '<p class="text-gray-400 text-center py-8">No players</p>'}
                             </div>
                         ` : ''}
 
                         ${currentTab === 'admin' ? `
-                            <h2 class="text-2xl font-bold text-white mb-2">Admin</h2>
-                            <p class="text-white/50 text-sm mb-6">Update match results</p>
+                            <h2 class="text-xl font-bold text-gray-900 mb-1">Admin</h2>
+                            <p class="text-sm text-gray-400 mb-4">Update match results</p>
                             
-                            <div class="space-y-3" id="matchCards">
+                            <div class="space-y-2" id="matchCards">
                                 ${allMatches.filter(m => m.status === 'Scheduled' || m.status === 'Postponed').length > 0 ? 
-                                    allMatches.filter(m => m.status === 'Scheduled' || m.status === 'Postponed').map(match => `
-                                    <div onclick="selectMatch('${match.id}')" class="glass-card rounded-2xl p-4 cursor-pointer active:scale-98 transition-transform">
+                                    allMatches.filter(m => m.status === 'Scheduled' || m.status === 'Postponed').map(m => `
+                                    <div onclick="selectMatch('${m.id}')" class="glass-card rounded-2xl p-4 cursor-pointer">
                                         <div class="flex items-center justify-between">
                                             <div>
-                                                <p class="text-white font-semibold">${match.opponent}</p>
-                                                <p class="text-white/50 text-sm">${match.date} · ${match.kickOffTime}</p>
+                                                <p class="font-semibold text-gray-900">${m.opponent}</p>
+                                                <p class="text-sm text-gray-500">${formatShortDate(m.date)} · ${m.kickOffTime}</p>
                                             </div>
                                             <div class="flex items-center gap-2">
-                                                <span class="glass-button px-3 py-1 rounded-xl text-xs font-medium ${match.venue === 'Home' ? 'text-green-400' : 'text-blue-400'}">${match.venue}</span>
-                                                ${match.status === 'Postponed' ? '<span class="text-orange-400 text-xs">PP</span>' : ''}
+                                                <span class="pill ${m.venue === 'Home' ? 'pill-home' : 'pill-away'} px-2.5 py-0.5 rounded-full text-xs font-medium">${m.venue}</span>
                                             </div>
                                         </div>
                                     </div>
-                                `).join('') : '<p class="text-white/50 text-center py-8">No matches to update</p>'}
+                                `).join('') : '<p class="text-gray-400 text-center py-8">No matches to update</p>'}
                             </div>
 
                             <div id="matchForm" class="hidden">
-                                <div class="glass-card rounded-3xl p-6">
-                                    <div id="matchInfo" class="mb-6 pb-4 border-b border-white/10"></div>
+                                <div class="glass-card rounded-2xl p-5">
+                                    <div id="matchInfo" class="mb-5 pb-4 border-b border-gray-100"></div>
 
-                                    <div class="mb-6">
-                                        <p class="text-white/50 text-xs uppercase tracking-wider mb-3">Status</p>
-                                        <div class="grid grid-cols-2 gap-3">
-                                            <button type="button" onclick="setStatus('Played')" id="btn-Played" class="status-btn glass-button py-3 rounded-2xl text-white font-medium">Played</button>
-                                            <button type="button" onclick="setStatus('Postponed')" id="btn-Postponed" class="status-btn glass-button py-3 rounded-2xl text-white font-medium">Postponed</button>
+                                    <div class="mb-5">
+                                        <p class="text-xs font-medium text-gray-400 uppercase tracking-wide mb-2">Status</p>
+                                        <div class="grid grid-cols-2 gap-2">
+                                            <button onclick="setStatus('Played')" id="btn-Played" class="status-btn btn-glass py-3 rounded-xl font-medium text-gray-700">Played</button>
+                                            <button onclick="setStatus('Postponed')" id="btn-Postponed" class="status-btn btn-glass py-3 rounded-xl font-medium text-gray-700">Postponed</button>
                                         </div>
                                     </div>
 
                                     <div id="scoreSection" class="hidden">
-                                        <div class="mb-6">
-                                            <p class="text-white/50 text-xs uppercase tracking-wider mb-3">Score</p>
-                                            <div class="flex items-center gap-4">
+                                        <div class="mb-5">
+                                            <p class="text-xs font-medium text-gray-400 uppercase tracking-wide mb-2">Score</p>
+                                            <div class="flex items-center gap-3">
                                                 <div class="flex-1">
-                                                    <p class="text-center text-white/50 text-xs mb-2">Egerton</p>
-                                                    <input type="number" id="adminOurScore" min="0" 
-                                                           class="w-full text-center text-3xl font-bold py-4 bg-white/10 border border-white/20 rounded-2xl text-white focus:border-yellow-400 focus:outline-none" 
-                                                           placeholder="0">
+                                                    <p class="text-center text-xs text-gray-400 mb-1">Egerton</p>
+                                                    <input type="number" id="adminOurScore" min="0" class="glass-input w-full text-center text-2xl font-bold py-3 rounded-xl" placeholder="0">
                                                 </div>
-                                                <span class="text-2xl text-white/30">-</span>
+                                                <span class="text-xl text-gray-300">-</span>
                                                 <div class="flex-1">
-                                                    <p class="text-center text-white/50 text-xs mb-2" id="opponentName">Opponent</p>
-                                                    <input type="number" id="adminTheirScore" min="0" 
-                                                           class="w-full text-center text-3xl font-bold py-4 bg-white/10 border border-white/20 rounded-2xl text-white focus:border-yellow-400 focus:outline-none" 
-                                                           placeholder="0">
+                                                    <p class="text-center text-xs text-gray-400 mb-1" id="opponentName">Opp</p>
+                                                    <input type="number" id="adminTheirScore" min="0" class="glass-input w-full text-center text-2xl font-bold py-3 rounded-xl" placeholder="0">
                                                 </div>
                                             </div>
                                         </div>
 
-                                        <div class="mb-6">
-                                            <p class="text-white/50 text-xs uppercase tracking-wider mb-3">Goal Scorers</p>
-                                            <input type="text" id="adminGoalScorers" 
-                                                   class="w-full py-4 px-4 bg-white/10 border border-white/20 rounded-2xl text-white placeholder-white/30 focus:border-yellow-400 focus:outline-none" 
-                                                   placeholder="Name, Name">
+                                        <div class="mb-5">
+                                            <p class="text-xs font-medium text-gray-400 uppercase tracking-wide mb-2">Goal Scorers</p>
+                                            <input type="text" id="adminGoalScorers" class="glass-input w-full py-3 px-4 rounded-xl" placeholder="Name, Name">
                                         </div>
 
-                                        <div class="mb-6">
-                                            <p class="text-white/50 text-xs uppercase tracking-wider mb-3">Goals Each</p>
-                                            <input type="text" id="adminNotes" 
-                                                   class="w-full py-4 px-4 bg-white/10 border border-white/20 rounded-2xl text-white placeholder-white/30 focus:border-yellow-400 focus:outline-none" 
-                                                   placeholder="2, 1">
+                                        <div class="mb-5">
+                                            <p class="text-xs font-medium text-gray-400 uppercase tracking-wide mb-2">Goals Each</p>
+                                            <input type="text" id="adminNotes" class="glass-input w-full py-3 px-4 rounded-xl" placeholder="2, 1">
                                         </div>
 
-                                        <div class="mb-6">
-                                            <p class="text-white/50 text-xs uppercase tracking-wider mb-3">Man of the Match</p>
-                                            <select id="adminMOTM" class="w-full py-4 px-4 bg-white/10 border border-white/20 rounded-2xl text-white focus:border-yellow-400 focus:outline-none appearance-none">
-                                                <option value="" class="bg-gray-900">Select player...</option>
-                                                ${players.map(p => `<option value="${p.name}" class="bg-gray-900">${p.name}</option>`).join('')}
+                                        <div class="mb-5">
+                                            <p class="text-xs font-medium text-gray-400 uppercase tracking-wide mb-2">MOTM</p>
+                                            <select id="adminMOTM" class="glass-input w-full py-3 px-4 rounded-xl">
+                                                <option value="">Select player...</option>
+                                                ${players.map(p => `<option value="${p.name}">${p.name}</option>`).join('')}
                                             </select>
                                         </div>
                                     </div>
 
                                     <input type="hidden" id="adminStatus" value="Scheduled">
 
-                                    <div class="flex gap-3">
-                                        <button onclick="cancelEdit()" class="flex-1 glass-button py-4 rounded-2xl text-white font-semibold">Cancel</button>
-                                        <button onclick="saveMatch()" class="flex-1 py-4 rounded-2xl bg-yellow-400 text-gray-900 font-semibold active:scale-95 transition-transform">Save</button>
+                                    <div class="flex gap-2">
+                                        <button onclick="cancelEdit()" class="flex-1 btn-glass py-3 rounded-xl font-semibold text-gray-700">Cancel</button>
+                                        <button onclick="saveMatch()" class="flex-1 btn-primary py-3 rounded-xl font-semibold">Save</button>
                                     </div>
 
-                                    <div id="adminMessage" class="mt-4 text-center hidden"></div>
+                                    <div id="adminMessage" class="mt-4 text-center text-sm hidden"></div>
                                 </div>
                             </div>
                         ` : ''}
+                        
+                        </div>
                     </main>
 
-                    <!-- Bottom Navigation -->
-                    <nav class="glass-nav fixed bottom-4 left-4 right-4 rounded-3xl flex justify-around py-2 z-50 safe-bottom">
-                        <button onclick="setActiveTab('overview')" class="nav-item flex flex-col items-center py-2 px-4 ${currentTab === 'overview' ? 'text-yellow-400' : 'text-white/50'}">
-                            <span class="text-xl mb-1">📊</span>
-                            <span class="text-[10px] font-medium">Home</span>
+                    <!-- Bottom Navigation - Liquid Glass -->
+                    <nav class="glass-nav fixed bottom-4 left-4 right-4 rounded-[28px] flex justify-around py-2 z-50">
+                        <button onclick="setActiveTab('overview')" class="nav-item ${currentTab === 'overview' ? 'active' : ''} flex flex-col items-center py-2 px-4">
+                            <span class="text-lg mb-0.5 ${currentTab === 'overview' ? '' : 'grayscale opacity-60'}">📊</span>
+                            <span class="text-[10px] font-medium ${currentTab === 'overview' ? 'text-yellow-600' : 'text-gray-400'}">Home</span>
                         </button>
-                        <button onclick="setActiveTab('fixtures')" class="nav-item flex flex-col items-center py-2 px-4 ${currentTab === 'fixtures' ? 'text-yellow-400' : 'text-white/50'}">
-                            <span class="text-xl mb-1">📅</span>
-                            <span class="text-[10px] font-medium">Fixtures</span>
+                        <button onclick="setActiveTab('fixtures')" class="nav-item ${currentTab === 'fixtures' ? 'active' : ''} flex flex-col items-center py-2 px-4">
+                            <span class="text-lg mb-0.5 ${currentTab === 'fixtures' ? '' : 'grayscale opacity-60'}">📅</span>
+                            <span class="text-[10px] font-medium ${currentTab === 'fixtures' ? 'text-yellow-600' : 'text-gray-400'}">Fixtures</span>
                         </button>
-                        <button onclick="setActiveTab('results')" class="nav-item flex flex-col items-center py-2 px-4 ${currentTab === 'results' ? 'text-yellow-400' : 'text-white/50'}">
-                            <span class="text-xl mb-1">🏆</span>
-                            <span class="text-[10px] font-medium">Results</span>
+                        <button onclick="setActiveTab('results')" class="nav-item ${currentTab === 'results' ? 'active' : ''} flex flex-col items-center py-2 px-4">
+                            <span class="text-lg mb-0.5 ${currentTab === 'results' ? '' : 'grayscale opacity-60'}">🏆</span>
+                            <span class="text-[10px] font-medium ${currentTab === 'results' ? 'text-yellow-600' : 'text-gray-400'}">Results</span>
                         </button>
-                        <button onclick="setActiveTab('players')" class="nav-item flex flex-col items-center py-2 px-4 ${currentTab === 'players' ? 'text-yellow-400' : 'text-white/50'}">
-                            <span class="text-xl mb-1">👥</span>
-                            <span class="text-[10px] font-medium">Squad</span>
+                        <button onclick="setActiveTab('players')" class="nav-item ${currentTab === 'players' ? 'active' : ''} flex flex-col items-center py-2 px-4">
+                            <span class="text-lg mb-0.5 ${currentTab === 'players' ? '' : 'grayscale opacity-60'}">👥</span>
+                            <span class="text-[10px] font-medium ${currentTab === 'players' ? 'text-yellow-600' : 'text-gray-400'}">Squad</span>
                         </button>
-                        <button onclick="setActiveTab('admin')" class="nav-item flex flex-col items-center py-2 px-4 ${currentTab === 'admin' ? 'text-yellow-400' : 'text-white/50'}">
-                            <span class="text-xl mb-1">⚙️</span>
-                            <span class="text-[10px] font-medium">Admin</span>
+                        <button onclick="setActiveTab('admin')" class="nav-item ${currentTab === 'admin' ? 'active' : ''} flex flex-col items-center py-2 px-4">
+                            <span class="text-lg mb-0.5 ${currentTab === 'admin' ? '' : 'grayscale opacity-60'}">⚙️</span>
+                            <span class="text-[10px] font-medium ${currentTab === 'admin' ? 'text-yellow-600' : 'text-gray-400'}">Admin</span>
                         </button>
                     </nav>
                 </div>
@@ -605,7 +631,6 @@
             selectedMatchId = matchId;
             const form = document.getElementById('matchForm');
             const cards = document.getElementById('matchCards');
-            
             const match = allMatches.find(m => m.id === matchId);
             if (!match) return;
 
@@ -613,8 +638,8 @@
             form.classList.remove('hidden');
 
             document.getElementById('matchInfo').innerHTML = `
-                <p class="text-xl font-semibold text-white">${match.opponent}</p>
-                <p class="text-white/50 text-sm mt-1">${match.date} · ${match.kickOffTime} · ${match.venue}</p>
+                <p class="text-lg font-semibold text-gray-900">${match.opponent}</p>
+                <p class="text-sm text-gray-500">${formatShortDate(match.date)} · ${match.kickOffTime} · ${match.venue}</p>
             `;
 
             const opponentNameEl = document.getElementById('opponentName');
@@ -628,60 +653,30 @@
             const motmSelect = document.getElementById('adminMOTM');
             if (motmSelect) motmSelect.value = '';
 
-            document.querySelectorAll('.status-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-
+            document.querySelectorAll('.status-btn').forEach(btn => btn.classList.remove('active'));
             document.getElementById('scoreSection').classList.add('hidden');
         }
 
         function setStatus(status) {
             document.getElementById('adminStatus').value = status;
-            
-            document.querySelectorAll('.status-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            
+            document.querySelectorAll('.status-btn').forEach(btn => btn.classList.remove('active'));
             const activeBtn = document.getElementById('btn-' + status);
-            if (activeBtn) {
-                activeBtn.classList.add('active');
-            }
-
-            const scoreSection = document.getElementById('scoreSection');
-            if (status === 'Played') {
-                scoreSection.classList.remove('hidden');
-            } else {
-                scoreSection.classList.add('hidden');
-            }
+            if (activeBtn) activeBtn.classList.add('active');
+            document.getElementById('scoreSection').classList.toggle('hidden', status !== 'Played');
         }
 
         function cancelEdit() {
             selectedMatchId = null;
-            const form = document.getElementById('matchForm');
-            const cards = document.getElementById('matchCards');
-            
-            form.classList.add('hidden');
-            cards.classList.remove('hidden');
+            document.getElementById('matchForm').classList.add('hidden');
+            document.getElementById('matchCards').classList.remove('hidden');
         }
 
         async function saveMatch() {
-            if (!selectedMatchId) {
-                showAdminMessage('No match selected', 'error');
-                return;
-            }
-
+            if (!selectedMatchId) return showAdminMessage('No match selected', 'error');
             const status = document.getElementById('adminStatus').value;
-            
-            if (status === 'Scheduled') {
-                showAdminMessage('Select status first', 'error');
-                return;
-            }
+            if (status === 'Scheduled') return showAdminMessage('Select status', 'error');
 
-            const data = {
-                id: selectedMatchId,
-                status: status
-            };
-
+            const data = { id: selectedMatchId, status };
             if (status === 'Played') {
                 data.ourScore = document.getElementById('adminOurScore').value || '0';
                 data.theirScore = document.getElementById('adminTheirScore').value || '0';
@@ -689,47 +684,25 @@
                 data.notes = document.getElementById('adminNotes').value || '';
                 data.motm = document.getElementById('adminMOTM').value || '';
             } else {
-                data.ourScore = '';
-                data.theirScore = '';
-                data.goalScorers = '';
-                data.notes = '';
+                data.ourScore = ''; data.theirScore = ''; data.goalScorers = ''; data.notes = '';
             }
 
             try {
                 showAdminMessage('Saving...', 'info');
-                
-                await fetch(APPS_SCRIPT_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                });
-
+                await fetch(APPS_SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
                 showAdminMessage('Saved ✓', 'success');
-                
-                setTimeout(() => {
-                    selectedMatchId = null;
-                    fetchSheetData();
-                }, 1500);
-
+                setTimeout(() => { selectedMatchId = null; fetchSheetData(); }, 1500);
             } catch (error) {
-                console.error('Error saving match:', error);
                 showAdminMessage('Error', 'error');
             }
         }
 
         function showAdminMessage(text, type) {
-            const message = document.getElementById('adminMessage');
-            if (!message) return;
-            
-            message.classList.remove('hidden');
-            message.className = 'mt-4 text-center text-sm';
-            
-            if (type === 'success') message.classList.add('text-green-400');
-            else if (type === 'error') message.classList.add('text-red-400');
-            else message.classList.add('text-blue-400');
-            
-            message.textContent = text;
+            const msg = document.getElementById('adminMessage');
+            if (!msg) return;
+            msg.classList.remove('hidden', 'text-green-600', 'text-red-500', 'text-blue-500');
+            msg.classList.add(type === 'success' ? 'text-green-600' : type === 'error' ? 'text-red-500' : 'text-blue-500');
+            msg.textContent = text;
         }
 
         fetchSheetData();
