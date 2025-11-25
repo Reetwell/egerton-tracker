@@ -76,18 +76,9 @@
         }
 
         /* Stat cards with colors */
-        .stat-win {
-            background: rgba(220, 252, 231, 0.6);
-            border-color: rgba(34, 197, 94, 0.2);
-        }
-        .stat-draw {
-            background: rgba(254, 249, 195, 0.6);
-            border-color: rgba(250, 204, 21, 0.3);
-        }
-        .stat-loss {
-            background: rgba(254, 226, 226, 0.6);
-            border-color: rgba(239, 68, 68, 0.2);
-        }
+        .stat-win { background: rgba(220, 252, 231, 0.6); border-color: rgba(34, 197, 94, 0.2); }
+        .stat-draw { background: rgba(254, 249, 195, 0.6); border-color: rgba(250, 204, 21, 0.3); }
+        .stat-loss { background: rgba(254, 226, 226, 0.6); border-color: rgba(239, 68, 68, 0.2); }
 
         /* Navigation item */
         .nav-item {
@@ -108,29 +99,46 @@
             transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
-        .nav-item.active::after {
-            transform: translateX(-50%) scaleX(1);
-        }
-        
-        .nav-item:active {
-            transform: scale(0.9);
-        }
+        .nav-item.active::after { transform: translateX(-50%) scaleX(1); }
+        .nav-item:active { transform: scale(0.9); }
 
         /* Page transitions */
         .page-content {
-            animation: fadeSlideIn 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: appleSpringIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         
-        @keyframes fadeSlideIn {
-            from {
-                opacity: 0;
-                transform: translateY(8px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        @keyframes appleSpringIn {
+            0% { opacity: 0; transform: translateX(-12px) scale(0.97); }
+            60% { opacity: 1; transform: translateX(2px) scale(1.01); }
+            100% { opacity: 1; transform: translateX(0) scale(1); }
         }
+
+        /* Welcome animations */
+        @keyframes welcomeFadeIn {
+            0% { opacity: 0; transform: scale(0.9); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        
+        @keyframes welcomeFadeOut {
+            0% { opacity: 1; transform: scale(1); }
+            100% { opacity: 0; transform: scale(1.1); }
+        }
+        
+        @keyframes badgeFadeIn {
+            0% { opacity: 0; transform: scale(0.8) rotate(-10deg); }
+            60% { transform: scale(1.05) rotate(2deg); }
+            100% { opacity: 1; transform: scale(1) rotate(0deg); }
+        }
+        
+        @keyframes homeSlideIn {
+            0% { opacity: 0; transform: translateY(30px) scale(0.95); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        
+        .welcome-text { animation: welcomeFadeIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .welcome-fade-out { animation: welcomeFadeOut 0.5s cubic-bezier(0.4, 0, 1, 1) forwards; }
+        .badge-animate { animation: badgeFadeIn 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .home-slide-in { animation: homeSlideIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 
         /* Input styling */
         .glass-input {
@@ -166,15 +174,8 @@
             transition: all 0.2s ease;
         }
         
-        .btn-glass:active {
-            transform: scale(0.97);
-            background: rgba(255, 255, 255, 0.8);
-        }
-        
-        .btn-glass.active {
-            background: rgba(250, 204, 21, 0.25);
-            border-color: rgba(250, 204, 21, 0.5);
-        }
+        .btn-glass:active { transform: scale(0.97); background: rgba(255, 255, 255, 0.8); }
+        .btn-glass.active { background: rgba(250, 204, 21, 0.25); border-color: rgba(250, 204, 21, 0.5); }
 
         /* Badge/pill styling */
         .pill {
@@ -184,15 +185,8 @@
             border: 0.5px solid rgba(0, 0, 0, 0.06);
         }
         
-        .pill-home {
-            background: rgba(220, 252, 231, 0.7);
-            color: #15803d;
-        }
-        
-        .pill-away {
-            background: rgba(219, 234, 254, 0.7);
-            color: #1d4ed8;
-        }
+        .pill-home { background: rgba(220, 252, 231, 0.7); color: #15803d; }
+        .pill-away { background: rgba(219, 234, 254, 0.7); color: #1d4ed8; }
 
         /* Result badges */
         .result-w { background: rgba(34, 197, 94, 0.15); color: #15803d; }
@@ -204,36 +198,7 @@
         .safe-bottom { padding-bottom: env(safe-area-inset-bottom, 0px); }
 
         /* Smooth scroll */
-        .scroll-container {
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        /* Tooltip */
-        .tooltip { position: relative; }
-        .tooltip .tooltiptext {
-            visibility: hidden;
-            width: 180px;
-            background: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(10px);
-            color: #fff;
-            text-align: left;
-            border-radius: 12px;
-            padding: 10px 12px;
-            position: absolute;
-            z-index: 1000;
-            bottom: 130%;
-            left: 50%;
-            margin-left: -90px;
-            opacity: 0;
-            transition: opacity 0.2s;
-            font-size: 12px;
-        }
-        .tooltip:hover .tooltiptext,
-        .tooltip:active .tooltiptext {
-            visibility: visible;
-            opacity: 1;
-        }
+        .scroll-container { overflow-y: auto; -webkit-overflow-scrolling: touch; }
 
         /* Shake animation */
         @keyframes shake {
@@ -244,16 +209,8 @@
         .shake { animation: shake 0.4s ease; }
 
         /* Absent player buttons */
-        .absent-btn {
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-        }
-        
-        .absent-btn.selected {
-            background: rgba(254, 226, 226, 0.8);
-            color: #dc2626;
-            border-color: rgba(239, 68, 68, 0.4);
-        }
+        .absent-btn { backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+        .absent-btn.selected { background: rgba(254, 226, 226, 0.8); color: #dc2626; border-color: rgba(239, 68, 68, 0.4); }
 
         /* Sidebar - Desktop only */
         .sidebar {
@@ -261,27 +218,19 @@
             backdrop-filter: blur(40px) saturate(180%);
             -webkit-backdrop-filter: blur(40px) saturate(180%);
             border-right: 0.5px solid rgba(0, 0, 0, 0.06);
-            box-shadow: 
-                1px 0 3px rgba(0, 0, 0, 0.02),
-                inset -1px 0 0 rgba(255, 255, 255, 0.5);
+            box-shadow: 1px 0 3px rgba(0, 0, 0, 0.02), inset -1px 0 0 rgba(255, 255, 255, 0.5);
         }
         
         .sidebar-item {
-            transition: all 0.2s ease;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             border-radius: 12px;
+            position: relative;
         }
         
-        .sidebar-item:hover {
-            background: rgba(0, 0, 0, 0.04);
-        }
-        
-        .sidebar-item.active {
-            background: rgba(250, 204, 21, 0.15);
-        }
-        
-        .sidebar-item.active:hover {
-            background: rgba(250, 204, 21, 0.2);
-        }
+        .sidebar-item:hover { background: rgba(0, 0, 0, 0.04); transform: translateX(2px); }
+        .sidebar-item:active { transform: scale(0.97); }
+        .sidebar-item.active { background: rgba(250, 204, 21, 0.15); transform: translateX(4px); }
+        .sidebar-item.active:hover { background: rgba(250, 204, 21, 0.2); }
 
         /* Select dropdown styling */
         .glass-select {
@@ -304,9 +253,30 @@
         }
 
         /* Number styling */
-        .number-display {
-            font-variant-numeric: tabular-nums;
-            font-feature-settings: "tnum";
+        .number-display { font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; }
+
+        /* Login input */
+        .login-input {
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        .login-input:focus {
+            background: rgba(255, 255, 255, 0.9);
+            border-color: var(--yellow-club);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), 0 0 0 3px rgba(250, 204, 21, 0.2);
+            transform: scale(1.02);
+            outline: none;
+        }
+
+        /* Suggestion dropdown */
+        .suggestion-item {
+            transition: all 0.2s ease;
+        }
+        .suggestion-item:hover {
+            background: rgba(250, 204, 21, 0.15);
         }
     </style>
 </head>
@@ -326,6 +296,9 @@
         const BADGE_IMG = 'egerton-tracker.png';
         const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby6a_XWdPHAjEcId0-A57dRG26w_VJlF38lsVuBqnPGzeXAo3RTM76phbB7RA5n9zuwAA/exec';
 
+        // App state
+        let appState = 'login'; // 'login', 'welcome', 'badge', 'main'
+        let loggedInPlayer = null; // null for guest, player object for players
         let currentTab = 'overview';
         let allMatches = [];
         let resultFilter = null;
@@ -337,6 +310,118 @@
         let selectedPlayer = null;
         let selectedMatch = null;
         let absentPlayers = [];
+        let loginInput = '';
+        let suggestions = [];
+        let adminUnlocked = false;
+        let enteredPasscode = '';
+        let selectedMatchId = null;
+        const ADMIN_PASSCODE = '1505';
+
+        // Smart name matching
+        function findPlayerMatch(input) {
+            if (!input.trim()) return { exact: null, suggestions: [] };
+            
+            const inputLower = input.toLowerCase().trim();
+            const inputParts = inputLower.split(/\s+/);
+            
+            // Try exact match first
+            const exactMatch = players.find(p => p.name.toLowerCase() === inputLower);
+            if (exactMatch) return { exact: exactMatch, suggestions: [] };
+            
+            // Smart matching
+            const matches = players.filter(p => {
+                const nameLower = p.name.toLowerCase();
+                const nameParts = nameLower.split(/\s+/);
+                
+                // Check if input matches start of first name
+                if (nameParts[0].startsWith(inputParts[0])) {
+                    // If there's a second part, check last name initial
+                    if (inputParts.length > 1 && nameParts.length > 1) {
+                        const lastInitial = inputParts[inputParts.length - 1];
+                        return nameParts.some(part => part.startsWith(lastInitial));
+                    }
+                    return true;
+                }
+                
+                // Check if full name contains input
+                return nameLower.includes(inputLower);
+            });
+            
+            // If only one match, treat as exact
+            if (matches.length === 1) {
+                return { exact: matches[0], suggestions: [] };
+            }
+            
+            // Multiple matches - return as suggestions
+            return { exact: null, suggestions: matches.slice(0, 5) };
+        }
+
+        function handleLoginInput(value) {
+            loginInput = value;
+            const result = findPlayerMatch(value);
+            suggestions = result.suggestions;
+            renderApp();
+        }
+
+        function attemptLogin() {
+            const result = findPlayerMatch(loginInput);
+            
+            if (result.exact) {
+                // Exact match found - login
+                loggedInPlayer = result.exact;
+                startWelcomeSequence();
+            } else if (result.suggestions.length > 0) {
+                // Show suggestions
+                suggestions = result.suggestions;
+                renderApp();
+            } else {
+                // No match - shake
+                const input = document.getElementById('loginNameInput');
+                if (input) {
+                    input.classList.add('shake');
+                    setTimeout(() => input.classList.remove('shake'), 400);
+                }
+            }
+        }
+
+        function selectSuggestion(playerName) {
+            const player = players.find(p => p.name === playerName);
+            if (player) {
+                loggedInPlayer = player;
+                startWelcomeSequence();
+            }
+        }
+
+        function loginAsGuest() {
+            loggedInPlayer = null;
+            startWelcomeSequence();
+        }
+
+        function startWelcomeSequence() {
+            appState = 'welcome';
+            renderApp();
+            
+            // After welcome text, show badge
+            setTimeout(() => {
+                appState = 'badge';
+                renderApp();
+                
+                // After badge, go to main
+                setTimeout(() => {
+                    appState = 'main';
+                    renderApp();
+                }, 1200);
+            }, 1800);
+        }
+
+        function logout() {
+            appState = 'login';
+            loggedInPlayer = null;
+            loginInput = '';
+            suggestions = [];
+            currentTab = 'overview';
+            renderApp();
+        }
 
         function setActiveTab(tab) {
             currentTab = tab;
@@ -363,7 +448,6 @@
         function handleSearch(value) {
             searchQuery = value;
             renderApp();
-            // Keep focus on input after re-render
             setTimeout(() => {
                 const input = document.getElementById('searchInput');
                 if (input) {
@@ -406,23 +490,14 @@
             const name = playerName.toLowerCase().trim();
             const firstName = name.split(' ')[0];
             const lastName = name.split(' ').slice(1).join(' ');
-            
-            // Check if there are other players with same first name
-            const sameFirstName = players.filter(p => 
-                p.name.toLowerCase().trim().split(' ')[0] === firstName
-            ).length > 1;
+            const sameFirstName = players.filter(p => p.name.toLowerCase().trim().split(' ')[0] === firstName).length > 1;
             
             return results.filter(m => {
                 if (!m.goalScorers) return false;
                 const scorersLower = m.goalScorers.toLowerCase();
-                
-                // If multiple players share first name, require fuller match
                 if (sameFirstName) {
-                    // Must match full name OR last name must be present
-                    return scorersLower.includes(name) || 
-                           (lastName && scorersLower.includes(lastName));
+                    return scorersLower.includes(name) || (lastName && scorersLower.includes(lastName));
                 } else {
-                    // Safe to match first name only
                     return scorersLower.includes(name) || scorersLower.includes(firstName);
                 }
             }).map(m => {
@@ -431,14 +506,11 @@
                 let playerGoals = 0;
                 scorers.forEach((scorer, i) => {
                     if (sameFirstName) {
-                        // Stricter matching when multiple players share first name
-                        if (scorer.includes(name) || name.includes(scorer) ||
-                            (lastName && (scorer.includes(lastName) || lastName.includes(scorer)))) {
+                        if (scorer.includes(name) || name.includes(scorer) || (lastName && (scorer.includes(lastName) || lastName.includes(scorer)))) {
                             playerGoals += parseInt(goals[i]) || 1;
                         }
                     } else {
-                        if (scorer.includes(name) || name.includes(scorer) || 
-                            scorer.includes(firstName) || firstName === scorer) {
+                        if (scorer.includes(name) || name.includes(scorer) || scorer.includes(firstName) || firstName === scorer) {
                             playerGoals += parseInt(goals[i]) || 1;
                         }
                     }
@@ -520,13 +592,106 @@
         }
 
         function renderApp() {
+            // Login Screen
+            if (appState === 'login') {
+                document.getElementById('app').innerHTML = `
+                    <div class="min-h-screen flex flex-col items-center justify-center px-6" style="background: linear-gradient(180deg, rgba(250, 204, 21, 0.08) 0%, rgba(255, 255, 255, 1) 50%);">
+                        <div class="w-full max-w-md">
+                            <!-- Badge -->
+                            <div class="text-center mb-8">
+                                <img src="${BADGE_IMG}" class="w-24 h-24 rounded-3xl shadow-lg mx-auto mb-4" alt="Badge">
+                                <h1 class="text-2xl font-bold text-gray-900">Egerton U15 Lions</h1>
+                                <p class="text-gray-400">Season 2025/26</p>
+                            </div>
+                            
+                            <!-- Login Input -->
+                            <div class="relative mb-4">
+                                <input 
+                                    type="text" 
+                                    id="loginNameInput"
+                                    class="login-input w-full py-4 px-5 rounded-2xl text-lg text-center text-gray-900 placeholder-gray-400"
+                                    placeholder="Enter your name..."
+                                    value="${loginInput}"
+                                    oninput="handleLoginInput(this.value)"
+                                    onkeydown="if(event.key === 'Enter') attemptLogin()"
+                                    autocomplete="off"
+                                    autocapitalize="words"
+                                >
+                            </div>
+                            
+                            <!-- Suggestions -->
+                            ${suggestions.length > 0 ? `
+                                <div class="glass-card rounded-2xl overflow-hidden mb-4">
+                                    <p class="text-xs font-medium text-gray-400 uppercase tracking-wide px-4 pt-3 pb-2">Did you mean?</p>
+                                    ${suggestions.map(p => `
+                                        <div onclick="selectSuggestion('${p.name}')" class="suggestion-item flex items-center gap-3 px-4 py-3 cursor-pointer border-t border-gray-100/50">
+                                            <div class="w-10 h-10 rounded-xl bg-yellow-400 flex items-center justify-center font-bold text-gray-900">${p.shirtNumber}</div>
+                                            <div>
+                                                <p class="font-medium text-gray-900">${p.name}</p>
+                                                <p class="text-xs text-gray-400">${p.position}</p>
+                                            </div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            ` : ''}
+                            
+                            <!-- Continue Button -->
+                            <button onclick="attemptLogin()" class="btn-primary w-full py-4 rounded-2xl text-lg font-semibold mb-6">
+                                Continue
+                            </button>
+                            
+                            <!-- Guest Login -->
+                            <div class="text-center">
+                                <button onclick="loginAsGuest()" class="text-gray-400 text-sm hover:text-gray-600 transition-colors">
+                                    Continue as supporter →
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                setTimeout(() => {
+                    const input = document.getElementById('loginNameInput');
+                    if (input) input.focus();
+                }, 100);
+                return;
+            }
+
+            // Welcome Screen
+            if (appState === 'welcome') {
+                const name = loggedInPlayer ? loggedInPlayer.name.split(' ')[0] : 'Supporter';
+                document.getElementById('app').innerHTML = `
+                    <div class="min-h-screen flex items-center justify-center" style="background: linear-gradient(180deg, rgba(250, 204, 21, 0.1) 0%, rgba(255, 255, 255, 1) 50%);">
+                        <div class="text-center welcome-text">
+                            <p class="text-gray-400 text-lg mb-2">Welcome,</p>
+                            <h1 class="text-4xl font-bold text-gray-900">${name}</h1>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            // Badge Screen
+            if (appState === 'badge') {
+                document.getElementById('app').innerHTML = `
+                    <div class="min-h-screen flex items-center justify-center" style="background: linear-gradient(180deg, rgba(250, 204, 21, 0.1) 0%, rgba(255, 255, 255, 1) 50%);">
+                        <div class="text-center badge-animate">
+                            <img src="${BADGE_IMG}" class="w-32 h-32 rounded-3xl shadow-2xl mx-auto" alt="Badge">
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            // Main App
             const { wins, draws, losses } = getResultCounts();
             const played = results.length;
             const topScorers = [...players].sort((a, b) => b.goals - a.goals).slice(0, 3);
             let filteredResults = resultFilter ? results.filter(r => r.result === resultFilter) : results;
+            const isPlayer = loggedInPlayer !== null;
+            const displayName = isPlayer ? loggedInPlayer.name.split(' ')[0] : 'Supporter';
 
             document.getElementById('app').innerHTML = `
-                <div class="min-h-screen flex">
+                <div class="min-h-screen flex home-slide-in">
                     <!-- Sidebar - Desktop Only -->
                     <aside class="sidebar hidden md:flex flex-col w-64 fixed left-0 top-0 bottom-0 z-40 safe-top">
                         <div class="p-4 border-b border-gray-100/50">
@@ -567,9 +732,9 @@
                                 <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                                 <span class="font-medium text-gray-500">Search</span>
                             </button>
-                            <button onclick="fetchSheetData()" class="sidebar-item w-full flex items-center gap-3 px-3 py-2.5 text-left">
-                                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
-                                <span class="font-medium text-gray-500">Refresh</span>
+                            <button onclick="logout()" class="sidebar-item w-full flex items-center gap-3 px-3 py-2.5 text-left">
+                                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                                <span class="font-medium text-gray-500">Logout</span>
                             </button>
                         </div>
                     </aside>
@@ -587,23 +752,31 @@
                                 </div>
                             </div>
                             <div class="flex items-center gap-2">
+                                <!-- User badge -->
+                                <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-yellow-100">
+                                    ${isPlayer ? `<span class="text-xs font-bold text-yellow-700">${loggedInPlayer.shirtNumber}</span>` : ''}
+                                    <span class="text-xs font-medium text-yellow-700">${displayName}</span>
+                                </div>
                                 <button onclick="openSearch()" class="btn-glass w-9 h-9 rounded-full flex items-center justify-center text-gray-500">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                                </button>
-                                <button onclick="fetchSheetData()" class="btn-glass w-9 h-9 rounded-full flex items-center justify-center text-gray-500">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
                                 </button>
                             </div>
                         </div>
                     </header>
 
+                    <!-- Desktop Header with User -->
+                    <div class="hidden md:flex items-center justify-end p-4 gap-3">
+                        <div class="flex items-center gap-2 px-4 py-2 rounded-full bg-yellow-100">
+                            ${isPlayer ? `<span class="text-sm font-bold text-yellow-700">${loggedInPlayer.shirtNumber}</span>` : ''}
+                            <span class="text-sm font-medium text-yellow-700">${displayName}</span>
+                        </div>
+                        <button onclick="logout()" class="btn-glass px-4 py-2 rounded-full text-sm text-gray-500">Logout</button>
+                    </div>
+
                     <!-- Search Overlay -->
                     <div id="searchOverlay" class="fixed inset-0 z-50 ${searchOpen ? '' : 'hidden'}" style="background: linear-gradient(180deg, rgba(250, 204, 21, 0.1) 0%, rgba(255, 255, 255, 0.95) 50%); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);">
                         <div class="flex flex-col items-center justify-center min-h-screen px-4 -mt-20">
-                            <!-- Logo/Badge -->
                             <img src="${BADGE_IMG}" class="w-20 h-20 rounded-2xl shadow-lg mb-8" alt="Badge">
-                            
-                            <!-- Search Box -->
                             <div class="w-full max-w-2xl">
                                 <div class="relative">
                                     <div class="glass-card rounded-2xl p-1" style="background: rgba(255,255,255,0.7); border: 1px solid rgba(255,255,255,0.8); box-shadow: 0 8px 32px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.9);">
@@ -614,8 +787,6 @@
                                         </div>
                                     </div>
                                 </div>
-                                
-                                <!-- Search Results -->
                                 <div class="mt-4 max-h-80 overflow-y-auto">
                                     ${searchQuery.length > 0 ? `
                                         ${getSearchResults().players.length > 0 ? `
@@ -634,7 +805,6 @@
                                                 `).join('')}
                                             </div>
                                         ` : ''}
-                                        
                                         ${getSearchResults().matches.length > 0 ? `
                                             <p class="text-xs font-medium text-gray-400 uppercase tracking-wide mb-2 px-2">Matches</p>
                                             <div class="space-y-2">
@@ -645,23 +815,14 @@
                                                                 <p class="font-semibold text-gray-900">${m.opponent}</p>
                                                                 <p class="text-xs text-gray-400">${formatShortDate(m.date)}</p>
                                                             </div>
-                                                            ${m.status.toLowerCase() === 'played' ? `
-                                                                <span class="text-lg font-bold">${m.ourScore}-${m.theirScore}</span>
-                                                            ` : `
-                                                                <span class="text-xs text-gray-400">${m.status}</span>
-                                                            `}
+                                                            ${m.status.toLowerCase() === 'played' ? `<span class="text-lg font-bold">${m.ourScore}-${m.theirScore}</span>` : `<span class="text-xs text-gray-400">${m.status}</span>`}
                                                         </div>
                                                     </div>
                                                 `).join('')}
                                             </div>
                                         ` : ''}
-                                        
-                                        ${getSearchResults().players.length === 0 && getSearchResults().matches.length === 0 ? `
-                                            <p class="text-gray-400 text-center py-8">No results for "${searchQuery}"</p>
-                                        ` : ''}
-                                    ` : `
-                                        <p class="text-gray-400 text-center py-4">Search for players or opponents</p>
-                                    `}
+                                        ${getSearchResults().players.length === 0 && getSearchResults().matches.length === 0 ? `<p class="text-gray-400 text-center py-8">No results for "${searchQuery}"</p>` : ''}
+                                    ` : `<p class="text-gray-400 text-center py-4">Search for players or opponents</p>`}
                                 </div>
                             </div>
                         </div>
@@ -671,66 +832,36 @@
                     <div id="playerProfile" class="fixed inset-0 z-50 ${selectedPlayer ? '' : 'hidden'}" style="background: rgba(255,255,255,0.98); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);">
                         ${selectedPlayer ? `
                             <div class="safe-top px-4 py-3 border-b border-gray-100">
-                                <div class="flex items-center justify-between">
-                                    <button onclick="closePlayerProfile()" class="flex items-center gap-1 text-yellow-600 font-medium">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
-                                        Back
-                                    </button>
-                                </div>
+                                <button onclick="closePlayerProfile()" class="flex items-center gap-1 text-yellow-600 font-medium">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                                    Back
+                                </button>
                             </div>
-                            
                             <div class="px-4 py-6 overflow-y-auto" style="max-height: calc(100vh - 60px);">
-                                <!-- Player Header -->
                                 <div class="text-center mb-6">
                                     <div class="w-20 h-20 rounded-2xl bg-yellow-400 flex items-center justify-center text-3xl font-bold text-gray-900 mx-auto mb-3">${selectedPlayer.shirtNumber}</div>
                                     <h1 class="text-2xl font-bold text-gray-900">${selectedPlayer.name}</h1>
                                     <p class="text-gray-500">${selectedPlayer.position}</p>
                                 </div>
-                                
-                                <!-- Stats Grid -->
                                 <div class="grid grid-cols-4 gap-2 mb-6">
-                                    <div class="glass-card rounded-2xl p-3 text-center">
-                                        <p class="text-xl font-bold text-gray-900">${selectedPlayer.appearances}</p>
-                                        <p class="text-[10px] text-gray-400">Apps</p>
-                                    </div>
-                                    <div class="glass-card rounded-2xl p-3 text-center">
-                                        <p class="text-xl font-bold text-gray-900">${selectedPlayer.goals}</p>
-                                        <p class="text-[10px] text-gray-400">Goals</p>
-                                    </div>
-                                    <div class="glass-card rounded-2xl p-3 text-center">
-                                        <p class="text-xl font-bold text-yellow-500">${selectedPlayer.motm}</p>
-                                        <p class="text-[10px] text-gray-400">MOTM</p>
-                                    </div>
-                                    <div class="glass-card rounded-2xl p-3 text-center">
-                                        <p class="text-xl font-bold text-gray-900">${selectedPlayer.foot || '-'}</p>
-                                        <p class="text-[10px] text-gray-400">Foot</p>
-                                    </div>
+                                    <div class="glass-card rounded-2xl p-3 text-center"><p class="text-xl font-bold text-gray-900">${selectedPlayer.appearances}</p><p class="text-[10px] text-gray-400">Apps</p></div>
+                                    <div class="glass-card rounded-2xl p-3 text-center"><p class="text-xl font-bold text-gray-900">${selectedPlayer.goals}</p><p class="text-[10px] text-gray-400">Goals</p></div>
+                                    <div class="glass-card rounded-2xl p-3 text-center"><p class="text-xl font-bold text-yellow-500">${selectedPlayer.motm}</p><p class="text-[10px] text-gray-400">MOTM</p></div>
+                                    <div class="glass-card rounded-2xl p-3 text-center"><p class="text-xl font-bold text-gray-900">${selectedPlayer.foot || '-'}</p><p class="text-[10px] text-gray-400">Foot</p></div>
                                 </div>
-                                
-                                <!-- Matches Scored In -->
                                 ${getPlayerMatches(selectedPlayer.name).length > 0 ? `
                                     <div class="glass-card rounded-2xl p-4">
                                         <p class="text-xs font-medium text-gray-400 uppercase tracking-wide mb-3">Matches Scored In</p>
                                         <div class="space-y-3">
                                             ${getPlayerMatches(selectedPlayer.name).map(m => `
                                                 <div class="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">
-                                                    <div>
-                                                        <p class="font-medium text-gray-900">${m.opponent}</p>
-                                                        <p class="text-xs text-gray-400">${formatShortDate(m.date)}</p>
-                                                    </div>
-                                                    <div class="text-right">
-                                                        <p class="font-bold">${m.ourScore}-${m.theirScore}</p>
-                                                        <p class="text-xs text-yellow-600">⚽ ${m.playerGoals}</p>
-                                                    </div>
+                                                    <div><p class="font-medium text-gray-900">${m.opponent}</p><p class="text-xs text-gray-400">${formatShortDate(m.date)}</p></div>
+                                                    <div class="text-right"><p class="font-bold">${m.ourScore}-${m.theirScore}</p><p class="text-xs text-yellow-600">⚽ ${m.playerGoals}</p></div>
                                                 </div>
                                             `).join('')}
                                         </div>
                                     </div>
-                                ` : `
-                                    <div class="glass-card rounded-2xl p-4">
-                                        <p class="text-gray-400 text-center py-4">No goals scored yet</p>
-                                    </div>
-                                `}
+                                ` : `<div class="glass-card rounded-2xl p-4"><p class="text-gray-400 text-center py-4">No goals scored yet</p></div>`}
                             </div>
                         ` : ''}
                     </div>
@@ -739,102 +870,58 @@
                     <div id="matchDetail" class="fixed inset-0 z-50 ${selectedMatch ? '' : 'hidden'}" style="background: rgba(255,255,255,0.98); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);">
                         ${selectedMatch ? `
                             <div class="safe-top px-4 py-3 border-b border-gray-100">
-                                <div class="flex items-center justify-between">
-                                    <button onclick="closeMatchDetail()" class="flex items-center gap-1 text-yellow-600 font-medium">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
-                                        Results
-                                    </button>
-                                </div>
+                                <button onclick="closeMatchDetail()" class="flex items-center gap-1 text-yellow-600 font-medium">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                                    Results
+                                </button>
                             </div>
-                            
                             <div class="px-4 py-6 overflow-y-auto" style="max-height: calc(100vh - 60px);">
-                                <!-- Match Header -->
                                 <div class="text-center mb-6">
                                     <p class="text-sm text-gray-400 mb-2">${selectedMatch.date}</p>
                                     <p class="text-sm text-gray-500 mb-4">${selectedMatch.competition}</p>
-                                    
                                     <div class="flex items-center justify-center gap-4 mb-4">
                                         <div class="text-center">
-                                            <div class="w-16 h-16 rounded-2xl bg-yellow-400 flex items-center justify-center mb-2 mx-auto">
-                                                <img src="${BADGE_IMG}" class="w-12 h-12 rounded-xl" alt="Egerton">
-                                            </div>
+                                            <div class="w-16 h-16 rounded-2xl bg-yellow-400 flex items-center justify-center mb-2 mx-auto"><img src="${BADGE_IMG}" class="w-12 h-12 rounded-xl" alt="Egerton"></div>
                                             <p class="text-sm font-medium text-gray-900">Egerton</p>
                                         </div>
-                                        
                                         <div class="text-center px-4">
                                             <p class="text-4xl font-bold text-gray-900">${selectedMatch.goalsFor} - ${selectedMatch.goalsAgainst}</p>
-                                            <span class="inline-block mt-2 px-3 py-1 rounded-full text-xs font-bold ${
-                                                selectedMatch.result === 'Win' ? 'bg-green-100 text-green-700' :
-                                                selectedMatch.result === 'Draw' ? 'bg-yellow-100 text-yellow-700' :
-                                                'bg-red-100 text-red-700'
-                                            }">${selectedMatch.result}</span>
+                                            <span class="inline-block mt-2 px-3 py-1 rounded-full text-xs font-bold ${selectedMatch.result === 'Win' ? 'bg-green-100 text-green-700' : selectedMatch.result === 'Draw' ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700'}">${selectedMatch.result}</span>
                                         </div>
-                                        
                                         <div class="text-center">
-                                            <div class="w-16 h-16 rounded-2xl bg-gray-200 flex items-center justify-center mb-2 mx-auto">
-                                                <span class="text-2xl">⚽</span>
-                                            </div>
+                                            <div class="w-16 h-16 rounded-2xl bg-gray-200 flex items-center justify-center mb-2 mx-auto"><span class="text-2xl">⚽</span></div>
                                             <p class="text-sm font-medium text-gray-900">${selectedMatch.opponent.split(' ')[0]}</p>
                                         </div>
                                     </div>
-                                    
                                     <span class="pill ${selectedMatch.venue === 'Home' ? 'pill-home' : 'pill-away'} px-3 py-1 rounded-full text-xs font-medium">${selectedMatch.venue}</span>
                                 </div>
-                                
-                                <!-- Match Info Cards -->
                                 <div class="space-y-3">
-                                    <!-- MOTM -->
                                     ${selectedMatch.motm ? `
                                         <div class="glass-card-yellow glass-card rounded-2xl p-4">
                                             <p class="text-xs font-medium text-yellow-700 uppercase tracking-wide mb-2">Man of the Match</p>
                                             <div class="flex items-center gap-3">
-                                                <div class="w-10 h-10 rounded-xl bg-yellow-400 flex items-center justify-center">
-                                                    <span class="text-lg">⭐</span>
-                                                </div>
+                                                <div class="w-10 h-10 rounded-xl bg-yellow-400 flex items-center justify-center"><span class="text-lg">⭐</span></div>
                                                 <p class="text-lg font-semibold text-gray-900">${selectedMatch.motm}</p>
                                             </div>
                                         </div>
                                     ` : ''}
-                                    
-                                    <!-- Goal Scorers -->
                                     <div class="glass-card rounded-2xl p-4">
                                         <p class="text-xs font-medium text-gray-400 uppercase tracking-wide mb-3">Goal Scorers</p>
                                         ${selectedMatch.goalScorers && selectedMatch.goalScorers !== 'NO GOALS' ? `
                                             <div class="space-y-2">
                                                 ${selectedMatch.goalScorers.split(',').map((scorer, i) => {
                                                     const goals = selectedMatch.notes ? selectedMatch.notes.split(',')[i]?.trim() || '1' : '1';
-                                                    return `
-                                                        <div class="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">
-                                                            <div class="flex items-center gap-2">
-                                                                <span class="text-lg">⚽</span>
-                                                                <p class="font-medium text-gray-900">${scorer.trim()}</p>
-                                                            </div>
-                                                            <p class="text-sm text-gray-500">${goals} goal${goals !== '1' ? 's' : ''}</p>
-                                                        </div>
-                                                    `;
+                                                    return `<div class="flex items-center justify-between py-2 border-b border-gray-100 last:border-0"><div class="flex items-center gap-2"><span class="text-lg">⚽</span><p class="font-medium text-gray-900">${scorer.trim()}</p></div><p class="text-sm text-gray-500">${goals} goal${goals !== '1' ? 's' : ''}</p></div>`;
                                                 }).join('')}
                                             </div>
-                                        ` : `
-                                            <p class="text-gray-400 text-center py-2">No goals scored</p>
-                                        `}
+                                        ` : `<p class="text-gray-400 text-center py-2">No goals scored</p>`}
                                     </div>
-                                    
-                                    <!-- Match Details -->
                                     <div class="glass-card rounded-2xl p-4">
                                         <p class="text-xs font-medium text-gray-400 uppercase tracking-wide mb-3">Details</p>
                                         <div class="space-y-2">
-                                            <div class="flex justify-between">
-                                                <p class="text-gray-500">Kick-off</p>
-                                                <p class="font-medium text-gray-900">${selectedMatch.kickOffTime}</p>
-                                            </div>
-                                            <div class="flex justify-between">
-                                                <p class="text-gray-500">Competition</p>
-                                                <p class="font-medium text-gray-900">${selectedMatch.competition || 'League'}</p>
-                                            </div>
-                                            <div class="flex justify-between">
-                                                <p class="text-gray-500">Venue</p>
-                                                <p class="font-medium text-gray-900">${selectedMatch.venue}</p>
-                                            </div>
+                                            <div class="flex justify-between"><p class="text-gray-500">Kick-off</p><p class="font-medium text-gray-900">${selectedMatch.kickOffTime}</p></div>
+                                            <div class="flex justify-between"><p class="text-gray-500">Competition</p><p class="font-medium text-gray-900">${selectedMatch.competition || 'League'}</p></div>
+                                            <div class="flex justify-between"><p class="text-gray-500">Venue</p><p class="font-medium text-gray-900">${selectedMatch.venue}</p></div>
                                         </div>
                                     </div>
                                 </div>
@@ -843,12 +930,51 @@
                     </div>
 
                     <!-- Main Content -->
-                    <main class="flex-1 scroll-container px-4 md:px-8 pb-28 md:pb-8 pt-4 md:pt-6">
+                    <main class="flex-1 scroll-container px-4 md:px-8 pb-28 md:pb-8 pt-4 md:pt-2">
                         <div class="page-content">
                         
                         ${currentTab === 'overview' ? `
-                            <!-- Stats -->
-                            <div class="grid grid-cols-4 gap-2 md:gap-4 mb-5 md:max-w-2xl">
+                            <!-- Next Match -->
+                            ${fixtures.length > 0 ? `
+                                <div class="glass-card-yellow glass-card rounded-2xl p-4 mb-4">
+                                    <p class="text-xs font-medium text-yellow-700 uppercase tracking-wide mb-2">Next Match</p>
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <p class="text-lg font-semibold text-gray-900">${fixtures[0].opponent}</p>
+                                            <p class="text-sm text-gray-500">${formatShortDate(fixtures[0].date)} · ${fixtures[0].kickOffTime}</p>
+                                        </div>
+                                        <span class="pill ${fixtures[0].venue === 'Home' ? 'pill-home' : 'pill-away'} px-3 py-1 rounded-full text-xs font-medium">${fixtures[0].venue}</span>
+                                    </div>
+                                </div>
+                            ` : ''}
+
+                            <!-- Personal Stats (for players) -->
+                            ${isPlayer ? `
+                                <div class="glass-card rounded-2xl p-4 mb-4">
+                                    <p class="text-xs font-medium text-gray-400 uppercase tracking-wide mb-3">Your Stats</p>
+                                    <div class="grid grid-cols-4 gap-2">
+                                        <div class="text-center">
+                                            <p class="text-2xl font-bold text-gray-900">${loggedInPlayer.appearances}</p>
+                                            <p class="text-[10px] text-gray-400">Apps</p>
+                                        </div>
+                                        <div class="text-center">
+                                            <p class="text-2xl font-bold text-gray-900">${loggedInPlayer.goals}</p>
+                                            <p class="text-[10px] text-gray-400">Goals</p>
+                                        </div>
+                                        <div class="text-center">
+                                            <p class="text-2xl font-bold text-yellow-500">${loggedInPlayer.motm}</p>
+                                            <p class="text-[10px] text-gray-400">MOTM</p>
+                                        </div>
+                                        <div class="text-center">
+                                            <p class="text-2xl font-bold text-gray-900">${loggedInPlayer.foot || '-'}</p>
+                                            <p class="text-[10px] text-gray-400">Foot</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            ` : ''}
+
+                            <!-- Team Stats -->
+                            <div class="grid grid-cols-4 gap-2 md:gap-4 mb-4 md:max-w-2xl">
                                 <div class="glass-card rounded-2xl p-3 text-center">
                                     <p class="text-xs text-gray-400 mb-0.5">Played</p>
                                     <p class="text-2xl font-bold number-display">${played}</p>
@@ -867,23 +993,9 @@
                                 </div>
                             </div>
 
-                            <!-- Next Match -->
-                            ${fixtures.length > 0 ? `
-                                <div class="glass-card-yellow glass-card rounded-2xl p-4 mb-5">
-                                    <p class="text-xs font-medium text-yellow-700 uppercase tracking-wide mb-2">Next Match</p>
-                                    <div class="flex items-center justify-between">
-                                        <div>
-                                            <p class="text-lg font-semibold text-gray-900">${fixtures[0].opponent}</p>
-                                            <p class="text-sm text-gray-500">${formatShortDate(fixtures[0].date)} · ${fixtures[0].kickOffTime}</p>
-                                        </div>
-                                        <span class="pill ${fixtures[0].venue === 'Home' ? 'pill-home' : 'pill-away'} px-3 py-1 rounded-full text-xs font-medium">${fixtures[0].venue}</span>
-                                    </div>
-                                </div>
-                            ` : ''}
-
                             <!-- Top Scorers -->
                             ${topScorers.length > 0 && topScorers[0].goals > 0 ? `
-                                <div class="glass-card rounded-2xl p-4 mb-5">
+                                <div class="glass-card rounded-2xl p-4 mb-4">
                                     <p class="text-xs font-medium text-gray-400 uppercase tracking-wide mb-3">Top Scorers</p>
                                     <div class="space-y-3">
                                         ${topScorers.filter(p => p.goals > 0).map((player, i) => `
@@ -980,18 +1092,9 @@
                                                 <p class="text-xs text-gray-400">${p.position}${p.foot ? ' · ' + p.foot : ''}</p>
                                             </div>
                                             <div class="flex items-center gap-3 text-center">
-                                                <div>
-                                                    <p class="text-base font-bold number-display">${p.appearances}</p>
-                                                    <p class="text-[10px] text-gray-400">Apps</p>
-                                                </div>
-                                                <div>
-                                                    <p class="text-base font-bold number-display">${p.goals}</p>
-                                                    <p class="text-[10px] text-gray-400">Goals</p>
-                                                </div>
-                                                <div>
-                                                    <p class="text-base font-bold ${p.motm > 0 ? 'text-yellow-500' : 'text-gray-900'} number-display">${p.motm}</p>
-                                                    <p class="text-[10px] text-gray-400">MOTM</p>
-                                                </div>
+                                                <div><p class="text-base font-bold number-display">${p.appearances}</p><p class="text-[10px] text-gray-400">Apps</p></div>
+                                                <div><p class="text-base font-bold number-display">${p.goals}</p><p class="text-[10px] text-gray-400">Goals</p></div>
+                                                <div><p class="text-base font-bold ${p.motm > 0 ? 'text-yellow-500' : 'text-gray-900'} number-display">${p.motm}</p><p class="text-[10px] text-gray-400">MOTM</p></div>
                                             </div>
                                             <svg class="w-4 h-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                                         </div>
@@ -1008,16 +1111,13 @@
                                     </div>
                                     <h2 class="text-xl font-semibold text-gray-900 mb-1">Admin Access</h2>
                                     <p class="text-sm text-gray-400 mb-6">Enter passcode to continue</p>
-                                    
                                     <div class="flex gap-3 mb-6" id="passcodeDisplay">
                                         <div class="w-3 h-3 rounded-full bg-gray-200 passcode-dot"></div>
                                         <div class="w-3 h-3 rounded-full bg-gray-200 passcode-dot"></div>
                                         <div class="w-3 h-3 rounded-full bg-gray-200 passcode-dot"></div>
                                         <div class="w-3 h-3 rounded-full bg-gray-200 passcode-dot"></div>
                                     </div>
-                                    
                                     <div id="passcodeError" class="text-red-500 text-sm mb-4 hidden">Incorrect passcode</div>
-                                    
                                     <div class="grid grid-cols-3 gap-4">
                                         ${[1,2,3,4,5,6,7,8,9,'',0,'del'].map(n => 
                                             n === '' ? '<div></div>' : 
@@ -1027,99 +1127,85 @@
                                     </div>
                                 </div>
                             </div>
-                            
                             <div id="adminContent" class="${adminUnlocked ? '' : 'hidden'}">
-                            <h2 class="text-xl font-bold text-gray-900 mb-1">Admin</h2>
-                            <p class="text-sm text-gray-400 mb-4">Update match results</p>
-                            
-                            <div class="space-y-2" id="matchCards">
-                                ${allMatches.filter(m => m.status === 'Scheduled' || m.status === 'Postponed').length > 0 ? 
-                                    allMatches.filter(m => m.status === 'Scheduled' || m.status === 'Postponed').map(m => `
-                                    <div onclick="selectMatch('${m.id}')" class="glass-card rounded-2xl p-4 cursor-pointer">
-                                        <div class="flex items-center justify-between">
-                                            <div>
-                                                <p class="font-semibold text-gray-900">${m.opponent}</p>
-                                                <p class="text-sm text-gray-500">${formatShortDate(m.date)} · ${m.kickOffTime}</p>
-                                            </div>
-                                            <div class="flex items-center gap-2">
+                                <h2 class="text-xl font-bold text-gray-900 mb-1">Admin</h2>
+                                <p class="text-sm text-gray-400 mb-4">Update match results</p>
+                                <div class="space-y-2" id="matchCards">
+                                    ${allMatches.filter(m => m.status === 'Scheduled' || m.status === 'Postponed').length > 0 ? 
+                                        allMatches.filter(m => m.status === 'Scheduled' || m.status === 'Postponed').map(m => `
+                                        <div onclick="selectMatch('${m.id}')" class="glass-card rounded-2xl p-4 cursor-pointer">
+                                            <div class="flex items-center justify-between">
+                                                <div>
+                                                    <p class="font-semibold text-gray-900">${m.opponent}</p>
+                                                    <p class="text-sm text-gray-500">${formatShortDate(m.date)} · ${m.kickOffTime}</p>
+                                                </div>
                                                 <span class="pill ${m.venue === 'Home' ? 'pill-home' : 'pill-away'} px-2.5 py-0.5 rounded-full text-xs font-medium">${m.venue}</span>
                                             </div>
                                         </div>
-                                    </div>
-                                `).join('') : '<p class="text-gray-400 text-center py-8">No matches to update</p>'}
-                            </div>
-
-                            <div id="matchForm" class="hidden">
-                                <div class="glass-card rounded-2xl p-5">
-                                    <div id="matchInfo" class="mb-5 pb-4 border-b border-gray-100"></div>
-
-                                    <div class="mb-5">
-                                        <p class="text-xs font-medium text-gray-400 uppercase tracking-wide mb-2">Status</p>
-                                        <div class="grid grid-cols-2 gap-2">
-                                            <button onclick="setStatus('Played')" id="btn-Played" class="status-btn btn-glass py-3 rounded-xl font-medium text-gray-700">Played</button>
-                                            <button onclick="setStatus('Postponed')" id="btn-Postponed" class="status-btn btn-glass py-3 rounded-xl font-medium text-gray-700">Postponed</button>
-                                        </div>
-                                    </div>
-
-                                    <div id="scoreSection" class="hidden">
+                                    `).join('') : '<p class="text-gray-400 text-center py-8">No matches to update</p>'}
+                                </div>
+                                <div id="matchForm" class="hidden">
+                                    <div class="glass-card rounded-2xl p-5">
+                                        <div id="matchInfo" class="mb-5 pb-4 border-b border-gray-100"></div>
                                         <div class="mb-5">
-                                            <p class="text-xs font-medium text-gray-400 uppercase tracking-wide mb-2">Score</p>
-                                            <div class="flex items-center gap-3">
-                                                <div class="flex-1">
-                                                    <p class="text-center text-xs text-gray-400 mb-1">Egerton</p>
-                                                    <input type="number" id="adminOurScore" min="0" class="glass-input w-full text-center text-2xl font-bold py-3 rounded-xl" placeholder="0">
+                                            <p class="text-xs font-medium text-gray-400 uppercase tracking-wide mb-2">Status</p>
+                                            <div class="grid grid-cols-2 gap-2">
+                                                <button onclick="setStatus('Played')" id="btn-Played" class="status-btn btn-glass py-3 rounded-xl font-medium text-gray-700">Played</button>
+                                                <button onclick="setStatus('Postponed')" id="btn-Postponed" class="status-btn btn-glass py-3 rounded-xl font-medium text-gray-700">Postponed</button>
+                                            </div>
+                                        </div>
+                                        <div id="scoreSection" class="hidden">
+                                            <div class="mb-5">
+                                                <p class="text-xs font-medium text-gray-400 uppercase tracking-wide mb-2">Score</p>
+                                                <div class="flex items-center gap-3">
+                                                    <div class="flex-1">
+                                                        <p class="text-center text-xs text-gray-400 mb-1">Egerton</p>
+                                                        <input type="number" id="adminOurScore" min="0" class="glass-input w-full text-center text-2xl font-bold py-3 rounded-xl" placeholder="0">
+                                                    </div>
+                                                    <span class="text-xl text-gray-300">-</span>
+                                                    <div class="flex-1">
+                                                        <p class="text-center text-xs text-gray-400 mb-1" id="opponentName">Opp</p>
+                                                        <input type="number" id="adminTheirScore" min="0" class="glass-input w-full text-center text-2xl font-bold py-3 rounded-xl" placeholder="0">
+                                                    </div>
                                                 </div>
-                                                <span class="text-xl text-gray-300">-</span>
-                                                <div class="flex-1">
-                                                    <p class="text-center text-xs text-gray-400 mb-1" id="opponentName">Opp</p>
-                                                    <input type="number" id="adminTheirScore" min="0" class="glass-input w-full text-center text-2xl font-bold py-3 rounded-xl" placeholder="0">
+                                            </div>
+                                            <div class="mb-5">
+                                                <p class="text-xs font-medium text-gray-400 uppercase tracking-wide mb-2">Goal Scorers</p>
+                                                <input type="text" id="adminGoalScorers" class="glass-input w-full py-3 px-4 rounded-xl" placeholder="Name, Name">
+                                            </div>
+                                            <div class="mb-5">
+                                                <p class="text-xs font-medium text-gray-400 uppercase tracking-wide mb-2">Goals Each</p>
+                                                <input type="text" id="adminNotes" class="glass-input w-full py-3 px-4 rounded-xl" placeholder="2, 1">
+                                            </div>
+                                            <div class="mb-5">
+                                                <p class="text-xs font-medium text-gray-400 uppercase tracking-wide mb-2">Man of the Match</p>
+                                                <select id="adminMOTM" class="glass-select w-full py-3 px-4 rounded-2xl text-gray-900">
+                                                    <option value="">Select player...</option>
+                                                    ${players.map(p => `<option value="${p.name}">${p.name}</option>`).join('')}
+                                                </select>
+                                            </div>
+                                            <div class="mb-5">
+                                                <p class="text-xs font-medium text-gray-400 uppercase tracking-wide mb-2">Absent Players</p>
+                                                <p class="text-xs text-gray-400 mb-3">Tap players who didn't attend</p>
+                                                <div class="flex flex-wrap gap-2" id="absentSelector">
+                                                    ${players.map(p => `
+                                                        <button type="button" onclick="toggleAbsent('${p.name}')" id="absent-${p.name.replace(/\s+/g, '-')}" class="absent-btn px-4 py-2.5 rounded-full text-sm font-medium transition-all bg-white/60 text-gray-600 border border-gray-200 active:scale-95">
+                                                            ${p.name.split(' ')[0]}
+                                                        </button>
+                                                    `).join('')}
                                                 </div>
                                             </div>
                                         </div>
-
-                                        <div class="mb-5">
-                                            <p class="text-xs font-medium text-gray-400 uppercase tracking-wide mb-2">Goal Scorers</p>
-                                            <input type="text" id="adminGoalScorers" class="glass-input w-full py-3 px-4 rounded-xl" placeholder="Name, Name">
+                                        <input type="hidden" id="adminStatus" value="Scheduled">
+                                        <div class="flex gap-2">
+                                            <button onclick="cancelEdit()" class="flex-1 btn-glass py-3 rounded-xl font-semibold text-gray-700">Cancel</button>
+                                            <button onclick="saveMatch()" class="flex-1 btn-primary py-3 rounded-xl font-semibold">Save</button>
                                         </div>
-
-                                        <div class="mb-5">
-                                            <p class="text-xs font-medium text-gray-400 uppercase tracking-wide mb-2">Goals Each</p>
-                                            <input type="text" id="adminNotes" class="glass-input w-full py-3 px-4 rounded-xl" placeholder="2, 1">
-                                        </div>
-
-                                        <div class="mb-5">
-                                            <p class="text-xs font-medium text-gray-400 uppercase tracking-wide mb-2">Man of the Match</p>
-                                            <select id="adminMOTM" class="glass-select w-full py-3 px-4 rounded-2xl text-gray-900">
-                                                <option value="">Select player...</option>
-                                                ${players.map(p => `<option value="${p.name}">${p.name}</option>`).join('')}
-                                            </select>
-                                        </div>
-
-                                        <div class="mb-5">
-                                            <p class="text-xs font-medium text-gray-400 uppercase tracking-wide mb-2">Absent Players</p>
-                                            <p class="text-xs text-gray-400 mb-3">Tap players who didn't attend</p>
-                                            <div class="flex flex-wrap gap-2" id="absentSelector">
-                                                ${players.map(p => `
-                                                    <button type="button" onclick="toggleAbsent('${p.name}')" id="absent-${p.name.replace(/\s+/g, '-')}" class="absent-btn px-4 py-2.5 rounded-full text-sm font-medium transition-all bg-white/60 text-gray-600 border border-gray-200 active:scale-95">
-                                                        ${p.name.split(' ')[0]}
-                                                    </button>
-                                                `).join('')}
-                                            </div>
-                                        </div>
+                                        <div id="adminMessage" class="mt-4 text-center text-sm hidden"></div>
                                     </div>
-
-                                    <input type="hidden" id="adminStatus" value="Scheduled">
-
-                                    <div class="flex gap-2">
-                                        <button onclick="cancelEdit()" class="flex-1 btn-glass py-3 rounded-xl font-semibold text-gray-700">Cancel</button>
-                                        <button onclick="saveMatch()" class="flex-1 btn-primary py-3 rounded-xl font-semibold">Save</button>
-                                    </div>
-
-                                    <div id="adminMessage" class="mt-4 text-center text-sm hidden"></div>
                                 </div>
                             </div>
-                            </div>
-                        ` : ''}                        
+                        ` : ''}
                         </div>
                     </main>
 
@@ -1151,16 +1237,11 @@
             `;
         }
 
-        let selectedMatchId = null;
-        let enteredPasscode = '';
-        let adminUnlocked = false;
-        const ADMIN_PASSCODE = '1505';
-
+        // Admin functions
         function enterPasscode(num) {
             if (enteredPasscode.length >= 4) return;
             enteredPasscode += num.toString();
             updatePasscodeDisplay();
-            
             if (enteredPasscode.length === 4) {
                 setTimeout(() => {
                     if (enteredPasscode === ADMIN_PASSCODE) {
@@ -1170,11 +1251,7 @@
                     } else {
                         document.getElementById('passcodeError').classList.remove('hidden');
                         document.getElementById('passcodeDisplay').classList.add('shake');
-                        setTimeout(() => {
-                            enteredPasscode = '';
-                            updatePasscodeDisplay();
-                            document.getElementById('passcodeDisplay').classList.remove('shake');
-                        }, 500);
+                        setTimeout(() => { enteredPasscode = ''; updatePasscodeDisplay(); document.getElementById('passcodeDisplay').classList.remove('shake'); }, 500);
                     }
                 }, 100);
             }
@@ -1189,25 +1266,15 @@
         function updatePasscodeDisplay() {
             const dots = document.querySelectorAll('.passcode-dot');
             dots.forEach((dot, i) => {
-                if (i < enteredPasscode.length) {
-                    dot.classList.remove('bg-gray-200');
-                    dot.classList.add('bg-gray-900');
-                } else {
-                    dot.classList.remove('bg-gray-900');
-                    dot.classList.add('bg-gray-200');
-                }
+                if (i < enteredPasscode.length) { dot.classList.remove('bg-gray-200'); dot.classList.add('bg-gray-900'); }
+                else { dot.classList.remove('bg-gray-900'); dot.classList.add('bg-gray-200'); }
             });
         }
 
-        // Keyboard support for passcode
         document.addEventListener('keydown', function(e) {
             if (currentTab !== 'admin' || adminUnlocked) return;
-            
-            if (e.key >= '0' && e.key <= '9') {
-                enterPasscode(parseInt(e.key));
-            } else if (e.key === 'Backspace' || e.key === 'Delete') {
-                deletePasscode();
-            }
+            if (e.key >= '0' && e.key <= '9') enterPasscode(parseInt(e.key));
+            else if (e.key === 'Backspace' || e.key === 'Delete') deletePasscode();
         });
 
         function selectMatch(matchId) {
@@ -1217,18 +1284,11 @@
             const cards = document.getElementById('matchCards');
             const match = allMatches.find(m => m.id === matchId);
             if (!match) return;
-
             cards.classList.add('hidden');
             form.classList.remove('hidden');
-
-            document.getElementById('matchInfo').innerHTML = `
-                <p class="text-lg font-semibold text-gray-900">${match.opponent}</p>
-                <p class="text-sm text-gray-500">${formatShortDate(match.date)} · ${match.kickOffTime} · ${match.venue}</p>
-            `;
-
+            document.getElementById('matchInfo').innerHTML = `<p class="text-lg font-semibold text-gray-900">${match.opponent}</p><p class="text-sm text-gray-500">${formatShortDate(match.date)} · ${match.kickOffTime} · ${match.venue}</p>`;
             const opponentNameEl = document.getElementById('opponentName');
             if (opponentNameEl) opponentNameEl.textContent = match.opponent.split(' ')[0];
-
             document.getElementById('adminStatus').value = 'Scheduled';
             document.getElementById('adminOurScore').value = '';
             document.getElementById('adminTheirScore').value = '';
@@ -1236,7 +1296,6 @@
             document.getElementById('adminNotes').value = '';
             const motmSelect = document.getElementById('adminMOTM');
             if (motmSelect) motmSelect.value = '';
-
             document.querySelectorAll('.status-btn').forEach(btn => btn.classList.remove('active'));
             document.getElementById('scoreSection').classList.add('hidden');
         }
@@ -1253,15 +1312,12 @@
             const btnId = 'absent-' + playerName.replace(/\s+/g, '-');
             const btn = document.getElementById(btnId);
             if (!btn) return;
-            
             const index = absentPlayers.indexOf(playerName);
             if (index > -1) {
-                // Remove from absent list (player attended)
                 absentPlayers.splice(index, 1);
                 btn.classList.remove('bg-red-100', 'text-red-600', 'border-red-300');
                 btn.classList.add('bg-white/60', 'text-gray-600', 'border-gray-200');
             } else {
-                // Add to absent list (player didn't attend)
                 absentPlayers.push(playerName);
                 btn.classList.remove('bg-white/60', 'text-gray-600', 'border-gray-200');
                 btn.classList.add('bg-red-100', 'text-red-600', 'border-red-300');
@@ -1278,7 +1334,6 @@
             if (!selectedMatchId) return showAdminMessage('No match selected', 'error');
             const status = document.getElementById('adminStatus').value;
             if (status === 'Scheduled') return showAdminMessage('Select status', 'error');
-
             const data = { id: selectedMatchId, status };
             if (status === 'Played') {
                 data.ourScore = document.getElementById('adminOurScore').value || '0';
@@ -1287,18 +1342,13 @@
                 data.notes = document.getElementById('adminNotes').value || '';
                 data.motm = document.getElementById('adminMOTM').value || '';
                 data.absentPlayers = absentPlayers;
-            } else {
-                data.ourScore = ''; data.theirScore = ''; data.goalScorers = ''; data.notes = '';
-            }
-
+            } else { data.ourScore = ''; data.theirScore = ''; data.goalScorers = ''; data.notes = ''; }
             try {
                 showAdminMessage('Saving...', 'info');
                 await fetch(APPS_SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
                 showAdminMessage('Saved ✓', 'success');
                 setTimeout(() => { selectedMatchId = null; fetchSheetData(); }, 1500);
-            } catch (error) {
-                showAdminMessage('Error', 'error');
-            }
+            } catch (error) { showAdminMessage('Error', 'error'); }
         }
 
         function showAdminMessage(text, type) {
