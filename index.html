@@ -255,6 +255,54 @@
             border-color: rgba(239, 68, 68, 0.4);
         }
 
+        /* Sidebar - Desktop only */
+        .sidebar {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(40px) saturate(180%);
+            -webkit-backdrop-filter: blur(40px) saturate(180%);
+            border-right: 0.5px solid rgba(0, 0, 0, 0.06);
+            box-shadow: 
+                1px 0 3px rgba(0, 0, 0, 0.02),
+                inset -1px 0 0 rgba(255, 255, 255, 0.5);
+        }
+        
+        .sidebar-item {
+            transition: all 0.2s ease;
+            border-radius: 12px;
+        }
+        
+        .sidebar-item:hover {
+            background: rgba(0, 0, 0, 0.04);
+        }
+        
+        .sidebar-item.active {
+            background: rgba(250, 204, 21, 0.15);
+        }
+        
+        .sidebar-item.active:hover {
+            background: rgba(250, 204, 21, 0.2);
+        }
+
+        /* Select dropdown styling */
+        .glass-select {
+            background: rgba(255, 255, 255, 0.8);
+            border: 0.5px solid rgba(0, 0, 0, 0.1);
+            transition: all 0.2s ease;
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 40px;
+        }
+        
+        .glass-select:focus {
+            background-color: rgba(255, 255, 255, 0.95);
+            border-color: var(--yellow-club);
+            box-shadow: 0 0 0 3px rgba(250, 204, 21, 0.2);
+            outline: none;
+        }
+
         /* Number styling */
         .number-display {
             font-variant-numeric: tabular-nums;
@@ -441,9 +489,58 @@
             let filteredResults = resultFilter ? results.filter(r => r.result === resultFilter) : results;
 
             document.getElementById('app').innerHTML = `
-                <div class="min-h-screen flex flex-col">
-                    <!-- Header -->
-                    <header class="glass-header safe-top sticky top-0 z-40 px-4 py-3">
+                <div class="min-h-screen flex">
+                    <!-- Sidebar - Desktop Only -->
+                    <aside class="sidebar hidden md:flex flex-col w-64 fixed left-0 top-0 bottom-0 z-40 safe-top">
+                        <div class="p-4 border-b border-gray-100/50">
+                            <div class="flex items-center gap-3">
+                                <img src="${BADGE_IMG}" class="w-12 h-12 rounded-xl shadow-sm" alt="Badge">
+                                <div>
+                                    <h1 class="text-base font-semibold text-gray-900">Egerton U15 Lions</h1>
+                                    <p class="text-xs text-gray-400">Season 2025/26</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <nav class="flex-1 p-3 space-y-1">
+                            <button onclick="setActiveTab('overview')" class="sidebar-item ${currentTab === 'overview' ? 'active' : ''} w-full flex items-center gap-3 px-3 py-2.5 text-left">
+                                <span class="text-lg">📊</span>
+                                <span class="font-medium ${currentTab === 'overview' ? 'text-yellow-700' : 'text-gray-700'}">Overview</span>
+                            </button>
+                            <button onclick="setActiveTab('fixtures')" class="sidebar-item ${currentTab === 'fixtures' ? 'active' : ''} w-full flex items-center gap-3 px-3 py-2.5 text-left">
+                                <span class="text-lg">📅</span>
+                                <span class="font-medium ${currentTab === 'fixtures' ? 'text-yellow-700' : 'text-gray-700'}">Fixtures</span>
+                            </button>
+                            <button onclick="setActiveTab('results')" class="sidebar-item ${currentTab === 'results' ? 'active' : ''} w-full flex items-center gap-3 px-3 py-2.5 text-left">
+                                <span class="text-lg">🏆</span>
+                                <span class="font-medium ${currentTab === 'results' ? 'text-yellow-700' : 'text-gray-700'}">Results</span>
+                            </button>
+                            <button onclick="setActiveTab('players')" class="sidebar-item ${currentTab === 'players' ? 'active' : ''} w-full flex items-center gap-3 px-3 py-2.5 text-left">
+                                <span class="text-lg">👥</span>
+                                <span class="font-medium ${currentTab === 'players' ? 'text-yellow-700' : 'text-gray-700'}">Squad</span>
+                            </button>
+                            <button onclick="setActiveTab('admin')" class="sidebar-item ${currentTab === 'admin' ? 'active' : ''} w-full flex items-center gap-3 px-3 py-2.5 text-left">
+                                <span class="text-lg">⚙️</span>
+                                <span class="font-medium ${currentTab === 'admin' ? 'text-yellow-700' : 'text-gray-700'}">Admin</span>
+                            </button>
+                        </nav>
+                        
+                        <div class="p-3 border-t border-gray-100/50">
+                            <button onclick="openSearch()" class="sidebar-item w-full flex items-center gap-3 px-3 py-2.5 text-left">
+                                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                                <span class="font-medium text-gray-500">Search</span>
+                            </button>
+                            <button onclick="fetchSheetData()" class="sidebar-item w-full flex items-center gap-3 px-3 py-2.5 text-left">
+                                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                                <span class="font-medium text-gray-500">Refresh</span>
+                            </button>
+                        </div>
+                    </aside>
+
+                    <!-- Main Content Area -->
+                    <div class="flex-1 md:ml-64 flex flex-col min-h-screen">
+                    <!-- Header - Mobile Only -->
+                    <header class="glass-header safe-top sticky top-0 z-40 px-4 py-3 md:hidden">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-3">
                                 <img src="${BADGE_IMG}" class="w-9 h-9 rounded-lg shadow-sm" alt="Badge">
@@ -593,12 +690,12 @@
                     </div>
 
                     <!-- Main Content -->
-                    <main class="flex-1 scroll-container px-4 pb-28 pt-4">
+                    <main class="flex-1 scroll-container px-4 md:px-8 pb-28 md:pb-8 pt-4 md:pt-6">
                         <div class="page-content">
                         
                         ${currentTab === 'overview' ? `
                             <!-- Stats -->
-                            <div class="grid grid-cols-4 gap-2 mb-5">
+                            <div class="grid grid-cols-4 gap-2 md:gap-4 mb-5 md:max-w-2xl">
                                 <div class="glass-card rounded-2xl p-3 text-center">
                                     <p class="text-xs text-gray-400 mb-0.5">Played</p>
                                     <p class="text-2xl font-bold number-display">${played}</p>
@@ -834,8 +931,8 @@
                                         </div>
 
                                         <div class="mb-5">
-                                            <p class="text-xs font-medium text-gray-400 uppercase tracking-wide mb-2">MOTM</p>
-                                            <select id="adminMOTM" class="glass-input w-full py-3 px-4 rounded-xl">
+                                            <p class="text-xs font-medium text-gray-400 uppercase tracking-wide mb-2">Man of the Match</p>
+                                            <select id="adminMOTM" class="glass-select w-full py-3 px-4 rounded-2xl text-gray-900">
                                                 <option value="">Select player...</option>
                                                 ${players.map(p => `<option value="${p.name}">${p.name}</option>`).join('')}
                                             </select>
@@ -869,8 +966,8 @@
                         </div>
                     </main>
 
-                    <!-- Bottom Navigation - Liquid Glass -->
-                    <nav class="glass-nav fixed bottom-4 left-4 right-4 rounded-[28px] flex justify-around py-2 z-50">
+                    <!-- Bottom Navigation - Mobile Only -->
+                    <nav class="glass-nav fixed bottom-4 left-4 right-4 rounded-[28px] flex justify-around py-2 z-50 md:hidden">
                         <button onclick="setActiveTab('overview')" class="nav-item ${currentTab === 'overview' ? 'active' : ''} flex flex-col items-center py-2 px-4">
                             <span class="text-lg mb-0.5 ${currentTab === 'overview' ? '' : 'grayscale opacity-60'}">📊</span>
                             <span class="text-[10px] font-medium ${currentTab === 'overview' ? 'text-yellow-600' : 'text-gray-400'}">Home</span>
@@ -892,6 +989,7 @@
                             <span class="text-[10px] font-medium ${currentTab === 'admin' ? 'text-yellow-600' : 'text-gray-400'}">Admin</span>
                         </button>
                     </nav>
+                    </div>
                 </div>
             `;
         }
