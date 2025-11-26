@@ -376,6 +376,8 @@
         fixtures: [],
         results: [],
         players: [],
+        messages: [],
+        lineups: [],
         resultFilter: null,
         searchOpen: false,
         searchQuery: '',
@@ -386,7 +388,9 @@
         loginInput: '',
         suggestions: [],
         adminUnlocked: false,
-        enteredPasscode: ''
+        enteredPasscode: '',
+        newMessage: '',
+        lineupViewOpen: false
     };
 
     // ========================================
@@ -431,18 +435,53 @@
         };
     }
 
+    function getPlayerMessages(playerName) {
+        if (!playerName) return [];
+        return state.messages.filter(m => 
+            m.to.toLowerCase() === playerName.toLowerCase() || 
+            m.from.toLowerCase() === playerName.toLowerCase()
+        ).sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+    }
+
+    function getNextMatchLineup() {
+        if (state.fixtures.length === 0) return null;
+        const nextMatch = state.fixtures[0];
+        return state.lineups.find(l => l.matchId === nextMatch.id);
+    }
+
+    function formatTimestamp(ts) {
+        if (!ts) return '';
+        const d = new Date(ts);
+        if (isNaN(d)) return ts;
+        return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+    }
+
+    function openLineupView() {
+        state.lineupViewOpen = true;
+        renderApp();
+    }
+
+    function closeLineupView() {
+        state.lineupViewOpen = false;
+        renderApp();
+    }
+
     // ========================================
     // DATA FETCHING
     // ========================================
     async function fetchSheetData() {
         try {
-            const [fixturesRes, playersRes] = await Promise.all([
+            const [fixturesRes, playersRes, messagesRes, lineupsRes] = await Promise.all([
                 fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SPREADSHEET_ID}/values/Fixtures?key=${CONFIG.API_KEY}`),
-                fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SPREADSHEET_ID}/values/Players?key=${CONFIG.API_KEY}`)
+                fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SPREADSHEET_ID}/values/Players?key=${CONFIG.API_KEY}`),
+                fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SPREADSHEET_ID}/values/Messages?key=${CONFIG.API_KEY}`).catch(() => ({ json: () => ({}) })),
+                fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SPREADSHEET_ID}/values/Lineups?key=${CONFIG.API_KEY}`).catch(() => ({ json: () => ({}) }))
             ]);
             
             const fixturesData = await fixturesRes.json();
             const playersData = await playersRes.json();
+            const messagesData = await messagesRes.json();
+            const lineupsData = await lineupsRes.json();
 
             if (fixturesData.values?.length > 1) {
                 state.allMatches = fixturesData.values.slice(1)
@@ -490,6 +529,35 @@
                         motm: parseInt(row[4]) || 0,
                         foot: row[5] || '',
                         appearances: parseInt(row[6]) || 0
+                    }));
+            }
+
+            // Parse Messages: ID, From, FromType, To, Message, Timestamp
+            if (messagesData.values?.length > 1) {
+                state.messages = messagesData.values.slice(1)
+                    .filter(row => row?.length >= 5)
+                    .map(row => ({
+                        id: row[0] || '',
+                        from: row[1] || '',
+                        fromType: row[2] || '',
+                        to: row[3] || '',
+                        message: row[4] || '',
+                        timestamp: row[5] || ''
+                    }));
+            }
+
+            // Parse Lineups: MatchID, Formation, Starting11, Subs, Notes, CreatedBy, Timestamp
+            if (lineupsData.values?.length > 1) {
+                state.lineups = lineupsData.values.slice(1)
+                    .filter(row => row?.length >= 4)
+                    .map(row => ({
+                        matchId: row[0] || '',
+                        formation: row[1] || '',
+                        starting11: row[2] ? row[2].split(',').map(s => s.trim()) : [],
+                        subs: row[3] ? row[3].split(',').map(s => s.trim()) : [],
+                        notes: row[4] || '',
+                        createdBy: row[5] || '',
+                        timestamp: row[6] || ''
                     }));
             }
 
@@ -981,6 +1049,9 @@
                 </div>
             ` : ''}
 
+            <!-- Lineup Graphic -->
+            ${renderLineupGraphic()}
+
             <!-- Personal Stats -->
             ${isPlayer ? `
                 <div class="glass-card rounded-2xl p-4 mb-4">
@@ -1081,6 +1152,131 @@
                     : '<p class="text-gray-400 text-center py-8">No players</p>'
                 }
             </div>
+        `;
+    }
+
+    function renderLineupGraphic() {
+        const lineup = getNextMatchLineup();
+        const nextMatch = state.fixtures[0];
+        
+        if (!lineup || !nextMatch) return '';
+
+        const playerName = state.loggedInPlayer?.name || '';
+        const isInStarting = lineup.starting11.some(p => p.toLowerCase() === playerName.toLowerCase());
+        const isInSubs = lineup.subs.some(p => p.toLowerCase() === playerName.toLowerCase());
+        const playerStatus = isInStarting ? 'starting' : isInSubs ? 'sub' : '';
+
+        return `
+            <div onclick="openLineupView()" class="cursor-pointer rounded-2xl overflow-hidden mb-4" style="background: linear-gradient(135deg, #FACC15 0%, #EAB308 100%); position: relative;">
+                <!-- Diagonal stripes -->
+                <div style="position: absolute; top: -20px; right: -20px; width: 80px; height: 120px; background: repeating-linear-gradient(45deg, rgba(255,255,255,0.1), rgba(255,255,255,0.1) 10px, transparent 10px, transparent 20px); transform: rotate(-15deg);"></div>
+                <div style="position: absolute; top: 40px; right: 20px; width: 60px; height: 100px; background: repeating-linear-gradient(45deg, rgba(255,255,255,0.1), rgba(255,255,255,0.1) 10px, transparent 10px, transparent 20px); transform: rotate(-15deg);"></div>
+                
+                <div class="p-4 relative">
+                    <!-- Header -->
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center gap-2">
+                            <img src="${CONFIG.BADGE_IMG}" class="w-8 h-8 rounded-lg" alt="Badge">
+                            <div>
+                                <p class="text-[10px] font-medium text-gray-800 opacity-70">VS ${escapeHtml(nextMatch.opponent.toUpperCase())}</p>
+                                <p class="text-lg font-black text-gray-900 leading-tight">STARTING</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-5xl font-black text-gray-900/10">XI</p>
+                        </div>
+                    </div>
+
+                    <!-- Starting XI -->
+                    <div class="space-y-1 mb-3">
+                        ${lineup.starting11.slice(0, 11).map((player, i) => {
+                            const p = state.players.find(pl => pl.name.toLowerCase() === player.toLowerCase());
+                            const shirtNum = p?.shirtNumber || (i + 1);
+                            const isMe = player.toLowerCase() === playerName.toLowerCase();
+                            return `
+                                <div class="flex items-center gap-2 ${isMe ? 'bg-white/30 -mx-2 px-2 py-0.5 rounded-lg' : ''}">
+                                    <span class="w-6 h-6 rounded-md bg-gray-900 text-yellow-400 flex items-center justify-center text-xs font-bold">${shirtNum}</span>
+                                    <span class="text-sm font-semibold text-gray-900">${escapeHtml(player.split(' ')[1] || player)}</span>
+                                    ${isMe ? '<span class="text-xs bg-gray-900 text-yellow-400 px-1.5 py-0.5 rounded font-bold">YOU</span>' : ''}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+
+                    <!-- Subs -->
+                    ${lineup.subs.length > 0 ? `
+                        <div class="border-t border-gray-900/20 pt-2">
+                            <p class="text-xs font-bold text-gray-900/70 mb-1 italic">subs</p>
+                            <p class="text-xs text-gray-900/80">${lineup.subs.map(s => {
+                                const isMe = s.toLowerCase() === playerName.toLowerCase();
+                                return isMe ? `<span class="font-bold bg-white/30 px-1 rounded">${escapeHtml(s)}</span>` : escapeHtml(s);
+                            }).join(', ')}</p>
+                        </div>
+                    ` : ''}
+
+                    <!-- Notes -->
+                    ${lineup.notes ? `
+                        <div class="mt-2 pt-2 border-t border-gray-900/20">
+                            <p class="text-xs text-gray-900/70 italic">"${escapeHtml(lineup.notes)}"</p>
+                        </div>
+                    ` : ''}
+
+                    <!-- Player Status Badge -->
+                    ${playerStatus ? `
+                        <div class="absolute top-4 right-4">
+                            <span class="px-2 py-1 rounded-full text-xs font-bold ${playerStatus === 'starting' ? 'bg-gray-900 text-yellow-400' : 'bg-white/50 text-gray-900'}">
+                                ${playerStatus === 'starting' ? '⭐ Starting' : '🪑 Sub'}
+                            </span>
+                        </div>
+                    ` : ''}
+                </div>
+            </div>
+        `;
+    }
+
+    function renderMessages() {
+        if (!state.loggedInPlayer) {
+            return `
+                <h2 class="text-xl font-bold text-gray-900 mb-4">Messages</h2>
+                <div class="glass-card rounded-2xl p-6 text-center">
+                    <div class="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                    </div>
+                    <p class="text-gray-500">Login as a player to see messages from managers</p>
+                </div>
+            `;
+        }
+
+        const myMessages = getPlayerMessages(state.loggedInPlayer.name);
+
+        return `
+            <h2 class="text-xl font-bold text-gray-900 mb-4">Messages</h2>
+            ${myMessages.length > 0 ? `
+                <div class="glass-card rounded-2xl p-4">
+                    <div class="space-y-4 max-h-96 overflow-y-auto">
+                        ${myMessages.map(m => {
+                            const isFromManager = m.fromType === 'manager';
+                            return `
+                                <div class="flex ${isFromManager ? 'justify-start' : 'justify-end'}">
+                                    <div class="max-w-[80%] ${isFromManager ? 'bg-white border border-gray-100' : 'bg-yellow-400'} rounded-2xl px-4 py-3 shadow-sm">
+                                        ${isFromManager ? `<p class="text-xs font-medium text-yellow-600 mb-1">${escapeHtml(m.from)}</p>` : ''}
+                                        <p class="text-sm text-gray-900">${escapeHtml(m.message)}</p>
+                                        <p class="text-[10px] ${isFromManager ? 'text-gray-400' : 'text-yellow-700'} mt-1">${formatTimestamp(m.timestamp)}</p>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            ` : `
+                <div class="glass-card rounded-2xl p-6 text-center">
+                    <div class="w-16 h-16 rounded-full bg-yellow-100 flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                    </div>
+                    <p class="text-gray-500">No messages yet</p>
+                    <p class="text-xs text-gray-400 mt-1">Your manager will message you here</p>
+                </div>
+            `}
         `;
     }
 
@@ -1443,6 +1639,7 @@
             fixtures: renderFixtures,
             results: renderResults,
             players: renderPlayers,
+            messages: renderMessages,
             admin: renderAdmin
         };
 
@@ -1460,10 +1657,10 @@
                         </div>
                     </div>
                     <nav class="flex-1 p-3 space-y-1">
-                        ${['overview', 'fixtures', 'results', 'players', 'admin'].map(tab => `
+                        ${['overview', 'fixtures', 'results', 'players', 'messages', 'admin'].map(tab => `
                             <button onclick="setActiveTab('${tab}')" class="sidebar-item ${state.currentTab === tab ? 'active' : ''} w-full flex items-center gap-3 px-3 py-2.5 text-left">
-                                <span class="text-lg">${{overview: '📊', fixtures: '📅', results: '🏆', players: '👥', admin: '⚙️'}[tab]}</span>
-                                <span class="font-medium ${state.currentTab === tab ? 'text-yellow-700' : 'text-gray-700'}">${{overview: 'Overview', fixtures: 'Fixtures', results: 'Results', players: 'Squad', admin: 'Admin'}[tab]}</span>
+                                <span class="text-lg">${{overview: '📊', fixtures: '📅', results: '🏆', players: '👥', messages: '💬', admin: '⚙️'}[tab]}</span>
+                                <span class="font-medium ${state.currentTab === tab ? 'text-yellow-700' : 'text-gray-700'}">${{overview: 'Overview', fixtures: 'Fixtures', results: 'Results', players: 'Squad', messages: 'Messages', admin: 'Admin'}[tab]}</span>
                             </button>
                         `).join('')}
                     </nav>
@@ -1525,10 +1722,10 @@
 
                     <!-- Bottom Nav - Mobile -->
                     <nav class="glass-nav fixed bottom-4 left-4 right-4 rounded-[28px] flex justify-around py-2 z-50 md:hidden">
-                        ${['overview', 'fixtures', 'results', 'players', 'admin'].map(tab => `
-                            <button onclick="setActiveTab('${tab}')" class="nav-item ${state.currentTab === tab ? 'active' : ''} flex flex-col items-center py-2 px-4">
-                                <span class="text-lg mb-0.5 ${state.currentTab === tab ? '' : 'grayscale opacity-60'}">${{overview: '📊', fixtures: '📅', results: '🏆', players: '👥', admin: '⚙️'}[tab]}</span>
-                                <span class="text-[10px] font-medium ${state.currentTab === tab ? 'text-yellow-600' : 'text-gray-400'}">${{overview: 'Home', fixtures: 'Fixtures', results: 'Results', players: 'Squad', admin: 'Admin'}[tab]}</span>
+                        ${['overview', 'fixtures', 'results', 'players', 'messages'].map(tab => `
+                            <button onclick="setActiveTab('${tab}')" class="nav-item ${state.currentTab === tab ? 'active' : ''} flex flex-col items-center py-2 px-3">
+                                <span class="text-lg mb-0.5 ${state.currentTab === tab ? '' : 'grayscale opacity-60'}">${{overview: '📊', fixtures: '📅', results: '🏆', players: '👥', messages: '💬'}[tab]}</span>
+                                <span class="text-[10px] font-medium ${state.currentTab === tab ? 'text-yellow-600' : 'text-gray-400'}">${{overview: 'Home', fixtures: 'Fixtures', results: 'Results', players: 'Squad', messages: 'Chat'}[tab]}</span>
                             </button>
                         `).join('')}
                     </nav>
