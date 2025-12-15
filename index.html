@@ -444,8 +444,8 @@
     }
 
     function getNextMatchLineup() {
-        if (state.fixtures.length === 0) return null;
-        const nextMatch = state.fixtures[0];
+        const nextMatch = state.fixtures.find(m => m.status?.toLowerCase() === STATUS.SCHEDULED.toLowerCase());
+        if (!nextMatch) return null;
         return state.lineups.find(l => l.matchId === nextMatch.id);
     }
 
@@ -1034,17 +1034,19 @@
         const topScorers = [...state.players].sort((a, b) => b.goals - a.goals).slice(0, 3);
         const isPlayer = state.loggedInPlayer !== null;
 
+        const nextScheduledMatch = state.fixtures.find(m => m.status?.toLowerCase() === STATUS.SCHEDULED.toLowerCase());
+
         return `
             <!-- Next Match -->
-            ${state.fixtures.length > 0 ? `
+            ${nextScheduledMatch ? `
                 <div class="glass-card-yellow glass-card rounded-2xl p-4 mb-4">
                     <p class="text-xs font-medium text-yellow-700 uppercase tracking-wide mb-2">Next Match</p>
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="text-lg font-semibold text-gray-900">${escapeHtml(state.fixtures[0].opponent)}</p>
-                            <p class="text-sm text-gray-500">${formatShortDate(state.fixtures[0].date)} · ${escapeHtml(state.fixtures[0].kickOffTime)}</p>
+                            <p class="text-lg font-semibold text-gray-900">${escapeHtml(nextScheduledMatch.opponent)}</p>
+                            <p class="text-sm text-gray-500">${formatShortDate(nextScheduledMatch.date)} · ${escapeHtml(nextScheduledMatch.kickOffTime)}</p>
                         </div>
-                        <span class="pill ${state.fixtures[0].venue === 'Home' ? 'pill-home' : 'pill-away'} px-3 py-1 rounded-full text-xs font-medium">${escapeHtml(state.fixtures[0].venue)}</span>
+                        <span class="pill ${nextScheduledMatch.venue === 'Home' ? 'pill-home' : 'pill-away'} px-3 py-1 rounded-full text-xs font-medium">${escapeHtml(nextScheduledMatch.venue)}</span>
                     </div>
                 </div>
             ` : ''}
@@ -1157,8 +1159,8 @@
 
     function renderLineupGraphic() {
         const lineup = getNextMatchLineup();
-        const nextMatch = state.fixtures[0];
-        
+        const nextMatch = state.fixtures.find(m => m.status?.toLowerCase() === STATUS.SCHEDULED.toLowerCase());
+
         if (!lineup || !nextMatch) return '';
 
         const playerName = state.loggedInPlayer?.name || '';
