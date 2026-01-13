@@ -81,6 +81,138 @@
         }
 
         /* ========================================
+           LIQUID GLASS COMPONENTS (Apple-style)
+        ======================================== */
+        .liquid-glass-nav {
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(40px) saturate(200%);
+            -webkit-backdrop-filter: blur(40px) saturate(200%);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow:
+                0 8px 32px rgba(31, 38, 135, 0.12),
+                inset 0 2px 20px rgba(255, 255, 255, 0.3),
+                inset 0 -1px 0 rgba(255, 255, 255, 0.2);
+            filter: url(#liquid-glass-distort);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .liquid-glass-nav::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background: linear-gradient(
+                135deg,
+                rgba(255, 255, 255, 0.5) 0%,
+                transparent 40%,
+                transparent 60%,
+                rgba(255, 255, 255, 0.2) 100%
+            );
+            pointer-events: none;
+            animation: liquidShine 8s ease-in-out infinite;
+            background-size: 200% 200%;
+        }
+
+        .liquid-glass-card {
+            background: rgba(255, 255, 255, 0.18);
+            backdrop-filter: blur(24px) saturate(180%);
+            -webkit-backdrop-filter: blur(24px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.45);
+            border-radius: 1rem;
+            box-shadow:
+                0 8px 32px rgba(31, 38, 135, 0.1),
+                0 2px 8px rgba(0, 0, 0, 0.04),
+                inset 0 2px 20px rgba(255, 255, 255, 0.25);
+            filter: url(#liquid-glass-distort);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.3s ease;
+        }
+
+        .liquid-glass-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -50%;
+            width: 200%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent 0%,
+                rgba(255, 255, 255, 0.4) 50%,
+                transparent 100%
+            );
+            transform: skewX(-20deg);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .liquid-glass-card:hover::before {
+            opacity: 1;
+            animation: cardShine 1.5s ease;
+        }
+
+        .liquid-glass-card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background: linear-gradient(
+                135deg,
+                rgba(255, 255, 255, 0.4) 0%,
+                transparent 50%,
+                rgba(255, 255, 255, 0.1) 100%
+            );
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
+        .liquid-glass-card:active {
+            transform: scale(0.98);
+            filter: url(#liquid-glass-distort) brightness(1.05);
+        }
+
+        .liquid-glass-card-yellow {
+            background: rgba(254, 249, 195, 0.2);
+            backdrop-filter: blur(24px) saturate(180%);
+            -webkit-backdrop-filter: blur(24px) saturate(180%);
+            border: 1px solid rgba(250, 204, 21, 0.4);
+            box-shadow:
+                0 8px 32px rgba(250, 204, 21, 0.1),
+                inset 0 2px 20px rgba(255, 255, 255, 0.3);
+            filter: url(#liquid-glass-distort);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .liquid-glass-card-yellow::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background: linear-gradient(
+                135deg,
+                rgba(255, 255, 255, 0.5) 0%,
+                rgba(250, 204, 21, 0.1) 50%,
+                rgba(255, 255, 255, 0.2) 100%
+            );
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        @keyframes liquidShine {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        @keyframes cardShine {
+            0% { left: -50%; }
+            100% { left: 150%; }
+        }
+
+        /* ========================================
            STAT CARDS
         ======================================== */
         .stat-win { background: rgba(220, 252, 231, 0.6); border-color: rgba(34, 197, 94, 0.2); }
@@ -323,6 +455,15 @@
     </style>
 </head>
 <body class="text-gray-900">
+    <!-- SVG Filter for Liquid Glass Distortion Effect -->
+    <svg style="position:absolute;width:0;height:0;pointer-events:none;">
+        <defs>
+            <filter id="liquid-glass-distort">
+                <feTurbulence type="fractalNoise" baseFrequency="0.015" numOctaves="3" result="noise"/>
+                <feDisplacementMap in="SourceGraphic" in2="noise" scale="2" xChannelSelector="R" yChannelSelector="G"/>
+            </filter>
+        </defs>
+    </svg>
     <div id="app">
         <div class="min-h-screen flex items-center justify-center">
             <div class="text-center">
@@ -619,7 +760,7 @@
         if (!container) return;
         
         container.innerHTML = state.suggestions.length > 0 ? `
-            <div class="glass-card rounded-2xl overflow-hidden mb-4">
+            <div class="liquid-glass-card rounded-2xl overflow-hidden mb-4">
                 <p class="text-xs font-medium text-gray-400 uppercase tracking-wide px-4 pt-3 pb-2">Did you mean?</p>
                 ${state.suggestions.map(p => `
                     <div onclick="selectSuggestion('${escapeHtml(p.name)}')" class="suggestion-item flex items-center gap-3 px-4 py-3 cursor-pointer border-t border-gray-100/50">
@@ -949,7 +1090,7 @@
     function renderStatCard(label, value, colorClass = '', onClick = null) {
         const clickAttr = onClick ? `onclick="${onClick}" class="cursor-pointer"` : '';
         return `
-            <div class="glass-card ${colorClass} rounded-2xl p-3 md:p-4 text-center" ${clickAttr}>
+            <div class="liquid-glass-card ${colorClass} rounded-2xl p-3 md:p-4 text-center" ${clickAttr}>
                 <p class="text-xs ${colorClass ? '' : 'text-gray-400'} mb-0.5">${label}</p>
                 <p class="text-2xl md:text-3xl font-bold number-display">${value}</p>
             </div>
@@ -982,7 +1123,7 @@
     function renderMatchCard(match, showGoals = false) {
         const isPlayed = match.status?.toLowerCase() === STATUS.PLAYED.toLowerCase();
         return `
-            <div class="glass-card rounded-2xl p-4 ${isPlayed ? 'cursor-pointer relative' : ''}" ${isPlayed ? `onclick="openMatchDetail('${match.id}')"` : ''}>
+            <div class="liquid-glass-card rounded-2xl p-4 ${isPlayed ? 'cursor-pointer relative' : ''}" ${isPlayed ? `onclick="openMatchDetail('${match.id}')"` : ''}>
                 <div class="flex items-center justify-between mb-1">
                     <p class="font-semibold text-gray-900">${escapeHtml(match.opponent)}</p>
                     ${isPlayed ? `
@@ -1007,7 +1148,7 @@
 
     function renderPlayerCard(player) {
         return `
-            <div onclick="openPlayerProfile('${escapeHtml(player.name)}')" class="glass-card rounded-2xl p-4 cursor-pointer">
+            <div onclick="openPlayerProfile('${escapeHtml(player.name)}')" class="liquid-glass-card rounded-2xl p-4 cursor-pointer">
                 <div class="flex items-center gap-3">
                     <div class="w-11 h-11 rounded-xl bg-yellow-400 flex items-center justify-center font-bold text-gray-900">${escapeHtml(player.shirtNumber)}</div>
                     <div class="flex-1">
@@ -1039,7 +1180,7 @@
         return `
             <!-- Next Match -->
             ${nextScheduledMatch ? `
-                <div class="glass-card-yellow glass-card rounded-2xl p-4 mb-4">
+                <div class="liquid-glass-card-yellow liquid-glass-card rounded-2xl p-4 mb-4">
                     <p class="text-xs font-medium text-yellow-700 uppercase tracking-wide mb-2">Next Match</p>
                     <div class="flex items-center justify-between">
                         <div>
@@ -1056,7 +1197,7 @@
 
             <!-- Personal Stats -->
             ${isPlayer ? `
-                <div class="glass-card rounded-2xl p-4 mb-4">
+                <div class="liquid-glass-card rounded-2xl p-4 mb-4">
                     <p class="text-xs font-medium text-gray-400 uppercase tracking-wide mb-3">Your Stats</p>
                     ${renderPlayerStatsRow(state.loggedInPlayer)}
                 </div>
@@ -1072,7 +1213,7 @@
 
             <!-- Top Scorers -->
             ${topScorers.length > 0 && topScorers[0].goals > 0 ? `
-                <div class="glass-card rounded-2xl p-4 mb-4">
+                <div class="liquid-glass-card rounded-2xl p-4 mb-4">
                     <p class="text-xs font-medium text-gray-400 uppercase tracking-wide mb-3">Top Scorers</p>
                     <div class="space-y-3">
                         ${topScorers.filter(p => p.goals > 0).map((player, i) => `
@@ -1093,7 +1234,7 @@
 
             <!-- Recent Results -->
             ${state.results.length > 0 ? `
-                <div class="glass-card rounded-2xl p-4">
+                <div class="liquid-glass-card rounded-2xl p-4">
                     <p class="text-xs font-medium text-gray-400 uppercase tracking-wide mb-3">Recent</p>
                     <div class="space-y-2">
                         ${state.results.slice(0, 4).map(r => `
@@ -1240,7 +1381,7 @@
         if (!state.loggedInPlayer) {
             return `
                 <h2 class="text-xl font-bold text-gray-900 mb-4">Messages</h2>
-                <div class="glass-card rounded-2xl p-6 text-center">
+                <div class="liquid-glass-card rounded-2xl p-6 text-center">
                     <div class="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-4">
                         <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
                     </div>
@@ -1254,7 +1395,7 @@
         return `
             <h2 class="text-xl font-bold text-gray-900 mb-4">Messages</h2>
             ${myMessages.length > 0 ? `
-                <div class="glass-card rounded-2xl p-4">
+                <div class="liquid-glass-card rounded-2xl p-4">
                     <div class="space-y-4 max-h-96 overflow-y-auto">
                         ${myMessages.map(m => {
                             const isFromManager = m.fromType === 'manager';
@@ -1271,7 +1412,7 @@
                     </div>
                 </div>
             ` : `
-                <div class="glass-card rounded-2xl p-6 text-center">
+                <div class="liquid-glass-card rounded-2xl p-6 text-center">
                     <div class="w-16 h-16 rounded-full bg-yellow-100 flex items-center justify-center mx-auto mb-4">
                         <svg class="w-8 h-8 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
                     </div>
@@ -1303,7 +1444,7 @@
                         ${[1,2,3,4,5,6,7,8,9,'',0,'del'].map(n => 
                             n === '' ? '<div></div>' : 
                             n === 'del' ? '<button onclick="deletePasscode()" class="w-16 h-16 rounded-full flex items-center justify-center text-gray-500"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2M3 12l6.414 6.414a2 2 0 001.414.586H19a2 2 0 002-2V7a2 2 0 00-2-2h-8.172a2 2 0 00-1.414.586L3 12z"/></svg></button>' :
-                            `<button onclick="enterPasscode(${n})" class="w-16 h-16 rounded-full glass-card flex items-center justify-center text-2xl font-light text-gray-900 active:bg-gray-200 transition-colors">${n}</button>`
+                            `<button onclick="enterPasscode(${n})" class="w-16 h-16 rounded-full liquid-glass-card flex items-center justify-center text-2xl font-light text-gray-900 active:bg-gray-200 transition-colors">${n}</button>`
                         ).join('')}
                     </div>
                 </div>
@@ -1314,7 +1455,7 @@
                 <div class="space-y-2" id="matchCards">
                     ${scheduledMatches.length > 0 
                         ? scheduledMatches.map(m => `
-                            <div onclick="selectMatch('${m.id}')" class="glass-card rounded-2xl p-4 cursor-pointer">
+                            <div onclick="selectMatch('${m.id}')" class="liquid-glass-card rounded-2xl p-4 cursor-pointer">
                                 <div class="flex items-center justify-between">
                                     <div>
                                         <p class="font-semibold text-gray-900">${escapeHtml(m.opponent)}</p>
@@ -1328,7 +1469,7 @@
                     }
                 </div>
                 <div id="matchForm" class="hidden">
-                    <div class="glass-card rounded-2xl p-5">
+                    <div class="liquid-glass-card rounded-2xl p-5">
                         <div id="matchInfo" class="mb-5 pb-4 border-b border-gray-100"></div>
                         <div class="mb-5">
                             <p class="text-xs font-medium text-gray-400 uppercase tracking-wide mb-2">Status</p>
@@ -1408,7 +1549,7 @@
                 <div class="flex flex-col items-center justify-center min-h-screen px-4 -mt-20">
                     <img src="${CONFIG.BADGE_IMG}" class="w-20 h-20 rounded-2xl shadow-lg mb-8" alt="Badge">
                     <div class="w-full max-w-2xl">
-                        <div class="glass-card rounded-2xl p-1" style="background: rgba(255,255,255,0.7); border: 1px solid rgba(255,255,255,0.8); box-shadow: 0 8px 32px rgba(0,0,0,0.1);">
+                        <div class="liquid-glass-card rounded-2xl p-1" style="background: rgba(255,255,255,0.7); border: 1px solid rgba(255,255,255,0.8); box-shadow: 0 8px 32px rgba(0,0,0,0.1);">
                             <div class="flex items-center gap-3 px-4 py-3">
                                 <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                                 <input type="text" id="searchInput" class="flex-1 bg-transparent text-lg text-gray-900 placeholder-gray-400 focus:outline-none" placeholder="Search players or matches..." oninput="handleSearch(this.value)" value="${escapeHtml(state.searchQuery)}">
@@ -1421,7 +1562,7 @@
                                     <p class="text-xs font-medium text-gray-400 uppercase tracking-wide mb-2 px-2">Players</p>
                                     <div class="space-y-2 mb-4">
                                         ${results.players.map(p => `
-                                            <div onclick="openPlayerProfile('${escapeHtml(p.name)}')" class="glass-card rounded-2xl p-4 cursor-pointer" style="background: rgba(255,255,255,0.8);">
+                                            <div onclick="openPlayerProfile('${escapeHtml(p.name)}')" class="liquid-glass-card rounded-2xl p-4 cursor-pointer" style="background: rgba(255,255,255,0.8);">
                                                 <div class="flex items-center gap-3">
                                                     <div class="w-10 h-10 rounded-xl bg-yellow-400 flex items-center justify-center font-bold text-gray-900">${escapeHtml(p.shirtNumber)}</div>
                                                     <div>
@@ -1437,7 +1578,7 @@
                                     <p class="text-xs font-medium text-gray-400 uppercase tracking-wide mb-2 px-2">Matches</p>
                                     <div class="space-y-2">
                                         ${results.matches.map(m => `
-                                            <div class="glass-card rounded-2xl p-4" style="background: rgba(255,255,255,0.8);">
+                                            <div class="liquid-glass-card rounded-2xl p-4" style="background: rgba(255,255,255,0.8);">
                                                 <div class="flex items-center justify-between">
                                                     <div>
                                                         <p class="font-semibold text-gray-900">${escapeHtml(m.opponent)}</p>
@@ -1484,13 +1625,13 @@
                         <p class="text-gray-500">${escapeHtml(state.selectedPlayer.position)}</p>
                     </div>
                     <div class="grid grid-cols-4 gap-2 mb-6">
-                        <div class="glass-card rounded-2xl p-3 text-center"><p class="text-xl font-bold text-gray-900">${state.selectedPlayer.appearances}</p><p class="text-[10px] text-gray-400">Apps</p></div>
-                        <div class="glass-card rounded-2xl p-3 text-center"><p class="text-xl font-bold text-gray-900">${state.selectedPlayer.goals}</p><p class="text-[10px] text-gray-400">Goals</p></div>
-                        <div class="glass-card rounded-2xl p-3 text-center"><p class="text-xl font-bold text-yellow-500">${state.selectedPlayer.motm}</p><p class="text-[10px] text-gray-400">MOTM</p></div>
-                        <div class="glass-card rounded-2xl p-3 text-center"><p class="text-xl font-bold text-gray-900">${state.selectedPlayer.foot || '-'}</p><p class="text-[10px] text-gray-400">Foot</p></div>
+                        <div class="liquid-glass-card rounded-2xl p-3 text-center"><p class="text-xl font-bold text-gray-900">${state.selectedPlayer.appearances}</p><p class="text-[10px] text-gray-400">Apps</p></div>
+                        <div class="liquid-glass-card rounded-2xl p-3 text-center"><p class="text-xl font-bold text-gray-900">${state.selectedPlayer.goals}</p><p class="text-[10px] text-gray-400">Goals</p></div>
+                        <div class="liquid-glass-card rounded-2xl p-3 text-center"><p class="text-xl font-bold text-yellow-500">${state.selectedPlayer.motm}</p><p class="text-[10px] text-gray-400">MOTM</p></div>
+                        <div class="liquid-glass-card rounded-2xl p-3 text-center"><p class="text-xl font-bold text-gray-900">${state.selectedPlayer.foot || '-'}</p><p class="text-[10px] text-gray-400">Foot</p></div>
                     </div>
                     ${playerMatches.length > 0 ? `
-                        <div class="glass-card rounded-2xl p-4">
+                        <div class="liquid-glass-card rounded-2xl p-4">
                             <p class="text-xs font-medium text-gray-400 uppercase tracking-wide mb-3">Matches Scored In</p>
                             <div class="space-y-3">
                                 ${playerMatches.map(m => `
@@ -1501,7 +1642,7 @@
                                 `).join('')}
                             </div>
                         </div>
-                    ` : '<div class="glass-card rounded-2xl p-4"><p class="text-gray-400 text-center py-4">No goals scored yet</p></div>'}
+                    ` : '<div class="liquid-glass-card rounded-2xl p-4"><p class="text-gray-400 text-center py-4">No goals scored yet</p></div>'}
                 </div>
             </div>
         `;
@@ -1542,7 +1683,7 @@
                     </div>
                     <div class="space-y-3">
                         ${m.motm ? `
-                            <div class="glass-card-yellow glass-card rounded-2xl p-4">
+                            <div class="liquid-glass-card-yellow liquid-glass-card rounded-2xl p-4">
                                 <p class="text-xs font-medium text-yellow-700 uppercase tracking-wide mb-2">Man of the Match</p>
                                 <div class="flex items-center gap-3">
                                     <div class="w-10 h-10 rounded-xl bg-yellow-400 flex items-center justify-center"><span class="text-lg">⭐</span></div>
@@ -1550,7 +1691,7 @@
                                 </div>
                             </div>
                         ` : ''}
-                        <div class="glass-card rounded-2xl p-4">
+                        <div class="liquid-glass-card rounded-2xl p-4">
                             <p class="text-xs font-medium text-gray-400 uppercase tracking-wide mb-3">Goal Scorers</p>
                             ${m.goalScorers && m.goalScorers.trim() && m.goalScorers !== 'NO GOALS' ? `
                                 <div class="space-y-2">
@@ -1561,7 +1702,7 @@
                                 </div>
                             ` : '<p class="text-gray-400 text-center py-2">No goals scored</p>'}
                         </div>
-                        <div class="glass-card rounded-2xl p-4">
+                        <div class="liquid-glass-card rounded-2xl p-4">
                             <p class="text-xs font-medium text-gray-400 uppercase tracking-wide mb-3">Details</p>
                             <div class="space-y-2">
                                 <div class="flex justify-between"><p class="text-gray-500">Kick-off</p><p class="font-medium text-gray-900">${escapeHtml(m.kickOffTime)}</p></div>
@@ -1687,7 +1828,7 @@
                 <!-- Main Content -->
                 <div class="flex-1 md:ml-64 flex flex-col min-h-screen">
                     <!-- Header - Mobile -->
-                    <header class="glass-header safe-top sticky top-0 z-40 px-4 py-3 md:hidden">
+                    <header class="liquid-glass-nav safe-top sticky top-0 z-40 px-4 py-3 md:hidden">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-3">
                                 <img src="${CONFIG.BADGE_IMG}" class="w-9 h-9 rounded-lg shadow-sm" alt="Badge">
@@ -1729,7 +1870,7 @@
                     </main>
 
                     <!-- Bottom Nav - Mobile -->
-                    <nav class="glass-nav fixed bottom-4 left-4 right-4 rounded-[28px] flex justify-around py-2 z-50 md:hidden">
+                    <nav class="liquid-glass-nav fixed bottom-4 left-4 right-4 rounded-[28px] flex justify-around py-2 z-50 md:hidden">
                         ${['overview', 'fixtures', 'results', 'players', 'messages'].map(tab => `
                             <button onclick="setActiveTab('${tab}')" class="nav-item ${state.currentTab === tab ? 'active' : ''} flex flex-col items-center py-2 px-3">
                                 <span class="text-lg mb-0.5 ${state.currentTab === tab ? '' : 'grayscale opacity-60'}">${{overview: '📊', fixtures: '📅', results: '🏆', players: '👥', messages: '💬'}[tab]}</span>
