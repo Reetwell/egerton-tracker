@@ -4,8 +4,8 @@
   "description": "Team tracker for Egerton U15 Lions football club",
   "start_url": "/egerton-tracker/",
   "display": "standalone",
-  "background_color": "#1e1e1e",
-  "theme_color": "#1e1e1e",
+  "background_color": "#f8f8f8",
+  "theme_color": "#f8f8f8",
   "orientation": "portrait",
   "icons": [
     {

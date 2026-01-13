@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Egerton">
-    <meta name="theme-color" content="#1e1e1e">
+    <meta name="theme-color" content="#f8f8f8">
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="egerton-tracker.png">
     <title>Egerton U15 Lions</title>
@@ -101,14 +101,14 @@
            LIQUID GLASS COMPONENTS (Apple-style)
         ======================================== */
         .liquid-glass-nav {
-            background: rgba(30, 30, 30, 0.75);
-            backdrop-filter: blur(50px) saturate(180%);
-            -webkit-backdrop-filter: blur(50px) saturate(180%);
-            border: 1px solid rgba(255, 255, 255, 0.12);
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(40px) saturate(180%);
+            -webkit-backdrop-filter: blur(40px) saturate(180%);
+            border: 0.5px solid rgba(0, 0, 0, 0.06);
             box-shadow:
-                0 8px 32px rgba(0, 0, 0, 0.4),
-                inset 0 1px 0 rgba(255, 255, 255, 0.1),
-                inset 0 -1px 0 rgba(255, 255, 255, 0.05);
+                0 4px 24px rgba(0, 0, 0, 0.08),
+                inset 0 1px 0 rgba(255, 255, 255, 0.9),
+                inset 0 -0.5px 0 rgba(0, 0, 0, 0.05);
             position: relative;
             overflow: hidden;
         }
@@ -120,7 +120,7 @@
             border-radius: inherit;
             background: linear-gradient(
                 180deg,
-                rgba(255, 255, 255, 0.08) 0%,
+                rgba(255, 255, 255, 0.5) 0%,
                 transparent 50%
             );
             pointer-events: none;
@@ -229,28 +229,23 @@
         .nav-item {
             transition: all 0.25s var(--transition-smooth);
             position: relative;
-            border-radius: 12px;
-            padding: 8px 12px;
-            z-index: 1;
         }
 
-        .nav-item::before {
+        .nav-item::after {
             content: '';
             position: absolute;
-            inset: 0;
-            background: rgba(60, 60, 60, 0.8);
-            border-radius: 12px;
-            opacity: 0;
-            transition: opacity 0.25s var(--transition-smooth);
-            z-index: -1;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%) scale(0);
+            width: 5px;
+            height: 5px;
+            background: var(--color-primary);
+            border-radius: 50%;
+            transition: transform 0.25s var(--transition-smooth);
         }
 
-        .nav-item.active::before {
-            opacity: 1;
-        }
-
-        .nav-item.active {
-            color: var(--color-primary);
+        .nav-item.active::after {
+            transform: translateX(-50%) scale(1);
         }
 
         .nav-item:active { transform: scale(0.9); }
@@ -1884,16 +1879,16 @@
                             <div class="flex items-center gap-3">
                                 <img src="${CONFIG.BADGE_IMG}" class="w-9 h-9 rounded-lg shadow-sm" alt="Badge">
                                 <div>
-                                    <h1 class="text-base font-semibold text-white">${CONFIG.TEAM_NAME}</h1>
-                                    <p class="text-xs text-gray-400">${CONFIG.SEASON}</p>
+                                    <h1 class="text-base font-semibold text-gray-900">${CONFIG.TEAM_NAME}</h1>
+                                    <p class="text-xs text-gray-500">${CONFIG.SEASON}</p>
                                 </div>
                             </div>
                             <div class="flex items-center gap-2">
-                                <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-yellow-400/20">
-                                    ${isPlayer ? `<span class="text-xs font-bold text-yellow-400">${escapeHtml(state.loggedInPlayer.shirtNumber)}</span>` : ''}
-                                    <span class="text-xs font-medium text-yellow-400">${escapeHtml(displayName)}</span>
+                                <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-yellow-100">
+                                    ${isPlayer ? `<span class="text-xs font-bold text-yellow-700">${escapeHtml(state.loggedInPlayer.shirtNumber)}</span>` : ''}
+                                    <span class="text-xs font-medium text-yellow-700">${escapeHtml(displayName)}</span>
                                 </div>
-                                <button onclick="openSearch()" class="w-9 h-9 rounded-full flex items-center justify-center text-white/70 hover:text-white bg-white/10">
+                                <button onclick="openSearch()" class="btn-glass w-9 h-9 rounded-full flex items-center justify-center text-gray-500">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                                 </button>
                             </div>
@@ -1924,8 +1919,8 @@
                     <nav class="liquid-glass-nav fixed bottom-4 left-4 right-4 rounded-[28px] flex justify-around py-2 z-50 md:hidden">
                         ${['overview', 'fixtures', 'results', 'players', 'messages'].map(tab => `
                             <button onclick="setActiveTab('${tab}')" class="nav-item ${state.currentTab === tab ? 'active' : ''} flex flex-col items-center py-2 px-3">
-                                <span class="text-lg mb-0.5 ${state.currentTab === tab ? '' : 'opacity-50'}">${{overview: '📊', fixtures: '📅', results: '🏆', players: '👥', messages: '💬'}[tab]}</span>
-                                <span class="text-[10px] font-medium ${state.currentTab === tab ? 'text-yellow-400' : 'text-gray-400'}">${{overview: 'Home', fixtures: 'Fixtures', results: 'Results', players: 'Squad', messages: 'Chat'}[tab]}</span>
+                                <span class="text-lg mb-0.5 ${state.currentTab === tab ? '' : 'grayscale opacity-60'}">${{overview: '📊', fixtures: '📅', results: '🏆', players: '👥', messages: '💬'}[tab]}</span>
+                                <span class="text-[10px] font-medium ${state.currentTab === tab ? 'text-yellow-600' : 'text-gray-400'}">${{overview: 'Home', fixtures: 'Fixtures', results: 'Results', players: 'Squad', messages: 'Chat'}[tab]}</span>
                             </button>
                         `).join('')}
                     </nav>
