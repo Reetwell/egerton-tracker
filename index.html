@@ -4,9 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Egerton">
+    <meta name="theme-color" content="#1e1e1e">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="egerton-tracker.png">
     <title>Egerton U15 Lions</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // Register Service Worker for PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js').catch(() => {});
+            });
+        }
+    </script>
     <style>
         /* ========================================
            CSS VARIABLES & RESET
@@ -35,6 +47,11 @@
             background: linear-gradient(180deg, #f8f8f8 0%, #f0f0f5 100%);
             min-height: 100vh;
             font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
+            overscroll-behavior: none;
+        }
+
+        html {
+            overscroll-behavior: none;
         }
 
         /* ========================================
@@ -322,11 +339,13 @@
         /* ========================================
            ANIMATIONS
         ======================================== */
-        .page-content { animation: pageFadeIn 0.3s ease; }
-        
+        .page-content {
+            animation: pageFadeIn 0.2s var(--transition-smooth);
+        }
+
         @keyframes pageFadeIn {
-            0% { opacity: 0; }
-            100% { opacity: 1; }
+            0% { opacity: 0; transform: translateY(8px); }
+            100% { opacity: 1; transform: translateY(0); }
         }
 
         @keyframes sidebarBounce {
@@ -341,16 +360,16 @@
             0% { opacity: 0; transform: scale(0.9); }
             100% { opacity: 1; transform: scale(1); }
         }
-        
+
         @keyframes badgeFadeIn {
             0% { opacity: 0; transform: scale(0.8) rotate(-10deg); }
             60% { transform: scale(1.05) rotate(2deg); }
             100% { opacity: 1; transform: scale(1) rotate(0deg); }
         }
-        
+
         @keyframes homeSlideIn {
-            0% { opacity: 0; transform: translateY(30px) scale(0.95); }
-            100% { opacity: 1; transform: translateY(0) scale(1); }
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
         }
 
         @keyframes shake {
@@ -358,10 +377,10 @@
             20%, 60% { transform: translateX(-8px); }
             40%, 80% { transform: translateX(8px); }
         }
-        
+
         .welcome-text { animation: welcomeFadeIn 0.6s var(--transition-spring); }
         .badge-animate { animation: badgeFadeIn 0.7s var(--transition-spring); }
-        .home-slide-in { animation: homeSlideIn 0.6s var(--transition-spring); }
+        .home-slide-in { animation: homeSlideIn 0.4s var(--transition-smooth); }
         .shake { animation: shake 0.4s ease; }
 
         /* ========================================
